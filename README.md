@@ -1,5 +1,6 @@
 jURAclient
 ==========
+
 Java client for URA based public transport APIs.
 
 This client allows to simply connect any Java application to the public transport API to implement a monitor for the 
@@ -38,6 +39,12 @@ List<Trip> trips = ura.forStop("100000")
 
 * More refined query parameters
 * Stream API with asynchronous consumer
+
+**Build status:**
+
+* master  [![Build status](https://travis-ci.org/stklcode/juraclient.svg?branch=master)](https://travis-ci.org/stklcode/juraclient)
+* develop [![Build status](https://travis-ci.org/stklcode/juraclient.svg?branch=develop)](https://travis-ci.org/stklcode/juraclient)
+
 
 **License**
 
