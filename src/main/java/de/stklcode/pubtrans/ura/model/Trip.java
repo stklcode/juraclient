@@ -82,4 +82,44 @@ public class Trip {
         else
             throw new IOException("Field 15 not of expected type Long, found " + raw.get(15).getClass().getSimpleName());
     }
+
+    public Stop getStop() {
+        return stop;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public Integer getVisitID() {
+        return visitID;
+    }
+
+    public String getLineID() {
+        return lineID;
+    }
+
+    public String getLineName() {
+        return lineName;
+    }
+
+    public Integer getDirectionID() {
+        return directionID;
+    }
+
+    public String getDestinationName() {
+        return destinationName;
+    }
+
+    public String getDestinationText() {
+        return destinationText;
+    }
+
+    public Long getEstimatedTime() {
+        return estimatedTime;
+    }
+
+    public String getVehicleID() {
+        return vehicleID;
+    }
 }
