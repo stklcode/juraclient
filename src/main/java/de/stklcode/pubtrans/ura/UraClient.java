@@ -37,9 +37,6 @@ public class UraClient {
     private static final String DEFAULT_INSTANT_URL = "/interfaces/ura/instant_V2";
     private static final String DEFAULT_STREAM_URL = "/interfaces/ura/stream_V2";
 
-    private static final String FILTER_LINE = "LineID";
-    private static final String FILTER_STOP = "StopID";
-
     private static final String PAR_STOP_ID = "StopID";
     private static final String PAR_STOP_NAME = "StopPointName";
     private static final String PAR_STOP_STATE = "StopPointState";
@@ -68,9 +65,6 @@ public class UraClient {
     private final String streamURL;
     private final ObjectMapper mapper;
 
-    private String[] stops;
-    private String[] lines;
-
     /**
      * Constructor with base URL and default API paths.
      *
@@ -95,25 +89,53 @@ public class UraClient {
     }
 
     /**
-     * Builder pattern to request given stops.
+     * Builder pattern to request given stop IDs.
      *
      * @param stops Stop IDs
-     * @return the client
+     * @return the request
      */
-    public UraClient forStops(final String...stops) {
-        this.stops = stops;
-        return this;
+    public Query forStops(final String...stops) {
+        return new Query().forStops(stops);
     }
 
     /**
-     * Builder pattern to request given stops.
+     * Builder pattern to request given stop names.
+     *
+     * @param stopNames Stop Point Names
+     * @return the request
+     */
+    public Query forStopsByName(final String...stopNames) {
+        return new Query().forStopsByName(stopNames);
+    }
+
+    /**
+     * Builder pattern to request given line IDs.
      *
      * @param lines line IDs
-     * @return the client
+     * @return the request
      */
-    public UraClient forLines(final String...lines) {
-        this.lines = lines;
-        return this;
+    public Query forLines(final String...lines) {
+        return new Query().forLines(lines);
+    }
+
+    /**
+     * Builder pattern to request given line names.
+     *
+     * @param lineNames line names
+     * @return the request
+     */
+    public Query forLinesByName(final String...lineNames) {
+        return new Query().forLinesByName(lineNames);
+    }
+
+    /**
+     * Builder pattern to request given direction.
+     *
+     * @param direction the direction ID
+     * @return the request
+     */
+    public Query forDirection(final Integer direction) {
+        return new Query().forDirection(direction);
     }
 
     /**
@@ -123,7 +145,7 @@ public class UraClient {
      * @return list of trips
      */
     public List<Trip> getTrips() {
-        return getTrips(stops, lines, null);
+        return getTrips(new Query(), null);
     }
 
     /**
@@ -133,31 +155,29 @@ public class UraClient {
      * @return list of trips
      */
     public List<Trip> getTrips(final Integer limit) {
-        return getTrips(stops, lines, limit);
+        return getTrips(new Query(), limit);
     }
 
     /**
-     * Get list of trips for given stops and lines.
+     * Get list of trips.
+     * If forStops() and/or forLines() has been called, those will be used as filter.
      *
-     * @param stops the stops
-     * @param lines the lines
      * @return list of trips
      */
-    public List<Trip> getTrips(final String[] stops, final String[] lines) {
-        return getTrips(stops, lines, null);
+    public List<Trip> getTrips(Query query) {
+        return getTrips(query, null);
     }
 
     /**
-     * Get list of trips for given stops and lines with result limit.
+     * Get list of trips for given stopIDs and lineIDs with result limit.
      *
-     * @param stops the stops
-     * @param lines the lines
-     * @param limit maximum number of results
+     * @param query the request
+     * @param limit   maximum number of results
      * @return list of trips
      */
-    public List<Trip> getTrips(final String[] stops, final String[] lines, final Integer limit) {
+    public List<Trip> getTrips(final Query query, final Integer limit) {
         List<Trip> trips = new ArrayList<>();
-        try (InputStream is = requestInstant(REQUEST_TRIP, stops, lines);
+        try (InputStream is = requestInstant(REQUEST_TRIP, query.stopIDs, query.stopNames, query.lineIDs, query.lineNames, query.direction);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String line;
             while ((line = br.readLine()) != null && (limit == null || trips.size() < limit)) {
@@ -173,13 +193,13 @@ public class UraClient {
     }
 
     /**
-     * List available stops.
+     * List available stopIDs.
      *
      * @return the list
      */
     public List<Stop> listStops() {
         List<Stop> stops = new ArrayList<>();
-        try (InputStream is = requestInstant(REQUEST_STOP, null, null);
+        try (InputStream is = requestInstant(REQUEST_STOP, null, null, null, null, null);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -201,13 +221,94 @@ public class UraClient {
      * @return Input stream of the URL
      * @throws IOException on errors
      */
-    private InputStream requestInstant(String[] returnList, String[] stops, String[] lines) throws IOException {
+    private InputStream requestInstant(String[] returnList, String[] stopIDs, String[] stopNames, String[] lineIDs, String[] lineNames, Integer direction) throws IOException {
         String urlStr = baseURL + instantURL + "?ReturnList=" + String.join(",", returnList);
-        if (stops != null && stops.length > 0)
-            urlStr += "&" + FILTER_STOP + "=" + String.join(",", stops);
-        if (lines != null && lines.length > 0)
-            urlStr += "&" + FILTER_LINE + "=" + String.join(",", lines);
+        if (stopIDs != null && stopIDs.length > 0)
+            urlStr += "&" + PAR_STOP_ID + "=" + String.join(",", stopIDs);
+        if (stopNames != null && stopNames.length > 0)
+            urlStr += "&" + PAR_STOP_NAME + "=" + String.join(",", stopNames);
+        if (lineIDs != null && lineIDs.length > 0)
+            urlStr += "&" + PAR_LINE_ID + "=" + String.join(",", lineIDs);
+        if (lineNames != null && lineNames.length > 0)
+            urlStr += "&" + PAR_LINE_NAME + "=" + String.join(",", lineNames);
+        if (direction != null)
+            urlStr += "&" + PAR_DIR_ID + "=" + direction;
         URL url = new URL(urlStr);
         return url.openStream();
+    }
+
+    /**
+     * Request meta object.
+     */
+    public class Query {
+        private String[] stopIDs;
+        private String[] stopNames;
+        private String[] lineIDs;
+        private String[] lineNames;
+        private Integer direction;
+
+        /**
+         * Builder pattern to request given line IDs.
+         *
+         * @param lineIDs line IDs
+         * @return the query
+         */
+        public Query forLines(final String...lineIDs) {
+            this.lineIDs = lineIDs;
+            return this;
+        }
+
+        /**
+         * Builder pattern to request given line names.
+         *
+         * @param lineNames line names
+         * @return the query
+         */
+        public Query forLinesByName(final String...lineNames) {
+            this.lineNames = lineNames;
+            return this;
+        }
+
+        /**
+         * Builder pattern to request given stop IDs.
+         *
+         * @param stopIDs stop IDs
+         * @return the query
+         */
+        public Query forStops(final String...stopIDs) {
+            this.stopIDs = stopIDs;
+            return this;
+        }
+
+        /**
+         * Builder pattern to request given stop names.
+         *
+         * @param stopNames line names
+         * @return the query
+         */
+        public Query forStopsByName(final String...stopNames) {
+            this.stopNames = stopNames;
+            return this;
+        }
+
+        /**
+         * Builder pattern to request given direction.
+         *
+         * @param direction the direction
+         * @return the query
+         */
+        public Query forDirection(final Integer direction) {
+            this.direction = direction;
+            return this;
+        }
+
+        /**
+         * Get trips for set filters.
+         *
+         * @return List of matching trips
+         */
+        public List<Trip> getTrips() {
+            return UraClient.this.getTrips(this);
+        }
     }
 }
