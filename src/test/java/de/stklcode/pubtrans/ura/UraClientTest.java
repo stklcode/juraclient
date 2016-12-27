@@ -63,6 +63,11 @@ public class UraClientTest {
         assertThat(trips.get(7).getEstimatedTime(), is(1482854580000L));
         assertThat(trips.get(8).getVisitID(), is(30));
         assertThat(trips.get(9).getStop().getId(), is("100002"));
+
+        /* Get limited number of trips */
+        PowerMockito.when(mockURL.openStream()).thenReturn(getClass().getResourceAsStream("instant_trips_all.txt"));
+        trips = new UraClient("mocked").getTrips(5);
+        assertThat(trips, hasSize(5));
     }
 
     @Test

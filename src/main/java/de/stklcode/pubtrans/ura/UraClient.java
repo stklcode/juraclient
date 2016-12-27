@@ -40,6 +40,9 @@ public class UraClient {
     private static final String PAR_TRIP_ID = "TripID";
     private static final String PAR_ESTTIME = "EstimatedTime";
 
+    private static final Integer RES_TYPE_STOP = 0;
+    private static final Integer RES_TYPE_PREDICTION = 1;
+
 
     private static final String[] REQUEST_STOP = {PAR_STOP_NAME, PAR_STOP_ID, PAR_STOP_INDICATOR, PAR_STOP_STATE, PAR_GEOLOCATION};
     private static final String[] REQUEST_TRIP = {PAR_STOP_NAME, PAR_STOP_ID, PAR_STOP_INDICATOR, PAR_STOP_STATE, PAR_GEOLOCATION,
@@ -142,13 +145,11 @@ public class UraClient {
         try (InputStream is = requestInstant(REQUEST_TRIP, stops, lines);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String line;
-            boolean first = false;
-            while ((line = br.readLine()) != null) {
-                if (!first) {
-                    first = true;
-                    continue;
-                }
-                trips.add(new Trip(mapper.readValue(line, List.class)));
+            while ((line = br.readLine()) != null && (limit == null || trips.size() < limit)) {
+                List l = mapper.readValue(line, List.class);
+                /* Check if result exists and has correct response type */
+                if (l != null && l.size() > 0 && l.get(0).equals(RES_TYPE_PREDICTION))
+                    trips.add(new Trip(l));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -166,13 +167,11 @@ public class UraClient {
         try (InputStream is = requestInstant(REQUEST_STOP, null, null);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String line;
-            boolean first = false;
             while ((line = br.readLine()) != null) {
-                if (!first) {
-                    first = true;
-                    continue;
-                }
-                stops.add(new Stop(mapper.readValue(line, List.class)));
+                List l = mapper.readValue(line, List.class);
+                /* Check if result exists and has correct response type */
+                if (l != null && l.size() > 0 && l.get(0).equals(RES_TYPE_STOP))
+                    stops.add(new Stop(l));
             }
         } catch (IOException e) {
             e.printStackTrace();
