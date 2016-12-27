@@ -41,7 +41,7 @@ public class Stop {
             indicator = (String)raw.get(3);
         else
             throw new IOException("Field 3 not of expected type String, found " + raw.get(3).getClass().getSimpleName());
-        if (raw.get(4) instanceof String)
+        if (raw.get(4) instanceof Integer)
             state = (Integer)raw.get(4);
         else
             throw new IOException("Field 4 not of expected type Integer, found " + raw.get(4).getClass().getSimpleName());
@@ -49,7 +49,7 @@ public class Stop {
             latitude = (Double)raw.get(5);
         else
             throw new IOException("Field 5 not of expected type Double, found " + raw.get(5).getClass().getSimpleName());
-        if (raw.get(4) instanceof Double)
+        if (raw.get(6) instanceof Double)
             longitude = (Double)raw.get(6);
         else
             throw new IOException("Field 6 not of expected type Double, found " + raw.get(6).getClass().getSimpleName());
