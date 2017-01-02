@@ -193,13 +193,23 @@ public class UraClient {
     }
 
     /**
-     * List available stopIDs.
+     * Get list of stops without filters.
      *
      * @return the list
      */
     public List<Stop> getStops() {
+        return getStops(new Query());
+    }
+
+    /**
+     * List available stopIDs.
+     * If forStops() and/or forLines() has been called, those will be used as filter.
+     *
+     * @return the list
+     */
+    public List<Stop> getStops(Query query) {
         List<Stop> stops = new ArrayList<>();
-        try (InputStream is = requestInstant(REQUEST_STOP, null, null, null, null, null);
+        try (InputStream is = requestInstant(REQUEST_STOP, query.stopIDs, query.stopNames, query.lineIDs, query.lineNames, query.direction);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -300,6 +310,15 @@ public class UraClient {
         public Query forDirection(final Integer direction) {
             this.direction = direction;
             return this;
+        }
+
+        /**
+         * Get stops for set filters.
+         *
+         * @return List of matching trips
+         */
+        public List<Stop> getStops() {
+            return UraClient.this.getStops(this);
         }
 
         /**

@@ -71,6 +71,24 @@ public class UraClientTest {
     }
 
     @Test
+    public void getStopsForLineTest() throws Exception {
+        /* Mock the HTTP call */
+        URL mockURL = PowerMockito.mock(URL.class);
+        PowerMockito.whenNew(URL.class).withAnyArguments().thenReturn(mockURL);
+        PowerMockito.when(mockURL.openStream()).thenReturn(getClass().getResourceAsStream("instant_stops_line.txt"));
+
+        /* List stops and verify some values */
+        List<Stop> stops = new UraClient("mocked").forLines("33").getStops();
+        assertThat(stops, hasSize(47));
+        assertThat(stops.get(0).getId(), is("100000"));
+        assertThat(stops.get(1).getName(), is("Kuckelkorn"));
+        assertThat(stops.get(2).getState(), is(0));;
+        assertThat(stops.get(3).getLatitude(), is(50.7690688));
+        assertThat(stops.get(4).getIndicator(), is("H.1"));
+        assertThat(stops.get(5).getLongitude(), is(6.2314072));
+    }
+
+    @Test
     public void getTripsTest() throws Exception {
         /* Mock the HTTP call */
         URL mockURL = PowerMockito.mock(URL.class);
