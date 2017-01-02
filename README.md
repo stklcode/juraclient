@@ -32,7 +32,7 @@ List<Trip> trips = ura.forStop("100000")
 <dependency>
     <groupId>de.stklcode.pubtrans</groupId>
     <artifactId>juraclient</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
