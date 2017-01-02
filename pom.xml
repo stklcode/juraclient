@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.stklcode.pubtrans</groupId>
-    <artifactId>juraclien</artifactId>
+    <artifactId>juraclient</artifactId>
     <version>1.0.0</version>
 
     <properties>
