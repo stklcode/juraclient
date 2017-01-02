@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Stefan Kalscheuer
+ * Copyright 2016-2017 Stefan Kalscheuer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Client for URA based public transport API.
  *
- * @author Stefan Kalscheuer <stefan@stklcode.de>
+ * @author Stefan Kalscheuer [stefan@stklcode.de]
  */
 public class UraClient {
     private static final String DEFAULT_INSTANT_URL = "/interfaces/ura/instant_V2";
@@ -94,7 +94,7 @@ public class UraClient {
      * @param stops Stop IDs
      * @return the request
      */
-    public Query forStops(final String...stops) {
+    public Query forStops(final String... stops) {
         return new Query().forStops(stops);
     }
 
@@ -104,7 +104,7 @@ public class UraClient {
      * @param stopNames Stop Point Names
      * @return the request
      */
-    public Query forStopsByName(final String...stopNames) {
+    public Query forStopsByName(final String... stopNames) {
         return new Query().forStopsByName(stopNames);
     }
 
@@ -114,7 +114,7 @@ public class UraClient {
      * @param lines line IDs
      * @return the request
      */
-    public Query forLines(final String...lines) {
+    public Query forLines(final String... lines) {
         return new Query().forLines(lines);
     }
 
@@ -124,7 +124,7 @@ public class UraClient {
      * @param lineNames line names
      * @return the request
      */
-    public Query forLinesByName(final String...lineNames) {
+    public Query forLinesByName(final String... lineNames) {
         return new Query().forLinesByName(lineNames);
     }
 
@@ -152,6 +152,7 @@ public class UraClient {
      * Get list of trips with limit.
      * If forStops() and/or forLines() has been called, those will be used as filter.
      *
+     * @param limit maximum number of results
      * @return list of trips
      */
     public List<Trip> getTrips(final Integer limit) {
@@ -162,6 +163,7 @@ public class UraClient {
      * Get list of trips.
      * If forStops() and/or forLines() has been called, those will be used as filter.
      *
+     * @param query the query
      * @return list of trips
      */
     public List<Trip> getTrips(Query query) {
@@ -171,8 +173,8 @@ public class UraClient {
     /**
      * Get list of trips for given stopIDs and lineIDs with result limit.
      *
-     * @param query the request
-     * @param limit   maximum number of results
+     * @param query the query
+     * @param limit maximum number of results
      * @return list of trips
      */
     public List<Trip> getTrips(final Query query, final Integer limit) {
@@ -205,6 +207,7 @@ public class UraClient {
      * List available stopIDs.
      * If forStops() and/or forLines() has been called, those will be used as filter.
      *
+     * @param query the query
      * @return the list
      */
     public List<Stop> getStops(Query query) {
@@ -263,7 +266,7 @@ public class UraClient {
          * @param lineIDs line IDs
          * @return the query
          */
-        public Query forLines(final String...lineIDs) {
+        public Query forLines(final String... lineIDs) {
             this.lineIDs = lineIDs;
             return this;
         }
@@ -274,7 +277,7 @@ public class UraClient {
          * @param lineNames line names
          * @return the query
          */
-        public Query forLinesByName(final String...lineNames) {
+        public Query forLinesByName(final String... lineNames) {
             this.lineNames = lineNames;
             return this;
         }
@@ -285,7 +288,7 @@ public class UraClient {
          * @param stopIDs stop IDs
          * @return the query
          */
-        public Query forStops(final String...stopIDs) {
+        public Query forStops(final String... stopIDs) {
             this.stopIDs = stopIDs;
             return this;
         }
@@ -296,7 +299,7 @@ public class UraClient {
          * @param stopNames line names
          * @return the query
          */
-        public Query forStopsByName(final String...stopNames) {
+        public Query forStopsByName(final String... stopNames) {
             this.stopNames = stopNames;
             return this;
         }

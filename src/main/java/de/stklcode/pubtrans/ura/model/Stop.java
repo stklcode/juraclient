@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Stefan Kalscheuer
+ * Copyright 2016-2017 Stefan Kalscheuer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Entity for a single stop.
  *
- * @author Stefan Kalscheuer <stefan@stklcode.de>
+ * @author Stefan Kalscheuer [stefan@stklcode.de]
  */
 public class Stop {
     private final String id;
