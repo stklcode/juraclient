@@ -69,7 +69,6 @@ public class Stop {
             longitude = (Double)raw.get(6);
         else
             throw new IOException("Field 6 not of expected type Double, found " + raw.get(6).getClass().getSimpleName());
-
     }
 
     public String getId() {

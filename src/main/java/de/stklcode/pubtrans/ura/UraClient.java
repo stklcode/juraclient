@@ -197,7 +197,7 @@ public class UraClient {
      *
      * @return the list
      */
-    public List<Stop> listStops() {
+    public List<Stop> getStops() {
         List<Stop> stops = new ArrayList<>();
         try (InputStream is = requestInstant(REQUEST_STOP, null, null, null, null, null);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {

@@ -24,6 +24,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -40,23 +42,32 @@ import static org.hamcrest.core.Is.is;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ UraClient.class, URL.class })
 public class UraClientTest {
-    private static final String BASE_ASEAG = "http://ivu.aseag.de";
-
     @Test
-    public void listStopsTest() throws Exception {
+    public void getStopsTest() throws Exception {
         /* Mock the HTTP call */
         URL mockURL = PowerMockito.mock(URL.class);
         PowerMockito.whenNew(URL.class).withAnyArguments().thenReturn(mockURL);
         PowerMockito.when(mockURL.openStream()).thenReturn(getClass().getResourceAsStream("instant_stops.txt"));
 
         /* List stops and verify some values */
-        List<Stop> stops = new UraClient("mocked").listStops();
+        List<Stop> stops = new UraClient("mocked").getStops();
         assertThat(stops, hasSize(10));
         assertThat(stops.get(0).getId(), is("100210"));
         assertThat(stops.get(1).getName(), is("Brockenberg"));
         assertThat(stops.get(2).getState(), is(0));;
         assertThat(stops.get(3).getLatitude(), is(50.7578775));
         assertThat(stops.get(4).getLongitude(), is(6.0708663));
+
+        /* Test exception handling */
+        PowerMockito.when(mockURL.openStream()).thenReturn(new InputStream() {
+            @Override
+            public int read() throws IOException {
+                throw new IOException("Provoked exception 1.");
+            }
+        });
+        assertThat(new UraClient("mocked").getStops(), hasSize(0));
+        PowerMockito.when(mockURL.openStream()).thenThrow(new IOException("Provoked exception 2."));
+        assertThat(new UraClient("mocked").getStops(), hasSize(0));
     }
 
     @Test
@@ -84,6 +95,17 @@ public class UraClientTest {
         PowerMockito.when(mockURL.openStream()).thenReturn(getClass().getResourceAsStream("instant_trips_all.txt"));
         trips = new UraClient("mocked").getTrips(5);
         assertThat(trips, hasSize(5));
+
+        /* Test exception handling */
+        PowerMockito.when(mockURL.openStream()).thenReturn(new InputStream() {
+            @Override
+            public int read() throws IOException {
+                throw new IOException("Provoked exception 1.");
+            }
+        });
+        assertThat(new UraClient("mocked").getTrips(), hasSize(0));
+        PowerMockito.when(mockURL.openStream()).thenThrow(new IOException("Provoked exception 2."));
+        assertThat(new UraClient("mocked").getTrips(), hasSize(0));
     }
 
     @Test
@@ -103,6 +125,18 @@ public class UraClientTest {
         assertThat(trips.get(1).getLineID(), is("7"));
         assertThat(trips.get(2).getLineName(), is("25"));;
         assertThat(trips.get(3).getStop().getIndicator(), is("H.15"));
+
+        /* Get trips for stop name "Uniklinik" and verify some values */
+        PowerMockito.when(mockURL.openStream()).thenReturn(getClass().getResourceAsStream("instant_trips_stop_name.txt"));
+        trips = new UraClient("mocked")
+                .forStopsByName("Uniklinik")
+                .getTrips();
+        assertThat(trips, hasSize(10));
+        assertThat(trips.stream().filter(t -> !t.getStop().getName().equals("Uniklinik")).findAny(), is(Optional.empty()));
+        assertThat(trips.get(0).getId(), is("92000043013001"));
+        assertThat(trips.get(1).getLineID(), is("5"));
+        assertThat(trips.get(2).getVehicleID(), is("317"));;
+        assertThat(trips.get(3).getDirectionID(), is(1));
     }
 
     @Test
@@ -122,6 +156,38 @@ public class UraClientTest {
         assertThat(trips.get(1).getLineID(), is("3"));
         assertThat(trips.get(2).getLineName(), is("3.A"));;
         assertThat(trips.get(3).getStop().getIndicator(), is("H.4 (Pontwall)"));
+
+        /* Get trips for line name "3.A" and verify some values */
+        PowerMockito.when(mockURL.openStream()).thenReturn(getClass().getResourceAsStream("instant_trips_line_name.txt"));
+        trips = new UraClient("mocked")
+                .forLinesByName("3.A")
+                .getTrips();
+        assertThat(trips, hasSize(10));
+        assertThat(trips.stream().filter(t -> !t.getLineName().equals("3.A")).findAny(), is(Optional.empty()));
+        assertThat(trips.get(0).getId(), is("92000288014001"));
+        assertThat(trips.get(1).getLineID(), is("3"));
+        assertThat(trips.get(2).getLineName(), is("3.A"));;
+        assertThat(trips.get(3).getStop().getName(), is("Aachen Gartenstraße"));
+
+        /* Get trips for line 3 with direction 1 and verify some values */
+        PowerMockito.when(mockURL.openStream()).thenReturn(getClass().getResourceAsStream("instant_trips_line_direction.txt"));
+        trips = new UraClient("mocked")
+                .forLines("3")
+                .forDirection(1)
+                .getTrips();
+        assertThat(trips, hasSize(10));
+        assertThat(trips.stream().filter(t -> !t.getLineID().equals("3")).findAny(), is(Optional.empty()));
+        assertThat(trips.stream().filter(t -> !t.getDirectionID().equals(1)).findAny(), is(Optional.empty()));
+
+        /* Test lineID and direction in different order */
+        PowerMockito.when(mockURL.openStream()).thenReturn(getClass().getResourceAsStream("instant_trips_line_direction.txt"));
+        trips = new UraClient("mocked")
+                .forDirection(1)
+                .forLines("3")
+                .getTrips();
+        assertThat(trips, hasSize(10));
+        assertThat(trips.stream().filter(t -> !t.getLineID().equals("3")).findAny(), is(Optional.empty()));
+        assertThat(trips.stream().filter(t -> !t.getDirectionID().equals(1)).findAny(), is(Optional.empty()));
     }
 
     @Test
