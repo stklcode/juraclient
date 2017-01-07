@@ -32,6 +32,7 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 
 /**
@@ -49,7 +50,7 @@ public class UraClientTest {
         /* Mock the HTTP call */
         URL mockURL = PowerMockito.mock(URL.class);
         PowerMockito.whenNew(URL.class).withAnyArguments().thenReturn(mockURL);
-        PowerMockito.when(mockURL.openStream()).thenReturn(getClass().getResourceAsStream("instant_stops.txt"));
+        PowerMockito.when(mockURL.openStream()).thenReturn(getClass().getResourceAsStream("instant_V2_stops.txt"));
 
         /* List stops and verify some values */
         List<Stop> stops = new UraClient("mocked").getStops();
@@ -77,7 +78,7 @@ public class UraClientTest {
         /* Mock the HTTP call */
         URL mockURL = PowerMockito.mock(URL.class);
         PowerMockito.whenNew(URL.class).withAnyArguments().thenReturn(mockURL);
-        PowerMockito.when(mockURL.openStream()).thenReturn(getClass().getResourceAsStream("instant_stops_line.txt"));
+        PowerMockito.when(mockURL.openStream()).thenReturn(getClass().getResourceAsStream("instant_V2_stops_line.txt"));
 
         /* List stops and verify some values */
         List<Stop> stops = new UraClient("mocked").forLines("33").getStops();
@@ -88,6 +89,65 @@ public class UraClientTest {
         assertThat(stops.get(3).getLatitude(), is(50.7690688));
         assertThat(stops.get(4).getIndicator(), is("H.1"));
         assertThat(stops.get(5).getLongitude(), is(6.2314072));
+    }
+
+    @Test
+    public void getStopsForPositionTest() throws Exception {
+        /* Mock the HTTP call */
+        URL mockURL = PowerMockito.mock(URL.class);
+        PowerMockito.whenNew(URL.class).withAnyArguments().thenReturn(mockURL);
+        PowerMockito.when(mockURL.openStream()).thenReturn(getClass().getResourceAsStream("instant_V1_stops_circle.txt"));
+
+        /* List stops and verify some values */
+        List<Stop> stops = new UraClient("mocked").forPosition(51.51009, -0.1345734, 200).getStops();
+        assertThat(stops, hasSize(13));
+        assertThat(stops.get(0).getId(), is("156"));
+        assertThat(stops.get(1).getName(), is("Piccadilly Circus"));
+        assertThat(stops.get(2).getState(), is(0));;
+        assertThat(stops.get(3).getLatitude(), is(51.509154));
+        assertThat(stops.get(4).getLongitude(), is(-0.134172));
+        assertThat(stops.get(5).getIndicator(), is(nullValue()));
+
+        PowerMockito.when(mockURL.openStream()).thenReturn(getClass().getResourceAsStream("instant_V1_stops_circle_name.txt"));
+        stops = new UraClient("mocked").forStopsByName("Piccadilly Circus").forPosition(51.51009, -0.1345734, 200).getStops();
+        assertThat(stops, hasSize(7));
+        assertThat(stops.stream().filter(t -> !t.getName().equals("Piccadilly Circus")).findAny(), is(Optional.empty()));
+    }
+
+    @Test
+    public void getTripsForDestinationNamesTest() throws Exception {
+        /* Mock the HTTP call */
+        URL mockURL = PowerMockito.mock(URL.class);
+        PowerMockito.whenNew(URL.class).withAnyArguments().thenReturn(mockURL);
+        PowerMockito.when(mockURL.openStream()).thenReturn(getClass().getResourceAsStream("instant_V1_trips_destination.txt"));
+
+        /* List stops and verify some values */
+        List<Trip> trips = new UraClient("mocked").forDestinationNames("Piccadilly Circus").getTrips();
+        assertThat(trips, hasSize(9));
+        assertThat(trips.stream().filter(t -> !t.getDestinationName().equals("Piccadilly Cir")).findAny(), is(Optional.empty()));
+
+        PowerMockito.when(mockURL.openStream()).thenReturn(getClass().getResourceAsStream("instant_V1_trips_stop_destination.txt"));
+        trips = new UraClient("mocked").forStops("156").forDestinationNames("Marble Arch").getTrips();
+        assertThat(trips, hasSize(5));
+        assertThat(trips.stream().filter(t -> !t.getStop().getId().equals("156")).findAny(), is(Optional.empty()));
+        assertThat(trips.stream().filter(t -> !t.getDestinationName().equals("Marble Arch")).findAny(), is(Optional.empty()));
+    }
+
+    @Test
+    public void getTripsTowardsTest() throws Exception {
+        /* Mock the HTTP call */
+        URL mockURL = PowerMockito.mock(URL.class);
+        PowerMockito.whenNew(URL.class).withAnyArguments().thenReturn(mockURL);
+        PowerMockito.when(mockURL.openStream()).thenReturn(getClass().getResourceAsStream("instant_V1_trips_towards.txt"));
+
+        /* List stops and verify some values */
+        List<Trip> trips = new UraClient("mocked").towards("Marble Arch").getTrips();
+        assertThat(trips, hasSize(10));
+
+        PowerMockito.when(mockURL.openStream()).thenReturn(getClass().getResourceAsStream("instant_V1_trips_stop_towards.txt"));
+        trips = new UraClient("mocked").forStops("156").towards("Marble Arch").getTrips();
+        assertThat(trips, hasSize(17));
+        assertThat(trips.stream().filter(t -> !t.getStop().getId().equals("156")).findAny(), is(Optional.empty()));
     }
 
     @Test

@@ -51,6 +51,8 @@ public class UraClient {
     private static final String PAR_VEHICLE_ID = "VehicleID";
     private static final String PAR_TRIP_ID = "TripID";
     private static final String PAR_ESTTIME = "EstimatedTime";
+    private static final String PAR_TOWARDS = "Towards";
+    private static final String PAR_CIRCLE = "Circle";
 
     private static final Integer RES_TYPE_STOP = 0;
     private static final Integer RES_TYPE_PREDICTION = 1;
@@ -139,6 +141,38 @@ public class UraClient {
     }
 
     /**
+     * Builder pattern to request given destination names.
+     *
+     * @param destinationNames destination names
+     * @return the request
+     */
+    public Query forDestinationNames(final String... destinationNames) {
+        return new Query().forDestinationNames(destinationNames);
+    }
+
+    /**
+     * Builder pattern to request given direction defined by stop point name.
+     *
+     * @param towards towards stop point names
+     * @return the request
+     */
+    public Query towards(final String... towards) {
+        return new Query().towards(towards);
+    }
+
+    /**
+     * Builder pattern to request given destination names.
+     *
+     * @param latitude  Latitude (WGS84)
+     * @param longitude Longitude (WGS84)
+     * @param radius    Search radius (meters)
+     * @return the request
+     */
+    public Query forPosition(final Double latitude, final Double longitude, final Integer radius) {
+        return new Query().forPosition(latitude, longitude, radius);
+    }
+
+    /**
      * Get list of trips.
      * If forStops() and/or forLines() has been called, those will be used as filter.
      *
@@ -179,7 +213,7 @@ public class UraClient {
      */
     public List<Trip> getTrips(final Query query, final Integer limit) {
         List<Trip> trips = new ArrayList<>();
-        try (InputStream is = requestInstant(REQUEST_TRIP, query.stopIDs, query.stopNames, query.lineIDs, query.lineNames, query.direction);
+        try (InputStream is = requestInstant(REQUEST_TRIP, query);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String version = null;
             String line;
@@ -217,7 +251,7 @@ public class UraClient {
      */
     public List<Stop> getStops(Query query) {
         List<Stop> stops = new ArrayList<>();
-        try (InputStream is = requestInstant(REQUEST_STOP, query.stopIDs, query.stopNames, query.lineIDs, query.lineNames, query.direction);
+        try (InputStream is = requestInstant(REQUEST_STOP, query);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String line;
             String version;
@@ -237,21 +271,28 @@ public class UraClient {
      * Issue request to instant endpoint and return input stream.
      *
      * @param returnList fields to fetch
+     * @param query      the query
      * @return Input stream of the URL
      * @throws IOException on errors
      */
-    private InputStream requestInstant(String[] returnList, String[] stopIDs, String[] stopNames, String[] lineIDs, String[] lineNames, Integer direction) throws IOException {
+    private InputStream requestInstant(String[] returnList, Query query) throws IOException {
         String urlStr = baseURL + instantURL + "?ReturnList=" + String.join(",", returnList);
-        if (stopIDs != null && stopIDs.length > 0)
-            urlStr += "&" + PAR_STOP_ID + "=" + String.join(",", stopIDs);
-        if (stopNames != null && stopNames.length > 0)
-            urlStr += "&" + PAR_STOP_NAME + "=" + String.join(",", stopNames);
-        if (lineIDs != null && lineIDs.length > 0)
-            urlStr += "&" + PAR_LINE_ID + "=" + String.join(",", lineIDs);
-        if (lineNames != null && lineNames.length > 0)
-            urlStr += "&" + PAR_LINE_NAME + "=" + String.join(",", lineNames);
-        if (direction != null)
-            urlStr += "&" + PAR_DIR_ID + "=" + direction;
+        if (query.stopIDs != null && query.stopIDs.length > 0)
+            urlStr += "&" + PAR_STOP_ID + "=" + String.join(",", query.stopIDs);
+        if (query.stopNames != null && query.stopNames.length > 0)
+            urlStr += "&" + PAR_STOP_NAME + "=" + String.join(",", query.stopNames);
+        if (query.lineIDs != null && query.lineIDs.length > 0)
+            urlStr += "&" + PAR_LINE_ID + "=" + String.join(",", query.lineIDs);
+        if (query.lineNames != null && query.lineNames.length > 0)
+            urlStr += "&" + PAR_LINE_NAME + "=" + String.join(",", query.lineNames);
+        if (query.direction != null)
+            urlStr += "&" + PAR_DIR_ID + "=" + query.direction;
+        if (query.destinationNames != null)
+            urlStr += "&" + PAR_DEST_NAME + "=" + String.join(",", query.destinationNames);
+        if (query.towards != null)
+            urlStr += "&" + PAR_TOWARDS + "=" + String.join(",", query.towards);
+        if (query.circle != null)
+            urlStr += "&" + PAR_CIRCLE + "=" + String.join(",", query.circle);
         URL url = new URL(urlStr);
         return url.openStream();
     }
@@ -265,6 +306,9 @@ public class UraClient {
         private String[] lineIDs;
         private String[] lineNames;
         private Integer direction;
+        private String[] destinationNames;
+        private String[] towards;
+        private String circle;
 
         /**
          * Builder pattern to request given line IDs.
@@ -318,6 +362,41 @@ public class UraClient {
          */
         public Query forDirection(final Integer direction) {
             this.direction = direction;
+            return this;
+        }
+
+        /**
+         * Builder pattern to request given destination names
+         *
+         * @param destinationNames names of destinations
+         * @return the query
+         */
+        public Query forDestinationNames(final String... destinationNames) {
+            this.destinationNames = destinationNames;
+            return this;
+        }
+
+        /**
+         * Builder pattern to request given direction defined by stop point name.
+         *
+         * @param towards towards stop point names
+         * @return the request
+         */
+        public Query towards(final String... towards) {
+            this.towards = towards;
+            return this;
+        }
+
+        /**
+         * Builder pattern to request given position and radius.
+         *
+         * @param latitude  Latitude (WGS84)
+         * @param longitude Longitude (WGS84)
+         * @param radius    Search radius (meters)
+         * @return the query
+         */
+        public Query forPosition(final Double latitude, final Double longitude, final Integer radius) {
+            this.circle = latitude.toString() + "," + longitude.toString() + "," + radius.toString();
             return this;
         }
 
