@@ -1,4 +1,4 @@
-# jURAclient [![Build status](https://travis-ci.org/stklcode/juraclient.svg?branch=master)](https://travis-ci.org/stklcode/juraclient)
+# jURAclient [![Build status](https://travis-ci.org/stklcode/juraclient.svg?branch=master)](https://travis-ci.org/stklcode/juraclient) [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/stklcode/juraclient/blob/master/LICENSE.txt) ![Maven Central](https://img.shields.io/maven-central/v/de.stklcode.pubtrans/juraclient.svg)
 
 Java client for URA based public transport APIs.
 
