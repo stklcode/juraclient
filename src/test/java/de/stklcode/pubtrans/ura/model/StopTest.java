@@ -31,7 +31,7 @@ import static org.junit.Assert.fail;
 /**
  * Unit test for the Stop metamodel.
  *
- * @author Stefan Kalscheuer [stefan@stklcode.de]
+ * @author Stefan Kalscheuer
  */
 public class StopTest {
     @Test

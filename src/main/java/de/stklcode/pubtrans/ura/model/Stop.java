@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Entity for a single stop.
  *
- * @author Stefan Kalscheuer [stefan@stklcode.de]
+ * @author Stefan Kalscheuer
  */
 public class Stop {
     private final String id;
@@ -55,6 +55,8 @@ public class Stop {
             throw new IOException("Field 2 not of expected type String, found " + raw.get(2).getClass().getSimpleName());
         if (raw.get(3) instanceof String)
             indicator = (String)raw.get(3);
+        else if (raw.get(3) == null)
+            indicator = null;
         else
             throw new IOException("Field 3 not of expected type String, found " + raw.get(3).getClass().getSimpleName());
         if (raw.get(4) instanceof Integer)

@@ -31,11 +31,11 @@ import java.util.List;
 /**
  * Client for URA based public transport API.
  *
- * @author Stefan Kalscheuer [stefan@stklcode.de]
+ * @author Stefan Kalscheuer
  */
 public class UraClient {
-    private static final String DEFAULT_INSTANT_URL = "/interfaces/ura/instant_V2";
-    private static final String DEFAULT_STREAM_URL = "/interfaces/ura/stream_V2";
+    private static final String DEFAULT_INSTANT_URL = "/interfaces/ura/instant_V1";
+    private static final String DEFAULT_STREAM_URL = "/interfaces/ura/stream_V1";
 
     private static final String PAR_STOP_ID = "StopID";
     private static final String PAR_STOP_NAME = "StopPointName";
@@ -54,7 +54,7 @@ public class UraClient {
 
     private static final Integer RES_TYPE_STOP = 0;
     private static final Integer RES_TYPE_PREDICTION = 1;
-
+    private static final Integer RES_TYPE_URA_VERSION = 4;
 
     private static final String[] REQUEST_STOP = {PAR_STOP_NAME, PAR_STOP_ID, PAR_STOP_INDICATOR, PAR_STOP_STATE, PAR_GEOLOCATION};
     private static final String[] REQUEST_TRIP = {PAR_STOP_NAME, PAR_STOP_ID, PAR_STOP_INDICATOR, PAR_STOP_STATE, PAR_GEOLOCATION,
@@ -181,12 +181,17 @@ public class UraClient {
         List<Trip> trips = new ArrayList<>();
         try (InputStream is = requestInstant(REQUEST_TRIP, query.stopIDs, query.stopNames, query.lineIDs, query.lineNames, query.direction);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+            String version = null;
             String line;
             while ((line = br.readLine()) != null && (limit == null || trips.size() < limit)) {
                 List l = mapper.readValue(line, List.class);
                 /* Check if result exists and has correct response type */
-                if (l != null && l.size() > 0 && l.get(0).equals(RES_TYPE_PREDICTION))
-                    trips.add(new Trip(l));
+                if (l != null && l.size() > 0) {
+                    if (l.get(0).equals(RES_TYPE_URA_VERSION))
+                        version = l.get(1).toString();
+                    else if (l.get(0).equals(RES_TYPE_PREDICTION))
+                        trips.add(new Trip(l, version));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -215,6 +220,7 @@ public class UraClient {
         try (InputStream is = requestInstant(REQUEST_STOP, query.stopIDs, query.stopNames, query.lineIDs, query.lineNames, query.direction);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String line;
+            String version;
             while ((line = br.readLine()) != null) {
                 List l = mapper.readValue(line, List.class);
                 /* Check if result exists and has correct response type */

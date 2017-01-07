@@ -31,7 +31,7 @@ import static org.junit.Assert.fail;
 /**
  * Unit test for the Trip metamodel.
  *
- * @author Stefan Kalscheuer [stefan@stklcode.de]
+ * @author Stefan Kalscheuer
  */
 public class TripTest {
     @Test
@@ -73,7 +73,7 @@ public class TripTest {
         raw.add("destination name");
         raw.add("destination text");
         raw.add("vehicle");
-        raw.add("id");
+        raw.add(9876543210L);
         raw.add(123456789123456789L);
 
         try {
@@ -91,11 +91,21 @@ public class TripTest {
             assertThat(trip.getDestinationName(), is("destination name"));
             assertThat(trip.getDestinationText(), is("destination text"));
             assertThat(trip.getVehicleID(), is("vehicle"));
-            assertThat(trip.getId(), is("id"));
+            assertThat(trip.getId(), is("9876543210"));
             assertThat(trip.getEstimatedTime(), is(123456789123456789L));
         } catch (IOException e) {
             fail("Creation of Trip from valid list failed: " + e.getMessage());
         }
+
+        /* Test with V2 style list */
+        raw.set(14, "id");
+        try {
+            Trip trip = new Trip(raw, "2.0");
+            assertThat(trip.getId(), is("id"));
+        } catch (IOException e) {
+            fail("Creation of Trip from valid list failed: " + e.getMessage());
+        }
+        raw.set(14, 9876543210L);
 
         /* Excess elements should be ignored */
         raw.add("foo");
@@ -180,7 +190,7 @@ public class TripTest {
 
         invalid = new ArrayList<>(raw);
         invalid.remove(14);
-        invalid.add(14, 123);
+        invalid.add(14, 1.2);
         try {
             new Trip(invalid);
             fail("Creation of Trip with invalid id field successfull");
@@ -203,6 +213,15 @@ public class TripTest {
         try {
             new Trip(invalid);
             fail("Creation of Trip with too short list successfull");
+        } catch (Exception e) {
+            assertThat(e, is(instanceOf(IOException.class)));
+        }
+
+        invalid = new ArrayList<>(raw);
+        invalid.set(10, 3);
+        try {
+            new Trip(invalid);
+            fail("Creation of Trip with direction ID 3 successfull");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
         }

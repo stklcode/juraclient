@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Entity for a single trip.
  *
- * @author Stefan Kalscheuer [stefan@stklcode.de]
+ * @author Stefan Kalscheuer
  */
 public class Trip {
     private final Stop stop;
@@ -56,6 +56,10 @@ public class Trip {
     }
 
     public Trip(List raw) throws IOException {
+        this(raw, null);
+    }
+
+    public Trip(List raw, String version) throws IOException {
         if (raw == null || raw.size() < 16)
             throw new IOException("Invalid number of fields");
 
@@ -73,8 +77,11 @@ public class Trip {
             lineName = (String)raw.get(9);
         else
             throw new IOException("Field 9 not of expected type String, found " + raw.get(9).getClass().getSimpleName());
-        if (raw.get(10) instanceof Integer)
-            directionID = (Integer)raw.get(10);
+        if (raw.get(10) instanceof Integer) {
+            directionID = (Integer) raw.get(10);
+            if (directionID < 0 || directionID > 2)
+                throw new IOException("Direction out of range. Expected 1 or 2, found " + directionID);
+        }
         else
             throw new IOException("Field 10 not of expected type Integer, found " + raw.get(10).getClass().getSimpleName());
         if (raw.get(11) instanceof String)
@@ -85,14 +92,15 @@ public class Trip {
             destinationText = (String)raw.get(12);
         else
             throw new IOException("Field 12 not of expected type String, found " + raw.get(12).getClass().getSimpleName());
-        if (raw.get(13) instanceof String)
-            vehicleID = (String)raw.get(13);
+        /* TFL and ASEAG deliver different types with the same API version, so this field is a little more tolerant */
+        if (raw.get(13) instanceof String || raw.get(13) instanceof Integer || raw.get(13) instanceof Long)
+            vehicleID = raw.get(13).toString();
         else
-            throw new IOException("Field 13 not of expected type String, found " + raw.get(13).getClass().getSimpleName());
-        if (raw.get(14) instanceof String)
-            id = (String)raw.get(14);
+            throw new IOException("Field 13 not of expected type String/Integer/Long, found " + raw.get(13).getClass().getSimpleName());
+        if (raw.get(14) instanceof String || raw.get(14) instanceof Integer || raw.get(14) instanceof Long)
+            id = raw.get(14).toString();
         else
-            throw new IOException("Field 14 not of expected type String, found " + raw.get(14).getClass().getSimpleName());
+            throw new IOException("Field 14 not of expected type String/Integer/Long, found " + raw.get(14).getClass().getSimpleName());
         if (raw.get(15) instanceof Long)
             estimatedTime = (Long)raw.get(15);
         else
