@@ -145,6 +145,7 @@ public class UraClient {
      *
      * @param destinationNames destination names
      * @return the request
+     * @since 1.1.0
      */
     public Query forDestinationNames(final String... destinationNames) {
         return new Query().forDestinationNames(destinationNames);
@@ -155,6 +156,7 @@ public class UraClient {
      *
      * @param towards towards stop point names
      * @return the request
+     * @since 1.1.0
      */
     public Query towards(final String... towards) {
         return new Query().towards(towards);
@@ -167,6 +169,7 @@ public class UraClient {
      * @param longitude Longitude (WGS84)
      * @param radius    Search radius (meters)
      * @return the request
+     * @since 1.1.0
      */
     public Query forPosition(final Double latitude, final Double longitude, final Integer radius) {
         return new Query().forPosition(latitude, longitude, radius);
@@ -370,6 +373,7 @@ public class UraClient {
          *
          * @param destinationNames names of destinations
          * @return the query
+         * @since 1.1.0
          */
         public Query forDestinationNames(final String... destinationNames) {
             this.destinationNames = destinationNames;
@@ -381,6 +385,7 @@ public class UraClient {
          *
          * @param towards towards stop point names
          * @return the request
+         * @since 1.1.0
          */
         public Query towards(final String... towards) {
             this.towards = towards;
@@ -394,6 +399,7 @@ public class UraClient {
          * @param longitude Longitude (WGS84)
          * @param radius    Search radius (meters)
          * @return the query
+         * @since 1.1.0
          */
         public Query forPosition(final Double latitude, final Double longitude, final Integer radius) {
             this.circle = latitude.toString() + "," + longitude.toString() + "," + radius.toString();
