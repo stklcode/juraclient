@@ -70,18 +70,18 @@ public class UraClient {
     /**
      * Constructor with base URL and default API paths.
      *
-     * @param baseURL the base URL (with protocol, without trailing slash)
+     * @param baseURL The base URL (with protocol, without trailing slash).
      */
     public UraClient(String baseURL) {
         this(baseURL, DEFAULT_INSTANT_URL, DEFAULT_STREAM_URL);
     }
 
     /**
-     * Constructor with base URL and custom API paths
+     * Constructor with base URL and custom API paths.
      *
-     * @param baseURL    the base URL (including protocol)
-     * @param instantURL the path for instant requests
-     * @param streamURL  the path for stream requests
+     * @param baseURL    The base URL (including protocol).
+     * @param instantURL The path for instant requests.
+     * @param streamURL  The path for stream requests.
      */
     public UraClient(String baseURL, String instantURL, String streamURL) {
         this.baseURL = baseURL;
@@ -113,8 +113,8 @@ public class UraClient {
     /**
      * Builder pattern to request given line IDs.
      *
-     * @param lines line IDs
-     * @return the request
+     * @param lines Line IDs.
+     * @return The request.
      */
     public Query forLines(final String... lines) {
         return new Query().forLines(lines);
@@ -123,8 +123,8 @@ public class UraClient {
     /**
      * Builder pattern to request given line names.
      *
-     * @param lineNames line names
-     * @return the request
+     * @param lineNames Line names.
+     * @return The request.
      */
     public Query forLinesByName(final String... lineNames) {
         return new Query().forLinesByName(lineNames);
@@ -133,8 +133,8 @@ public class UraClient {
     /**
      * Builder pattern to request given direction.
      *
-     * @param direction the direction ID
-     * @return the request
+     * @param direction The direction ID.
+     * @return The request.
      */
     public Query forDirection(final Integer direction) {
         return new Query().forDirection(direction);
@@ -143,8 +143,8 @@ public class UraClient {
     /**
      * Builder pattern to request given destination names.
      *
-     * @param destinationNames destination names
-     * @return the request
+     * @param destinationNames Destination names.
+     * @return The request.
      * @since 1.1.0
      */
     public Query forDestinationNames(final String... destinationNames) {
@@ -154,8 +154,8 @@ public class UraClient {
     /**
      * Builder pattern to request given direction defined by stop point name.
      *
-     * @param towards towards stop point names
-     * @return the request
+     * @param towards Towards stop point names.
+     * @return The request.
      * @since 1.1.0
      */
     public Query towards(final String... towards) {
@@ -165,10 +165,10 @@ public class UraClient {
     /**
      * Builder pattern to request given destination names.
      *
-     * @param latitude  Latitude (WGS84)
-     * @param longitude Longitude (WGS84)
-     * @param radius    Search radius (meters)
-     * @return the request
+     * @param latitude  Latitude (WGS84).
+     * @param longitude Longitude (WGS84).
+     * @param radius    Search radius (meters).
+     * @return The request.
      * @since 1.1.0
      */
     public Query forPosition(final Double latitude, final Double longitude, final Integer radius) {
@@ -179,7 +179,7 @@ public class UraClient {
      * Get list of trips.
      * If forStops() and/or forLines() has been called, those will be used as filter.
      *
-     * @return list of trips
+     * @return List of trips.
      */
     public List<Trip> getTrips() {
         return getTrips(new Query(), null);
@@ -189,8 +189,8 @@ public class UraClient {
      * Get list of trips with limit.
      * If forStops() and/or forLines() has been called, those will be used as filter.
      *
-     * @param limit maximum number of results
-     * @return list of trips
+     * @param limit Maximum number of results.
+     * @return List of trips.
      */
     public List<Trip> getTrips(final Integer limit) {
         return getTrips(new Query(), limit);
@@ -200,8 +200,8 @@ public class UraClient {
      * Get list of trips.
      * If forStops() and/or forLines() has been called, those will be used as filter.
      *
-     * @param query the query
-     * @return list of trips
+     * @param query The query.
+     * @return List of trips.
      */
     public List<Trip> getTrips(Query query) {
         return getTrips(query, null);
@@ -210,25 +210,27 @@ public class UraClient {
     /**
      * Get list of trips for given stopIDs and lineIDs with result limit.
      *
-     * @param query the query
-     * @param limit maximum number of results
-     * @return list of trips
+     * @param query The query.
+     * @param limit Maximum number of results.
+     * @return List of trips.
      */
     public List<Trip> getTrips(final Query query, final Integer limit) {
         List<Trip> trips = new ArrayList<>();
         try (InputStream is = requestInstant(REQUEST_TRIP, query);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String version = null;
-            String line;
-            while ((line = br.readLine()) != null && (limit == null || trips.size() < limit)) {
+            String line = br.readLine();
+            while (line != null && (limit == null || trips.size() < limit)) {
                 List l = mapper.readValue(line, List.class);
                 /* Check if result exists and has correct response type */
                 if (l != null && l.size() > 0) {
-                    if (l.get(0).equals(RES_TYPE_URA_VERSION))
+                    if (l.get(0).equals(RES_TYPE_URA_VERSION)) {
                         version = l.get(1).toString();
-                    else if (l.get(0).equals(RES_TYPE_PREDICTION))
+                    } else if (l.get(0).equals(RES_TYPE_PREDICTION)) {
                         trips.add(new Trip(l, version));
+                    }
                 }
+                line = br.readLine();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -239,7 +241,7 @@ public class UraClient {
     /**
      * Get list of stops without filters.
      *
-     * @return the list
+     * @return Lhe list.
      */
     public List<Stop> getStops() {
         return getStops(new Query());
@@ -249,8 +251,8 @@ public class UraClient {
      * List available stopIDs.
      * If forStops() and/or forLines() has been called, those will be used as filter.
      *
-     * @param query the query
-     * @return the list
+     * @param query The query.
+     * @return The list.
      */
     public List<Stop> getStops(Query query) {
         List<Stop> stops = new ArrayList<>();
@@ -261,8 +263,9 @@ public class UraClient {
             while ((line = br.readLine()) != null) {
                 List l = mapper.readValue(line, List.class);
                 /* Check if result exists and has correct response type */
-                if (l != null && l.size() > 0 && l.get(0).equals(RES_TYPE_STOP))
+                if (l != null && l.size() > 0 && l.get(0).equals(RES_TYPE_STOP)) {
                     stops.add(new Stop(l));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -273,30 +276,41 @@ public class UraClient {
     /**
      * Issue request to instant endpoint and return input stream.
      *
-     * @param returnList fields to fetch
-     * @param query      the query
+     * @param returnList Fields to fetch.
+     * @param query      The query.
      * @return Input stream of the URL
      * @throws IOException on errors
      */
     private InputStream requestInstant(String[] returnList, Query query) throws IOException {
         String urlStr = baseURL + instantURL + "?ReturnList=" + String.join(",", returnList);
-        if (query.stopIDs != null && query.stopIDs.length > 0)
+
+        if (query.stopIDs != null && query.stopIDs.length > 0) {
             urlStr += "&" + PAR_STOP_ID + "=" + String.join(",", query.stopIDs);
-        if (query.stopNames != null && query.stopNames.length > 0)
+        }
+        if (query.stopNames != null && query.stopNames.length > 0) {
             urlStr += "&" + PAR_STOP_NAME + "=" + String.join(",", query.stopNames);
-        if (query.lineIDs != null && query.lineIDs.length > 0)
+        }
+        if (query.lineIDs != null && query.lineIDs.length > 0) {
             urlStr += "&" + PAR_LINE_ID + "=" + String.join(",", query.lineIDs);
-        if (query.lineNames != null && query.lineNames.length > 0)
+        }
+        if (query.lineNames != null && query.lineNames.length > 0) {
             urlStr += "&" + PAR_LINE_NAME + "=" + String.join(",", query.lineNames);
-        if (query.direction != null)
+        }
+        if (query.direction != null) {
             urlStr += "&" + PAR_DIR_ID + "=" + query.direction;
-        if (query.destinationNames != null)
+        }
+        if (query.destinationNames != null) {
             urlStr += "&" + PAR_DEST_NAME + "=" + String.join(",", query.destinationNames);
-        if (query.towards != null)
+        }
+        if (query.towards != null) {
             urlStr += "&" + PAR_TOWARDS + "=" + String.join(",", query.towards);
-        if (query.circle != null)
+        }
+        if (query.circle != null) {
             urlStr += "&" + PAR_CIRCLE + "=" + String.join(",", query.circle);
+        }
+
         URL url = new URL(urlStr);
+
         return url.openStream();
     }
 
@@ -316,8 +330,8 @@ public class UraClient {
         /**
          * Builder pattern to request given line IDs.
          *
-         * @param lineIDs line IDs
-         * @return the query
+         * @param lineIDs Line IDs.
+         * @return The query.
          */
         public Query forLines(final String... lineIDs) {
             this.lineIDs = lineIDs;
@@ -327,8 +341,8 @@ public class UraClient {
         /**
          * Builder pattern to request given line names.
          *
-         * @param lineNames line names
-         * @return the query
+         * @param lineNames Line names.
+         * @return The query.
          */
         public Query forLinesByName(final String... lineNames) {
             this.lineNames = lineNames;
@@ -338,8 +352,8 @@ public class UraClient {
         /**
          * Builder pattern to request given stop IDs.
          *
-         * @param stopIDs stop IDs
-         * @return the query
+         * @param stopIDs Stop IDs.
+         * @return The query.
          */
         public Query forStops(final String... stopIDs) {
             this.stopIDs = stopIDs;
@@ -349,8 +363,8 @@ public class UraClient {
         /**
          * Builder pattern to request given stop names.
          *
-         * @param stopNames line names
-         * @return the query
+         * @param stopNames Line names.
+         * @return The query.
          */
         public Query forStopsByName(final String... stopNames) {
             this.stopNames = stopNames;
@@ -360,8 +374,8 @@ public class UraClient {
         /**
          * Builder pattern to request given direction.
          *
-         * @param direction the direction
-         * @return the query
+         * @param direction The direction.
+         * @return The query.
          */
         public Query forDirection(final Integer direction) {
             this.direction = direction;
@@ -369,10 +383,10 @@ public class UraClient {
         }
 
         /**
-         * Builder pattern to request given destination names
+         * Builder pattern to request given destination names.
          *
-         * @param destinationNames names of destinations
-         * @return the query
+         * @param destinationNames Names of destinations.
+         * @return The query.
          * @since 1.1.0
          */
         public Query forDestinationNames(final String... destinationNames) {
@@ -383,8 +397,8 @@ public class UraClient {
         /**
          * Builder pattern to request given direction defined by stop point name.
          *
-         * @param towards towards stop point names
-         * @return the request
+         * @param towards Towards stop point names.
+         * @return The request.
          * @since 1.1.0
          */
         public Query towards(final String... towards) {
@@ -395,10 +409,10 @@ public class UraClient {
         /**
          * Builder pattern to request given position and radius.
          *
-         * @param latitude  Latitude (WGS84)
-         * @param longitude Longitude (WGS84)
-         * @param radius    Search radius (meters)
-         * @return the query
+         * @param latitude  Latitude (WGS84).
+         * @param longitude Longitude (WGS84).
+         * @param radius    Search radius (meters).
+         * @return The query.
          * @since 1.1.0
          */
         public Query forPosition(final Double latitude, final Double longitude, final Integer radius) {
@@ -409,7 +423,7 @@ public class UraClient {
         /**
          * Get stops for set filters.
          *
-         * @return List of matching trips
+         * @return List of matching trips.
          */
         public List<Stop> getStops() {
             return UraClient.this.getStops(this);
@@ -418,7 +432,7 @@ public class UraClient {
         /**
          * Get trips for set filters.
          *
-         * @return List of matching trips
+         * @return List of matching trips.
          */
         public List<Trip> getTrips() {
             return UraClient.this.getTrips(this);

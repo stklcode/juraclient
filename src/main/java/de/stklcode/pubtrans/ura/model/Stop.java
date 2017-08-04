@@ -25,6 +25,14 @@ import java.util.List;
  * @author Stefan Kalscheuer
  */
 public class Stop {
+    private static final int STOP_NAME = 1;
+    private static final int STOP_ID = 2;
+    private static final int INDICATOR = 3;
+    private static final int STATE = 4;
+    private static final int LATITUDE = 5;
+    private static final int LONGITUDE = 6;
+    private static final int NUM_OF_FIELDS = 7;
+
     private final String id;
     private final String name;
     private final String indicator;
@@ -32,6 +40,16 @@ public class Stop {
     private final Double latitude;
     private final Double longitude;
 
+    /**
+     * Construct Stop object.
+     *
+     * @param id        Stop ID.
+     * @param name      Stop name.
+     * @param indicator Stop indicator.
+     * @param state     Stop state.
+     * @param latitude  Stop geolocation latitude.
+     * @param longitude Stop geolocation longitude.
+     */
     public Stop(String id, String name, String indicator, Integer state, Double latitude, Double longitude) {
         this.id = id;
         this.name = name;
@@ -41,58 +59,100 @@ public class Stop {
         this.longitude = longitude;
     }
 
+    /**
+     * Construct Stop object from raw list of attributes parsed from JSON.
+     *
+     * @param raw List of attributes from JSON line
+     * @throws IOException Thrown on invalid line format.
+     */
     public Stop(List raw) throws IOException {
-        if (raw == null || raw.size() < 7)
+        if (raw == null || raw.size() < NUM_OF_FIELDS) {
             throw new IOException("Invalid number of fields");
+        }
 
-        if (raw.get(1) instanceof String)
-            name = (String)raw.get(1);
-        else
-            throw new IOException("Field 1 not of expected type String, found " + raw.get(1).getClass().getSimpleName());
-        if (raw.get(2) instanceof String)
-            id = (String)raw.get(2);
-        else
-            throw new IOException("Field 2 not of expected type String, found " + raw.get(2).getClass().getSimpleName());
-        if (raw.get(3) instanceof String)
-            indicator = (String)raw.get(3);
-        else if (raw.get(3) == null)
+        if (raw.get(1) instanceof String) {
+            name = (String) raw.get(STOP_NAME);
+        } else {
+            throw new IOException("Field " + STOP_NAME + " not of expected type String, found "
+                    + raw.get(STOP_NAME).getClass().getSimpleName());
+        }
+
+        if (raw.get(STOP_ID) instanceof String) {
+            id = (String) raw.get(STOP_ID);
+        } else {
+            throw new IOException("Field " + STOP_ID + " not of expected type String, found "
+                    + raw.get(STOP_ID).getClass().getSimpleName());
+        }
+
+        if (raw.get(INDICATOR) instanceof String) {
+            indicator = (String) raw.get(INDICATOR);
+        } else if (raw.get(INDICATOR) == null) {
             indicator = null;
-        else
-            throw new IOException("Field 3 not of expected type String, found " + raw.get(3).getClass().getSimpleName());
-        if (raw.get(4) instanceof Integer)
-            state = (Integer)raw.get(4);
-        else
-            throw new IOException("Field 4 not of expected type Integer, found " + raw.get(4).getClass().getSimpleName());
-        if (raw.get(5) instanceof Double)
-            latitude = (Double)raw.get(5);
-        else
-            throw new IOException("Field 5 not of expected type Double, found " + raw.get(5).getClass().getSimpleName());
-        if (raw.get(6) instanceof Double)
-            longitude = (Double)raw.get(6);
-        else
-            throw new IOException("Field 6 not of expected type Double, found " + raw.get(6).getClass().getSimpleName());
+            } else {
+            throw new IOException("Field " + INDICATOR + " not of expected type String, found "
+                    + raw.get(INDICATOR).getClass().getSimpleName());
+        }
+
+        if (raw.get(STATE) instanceof Integer) {
+            state = (Integer) raw.get(STATE);
+        } else {
+            throw new IOException("Field " + STATE + " not of expected type Integer, found "
+                    + raw.get(STATE).getClass().getSimpleName());
+        }
+
+        if (raw.get(LATITUDE) instanceof Double) {
+            latitude = (Double) raw.get(LATITUDE);
+        } else {
+            throw new IOException("Field " + LATITUDE + " not of expected type Double, found "
+                    + raw.get(LATITUDE).getClass().getSimpleName());
+        }
+
+        if (raw.get(LONGITUDE) instanceof Double) {
+            longitude = (Double) raw.get(LONGITUDE);
+        } else {
+            throw new IOException("Field " + LONGITUDE + " not of expected type Double, found "
+                    + raw.get(LONGITUDE).getClass().getSimpleName());
+        }
     }
 
+    /**
+     * @return The stop ID.
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * @return The stop name.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return The stop indicator.
+     */
     public String getIndicator() {
         return indicator;
     }
 
+    /**
+     * @return The stop indicator.
+     */
     public Integer getState() {
         return state;
     }
 
+    /**
+     * @return The stop geoloaction latitude.
+     */
     public Double getLatitude() {
         return latitude;
     }
 
+    /**
+     * @return The stop geolocation longitude.
+     */
     public Double getLongitude() {
         return longitude;
     }

@@ -36,8 +36,21 @@ import static org.junit.Assert.fail;
 public class TripTest {
     @Test
     public void basicConstructorTest() {
-        Trip trip = new Trip("sid", "name", "indicator", 1, 2.345, 6.789,
-                123, "lineid", "linename", 0, "destination name", "destination text", "vehicle", "id", 123456789123456789L);
+        Trip trip = new Trip("sid",
+                "name",
+                "indicator",
+                1,
+                2.345,
+                6.789,
+                123,
+                "lineid",
+                "linename",
+                0,
+                "destination name",
+                "destination text",
+                "vehicle",
+                "id",
+                123456789123456789L);
         assertThat(trip.getStop().getId(), is("sid"));
         assertThat(trip.getStop().getName(), is("name"));
         assertThat(trip.getStop().getIndicator(), is("indicator"));

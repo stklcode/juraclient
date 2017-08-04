@@ -25,6 +25,17 @@ import java.util.List;
  * @author Stefan Kalscheuer
  */
 public class Trip {
+    private static final int VISIT_ID = 7;
+    private static final int LINE_ID = 8;
+    private static final int LINE_NAME = 9;
+    private static final int DIRECTION_ID = 10;
+    private static final int DESTINATION_NAME = 11;
+    private static final int DESTINATION_TEXT = 12;
+    private static final int VEHICLE_ID = 13;
+    private static final int TRIP_ID = 14;
+    private static final int ESTIMATED_TIME = 15;
+    private static final int NUM_OF_FIELDS = 16;
+
     private final Stop stop;
     private final String id;
     private final Integer visitID;
@@ -36,13 +47,81 @@ public class Trip {
     private final Long estimatedTime;
     private final String vehicleID;
 
-    public Trip(String stopID, String stopName, String stopIndicator, Integer stopState, Double stopLatitude, Double stopLongitude,
-                Integer visitID, String lineID, String lineName, Integer directionID, String destinationName, String destinationText, String vehicleID, String tripID, Long estimatedTime) {
-        this(new Stop(stopID, stopName, stopIndicator, stopState, stopLatitude, stopLongitude),
-                visitID, lineID, lineName, directionID, destinationName, destinationText, vehicleID, tripID, estimatedTime);
+    /**
+     * Construct Trip object from complete set of data.
+     *
+     * @param stopID          Stop ID.
+     * @param stopName        Stop name.
+     * @param stopIndicator   Stop Indicator.
+     * @param stopState       Stop state.
+     * @param stopLatitude    Stop geolocation latitude.
+     * @param stopLongitude   Stop geolocation latitude.
+     * @param visitID         Visit ID.
+     * @param lineID          Line ID.
+     * @param lineName        Line name.
+     * @param directionID     Direction ID.
+     * @param destinationName Destination name.
+     * @param destinationText Destination text.
+     * @param vehicleID       Vehicle ID.
+     * @param tripID          Trip ID.
+     * @param estimatedTime   Estimated time.
+     */
+    public Trip(String stopID,
+                String stopName,
+                String stopIndicator,
+                Integer stopState,
+                Double stopLatitude,
+                Double stopLongitude,
+                Integer visitID,
+                String lineID,
+                String lineName,
+                Integer directionID,
+                String destinationName,
+                String destinationText,
+                String vehicleID,
+                String tripID,
+                Long estimatedTime) {
+        this(new Stop(stopID,
+                        stopName,
+                        stopIndicator,
+                        stopState,
+                        stopLatitude,
+                        stopLongitude),
+                visitID,
+                lineID,
+                lineName,
+                directionID,
+                destinationName,
+                destinationText,
+                vehicleID,
+                tripID,
+                estimatedTime);
     }
 
-    public Trip(Stop stop, Integer visitID, String lineID, String lineName, Integer directionID, String destinationName, String destinationText, String vehicleID, String tripID, Long estimatedTime) {
+    /**
+     * Construct Trip object from Stop model and set of additional data.
+     *
+     * @param stop            Stop model
+     * @param visitID         Visit ID
+     * @param lineID          Line ID
+     * @param lineName        Line name
+     * @param directionID     Direction ID
+     * @param destinationName Destination name
+     * @param destinationText Destination text
+     * @param vehicleID       Vehicle ID
+     * @param tripID          Trip ID
+     * @param estimatedTime   Estimated time
+     */
+    public Trip(Stop stop,
+                Integer visitID,
+                String lineID,
+                String lineName,
+                Integer directionID,
+                String destinationName,
+                String destinationText,
+                String vehicleID,
+                String tripID,
+                Long estimatedTime) {
         this.stop = stop;
         this.visitID = visitID;
         this.lineID = lineID;
@@ -55,94 +134,168 @@ public class Trip {
         this.estimatedTime = estimatedTime;
     }
 
+    /**
+     * Construct Trip object from raw list of attributes parsed from JSON.
+     *
+     * @param raw List of attributes from JSON line
+     * @throws IOException Thrown on invalid line format.
+     */
     public Trip(List raw) throws IOException {
         this(raw, null);
     }
 
+    /**
+     * Construct Stop object from raw list of attributes parsed from JSON with explicitly specified version.
+     *
+     * @param raw     List of attributes from JSON line
+     * @param version API version
+     * @throws IOException Thrown on invalid line format.
+     */
     public Trip(List raw, String version) throws IOException {
-        if (raw == null || raw.size() < 16)
+        if (raw == null || raw.size() < NUM_OF_FIELDS) {
             throw new IOException("Invalid number of fields");
+        }
 
         stop = new Stop(raw);
 
-        if (raw.get(7) instanceof Integer)
-            visitID = (Integer) raw.get(7);
-        else
-            throw new IOException("Field 7 not of expected type Integer, found " + raw.get(7).getClass().getSimpleName());
-        if (raw.get(8) instanceof String)
-            lineID = (String)raw.get(8);
-        else
-            throw new IOException("Field 8 not of expected type String, found " + raw.get(8).getClass().getSimpleName());
-        if (raw.get(9) instanceof String)
-            lineName = (String)raw.get(9);
-        else
-            throw new IOException("Field 9 not of expected type String, found " + raw.get(9).getClass().getSimpleName());
-        if (raw.get(10) instanceof Integer) {
-            directionID = (Integer) raw.get(10);
-            if (directionID < 0 || directionID > 2)
-                throw new IOException("Direction out of range. Expected 1 or 2, found " + directionID);
+        if (raw.get(VISIT_ID) instanceof Integer) {
+            visitID = (Integer) raw.get(VISIT_ID);
+        } else {
+            throw new IOException("Field " + VISIT_ID + " not of expected type Integer, found "
+                    + raw.get(VISIT_ID).getClass().getSimpleName());
         }
-        else
-            throw new IOException("Field 10 not of expected type Integer, found " + raw.get(10).getClass().getSimpleName());
-        if (raw.get(11) instanceof String)
-            destinationName = (String)raw.get(11);
-        else
-            throw new IOException("Field 11 not of expected type String, found " + raw.get(11).getClass().getSimpleName());
-        if (raw.get(12) instanceof String)
-            destinationText = (String)raw.get(12);
-        else
-            throw new IOException("Field 12 not of expected type String, found " + raw.get(12).getClass().getSimpleName());
+
+        if (raw.get(LINE_ID) instanceof String) {
+            lineID = (String) raw.get(LINE_ID);
+        } else {
+            throw new IOException("Field " + LINE_ID + " not of expected type String, found "
+                    + raw.get(LINE_ID).getClass().getSimpleName());
+        }
+
+        if (raw.get(LINE_NAME) instanceof String) {
+            lineName = (String) raw.get(LINE_NAME);
+        } else {
+            throw new IOException("Field " + LINE_NAME + " not of expected type String, found "
+                    + raw.get(LINE_NAME).getClass().getSimpleName());
+        }
+
+        if (raw.get(DIRECTION_ID) instanceof Integer) {
+            directionID = (Integer) raw.get(DIRECTION_ID);
+            if (directionID < 0 || directionID > 2) {
+                throw new IOException("Direction out of range. Expected 1 or 2, found " + directionID);
+            }
+        } else {
+            throw new IOException("Field " + DIRECTION_ID + " not of expected type Integer, found "
+                    + raw.get(DIRECTION_ID).getClass().getSimpleName());
+        }
+
+        if (raw.get(DESTINATION_NAME) instanceof String) {
+            destinationName = (String) raw.get(DESTINATION_NAME);
+        } else {
+            throw new IOException("Field " + DESTINATION_NAME + " not of expected type String, found "
+                    + raw.get(DESTINATION_NAME).getClass().getSimpleName());
+        }
+
+        if (raw.get(DESTINATION_TEXT) instanceof String) {
+            destinationText = (String) raw.get(DESTINATION_TEXT);
+        } else {
+            throw new IOException("Field " + DESTINATION_TEXT + " not of expected type String, found "
+                    + raw.get(DESTINATION_TEXT).getClass().getSimpleName());
+        }
+
         /* TFL and ASEAG deliver different types with the same API version, so this field is a little more tolerant */
-        if (raw.get(13) instanceof String || raw.get(13) instanceof Integer || raw.get(13) instanceof Long)
-            vehicleID = raw.get(13).toString();
-        else
-            throw new IOException("Field 13 not of expected type String/Integer/Long, found " + raw.get(13).getClass().getSimpleName());
-        if (raw.get(14) instanceof String || raw.get(14) instanceof Integer || raw.get(14) instanceof Long)
-            id = raw.get(14).toString();
-        else
-            throw new IOException("Field 14 not of expected type String/Integer/Long, found " + raw.get(14).getClass().getSimpleName());
-        if (raw.get(15) instanceof Long)
-            estimatedTime = (Long)raw.get(15);
-        else
-            throw new IOException("Field 15 not of expected type Long, found " + raw.get(15).getClass().getSimpleName());
+        if (raw.get(VEHICLE_ID) instanceof String
+                || raw.get(VEHICLE_ID) instanceof Integer
+                || raw.get(VEHICLE_ID) instanceof Long) {
+            vehicleID = raw.get(VEHICLE_ID).toString();
+        } else {
+            throw new IOException("Field " + VEHICLE_ID + " not of expected type String/Integer/Long, found "
+                    + raw.get(VEHICLE_ID).getClass().getSimpleName());
+        }
+
+        if (raw.get(TRIP_ID) instanceof String
+                || raw.get(TRIP_ID) instanceof Integer
+                || raw.get(TRIP_ID) instanceof Long) {
+            id = raw.get(TRIP_ID).toString();
+        } else {
+            throw new IOException("Field " + TRIP_ID + " not of expected type String/Integer/Long, found "
+                    + raw.get(TRIP_ID).getClass().getSimpleName());
+        }
+
+        if (raw.get(ESTIMATED_TIME) instanceof Long) {
+            estimatedTime = (Long) raw.get(ESTIMATED_TIME);
+        } else {
+            throw new IOException("Field " + ESTIMATED_TIME + " not of expected type Long, found "
+                    + raw.get(ESTIMATED_TIME).getClass().getSimpleName());
+        }
     }
 
+    /**
+     * @return The (starting) stop.
+     */
     public Stop getStop() {
         return stop;
     }
 
+    /**
+     * @return The trip ID.
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * @return The visit ID.
+     */
     public Integer getVisitID() {
         return visitID;
     }
 
+    /**
+     * @return The line ID.
+     */
     public String getLineID() {
         return lineID;
     }
 
+    /**
+     * @return The line name.
+     */
     public String getLineName() {
         return lineName;
     }
 
+    /**
+     * @return The direction ID.
+     */
     public Integer getDirectionID() {
         return directionID;
     }
 
+    /**
+     * @return The destination name.
+     */
     public String getDestinationName() {
         return destinationName;
     }
 
+    /**
+     * @return The destination text.
+     */
     public String getDestinationText() {
         return destinationText;
     }
 
+    /**
+     * @return The estimated departure time.
+     */
     public Long getEstimatedTime() {
         return estimatedTime;
     }
 
+    /**
+     * @return The vehicle ID.
+     */
     public String getVehicleID() {
         return vehicleID;
     }
