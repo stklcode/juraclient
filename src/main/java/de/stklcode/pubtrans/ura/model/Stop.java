@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author Stefan Kalscheuer
  */
-public class Stop {
+public final class Stop {
     private static final int STOP_NAME = 1;
     private static final int STOP_ID = 2;
     private static final int INDICATOR = 3;
@@ -50,7 +50,12 @@ public class Stop {
      * @param latitude  Stop geolocation latitude.
      * @param longitude Stop geolocation longitude.
      */
-    public Stop(String id, String name, String indicator, Integer state, Double latitude, Double longitude) {
+    public Stop(final String id,
+                final String name,
+                final String indicator,
+                final Integer state,
+                final Double latitude,
+                final Double longitude) {
         this.id = id;
         this.name = name;
         this.indicator = indicator;
@@ -65,7 +70,7 @@ public class Stop {
      * @param raw List of attributes from JSON line
      * @throws IOException Thrown on invalid line format.
      */
-    public Stop(List raw) throws IOException {
+    public Stop(final List raw) throws IOException {
         if (raw == null || raw.size() < NUM_OF_FIELDS) {
             throw new IOException("Invalid number of fields");
         }

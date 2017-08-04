@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author Stefan Kalscheuer
  */
-public class Trip {
+public final class Trip {
     private static final int VISIT_ID = 7;
     private static final int LINE_ID = 8;
     private static final int LINE_NAME = 9;
@@ -66,21 +66,21 @@ public class Trip {
      * @param tripID          Trip ID.
      * @param estimatedTime   Estimated time.
      */
-    public Trip(String stopID,
-                String stopName,
-                String stopIndicator,
-                Integer stopState,
-                Double stopLatitude,
-                Double stopLongitude,
-                Integer visitID,
-                String lineID,
-                String lineName,
-                Integer directionID,
-                String destinationName,
-                String destinationText,
-                String vehicleID,
-                String tripID,
-                Long estimatedTime) {
+    public Trip(final String stopID,
+                final String stopName,
+                final String stopIndicator,
+                final Integer stopState,
+                final Double stopLatitude,
+                final Double stopLongitude,
+                final Integer visitID,
+                final String lineID,
+                final String lineName,
+                final Integer directionID,
+                final String destinationName,
+                final String destinationText,
+                final String vehicleID,
+                final String tripID,
+                final Long estimatedTime) {
         this(new Stop(stopID,
                         stopName,
                         stopIndicator,
@@ -112,16 +112,16 @@ public class Trip {
      * @param tripID          Trip ID
      * @param estimatedTime   Estimated time
      */
-    public Trip(Stop stop,
-                Integer visitID,
-                String lineID,
-                String lineName,
-                Integer directionID,
-                String destinationName,
-                String destinationText,
-                String vehicleID,
-                String tripID,
-                Long estimatedTime) {
+    public Trip(final Stop stop,
+                final Integer visitID,
+                final String lineID,
+                final String lineName,
+                final Integer directionID,
+                final String destinationName,
+                final String destinationText,
+                final String vehicleID,
+                final String tripID,
+                final Long estimatedTime) {
         this.stop = stop;
         this.visitID = visitID;
         this.lineID = lineID;
@@ -140,7 +140,7 @@ public class Trip {
      * @param raw List of attributes from JSON line
      * @throws IOException Thrown on invalid line format.
      */
-    public Trip(List raw) throws IOException {
+    public Trip(final List raw) throws IOException {
         this(raw, null);
     }
 
@@ -151,7 +151,7 @@ public class Trip {
      * @param version API version
      * @throws IOException Thrown on invalid line format.
      */
-    public Trip(List raw, String version) throws IOException {
+    public Trip(final List raw, final String version) throws IOException {
         if (raw == null || raw.size() < NUM_OF_FIELDS) {
             throw new IOException("Invalid number of fields");
         }

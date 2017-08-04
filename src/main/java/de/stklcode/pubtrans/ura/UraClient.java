@@ -72,7 +72,7 @@ public class UraClient {
      *
      * @param baseURL The base URL (with protocol, without trailing slash).
      */
-    public UraClient(String baseURL) {
+    public UraClient(final String baseURL) {
         this(baseURL, DEFAULT_INSTANT_URL, DEFAULT_STREAM_URL);
     }
 
@@ -83,7 +83,7 @@ public class UraClient {
      * @param instantURL The path for instant requests.
      * @param streamURL  The path for stream requests.
      */
-    public UraClient(String baseURL, String instantURL, String streamURL) {
+    public UraClient(final String baseURL, final String instantURL, final String streamURL) {
         this.baseURL = baseURL;
         this.instantURL = instantURL;
         this.streamURL = streamURL;
@@ -96,7 +96,7 @@ public class UraClient {
      * @param stops Stop IDs
      * @return the request
      */
-    public Query forStops(final String... stops) {
+    public final Query forStops(final String... stops) {
         return new Query().forStops(stops);
     }
 
@@ -106,7 +106,7 @@ public class UraClient {
      * @param stopNames Stop Point Names
      * @return the request
      */
-    public Query forStopsByName(final String... stopNames) {
+    public final Query forStopsByName(final String... stopNames) {
         return new Query().forStopsByName(stopNames);
     }
 
@@ -116,7 +116,7 @@ public class UraClient {
      * @param lines Line IDs.
      * @return The request.
      */
-    public Query forLines(final String... lines) {
+    public final Query forLines(final String... lines) {
         return new Query().forLines(lines);
     }
 
@@ -126,7 +126,7 @@ public class UraClient {
      * @param lineNames Line names.
      * @return The request.
      */
-    public Query forLinesByName(final String... lineNames) {
+    public final Query forLinesByName(final String... lineNames) {
         return new Query().forLinesByName(lineNames);
     }
 
@@ -136,7 +136,7 @@ public class UraClient {
      * @param direction The direction ID.
      * @return The request.
      */
-    public Query forDirection(final Integer direction) {
+    public final Query forDirection(final Integer direction) {
         return new Query().forDirection(direction);
     }
 
@@ -147,7 +147,7 @@ public class UraClient {
      * @return The request.
      * @since 1.1.0
      */
-    public Query forDestinationNames(final String... destinationNames) {
+    public final Query forDestinationNames(final String... destinationNames) {
         return new Query().forDestinationNames(destinationNames);
     }
 
@@ -158,7 +158,7 @@ public class UraClient {
      * @return The request.
      * @since 1.1.0
      */
-    public Query towards(final String... towards) {
+    public final Query towards(final String... towards) {
         return new Query().towards(towards);
     }
 
@@ -171,7 +171,7 @@ public class UraClient {
      * @return The request.
      * @since 1.1.0
      */
-    public Query forPosition(final Double latitude, final Double longitude, final Integer radius) {
+    public final Query forPosition(final Double latitude, final Double longitude, final Integer radius) {
         return new Query().forPosition(latitude, longitude, radius);
     }
 
@@ -203,7 +203,7 @@ public class UraClient {
      * @param query The query.
      * @return List of trips.
      */
-    public List<Trip> getTrips(Query query) {
+    public List<Trip> getTrips(final Query query) {
         return getTrips(query, null);
     }
 
@@ -254,7 +254,7 @@ public class UraClient {
      * @param query The query.
      * @return The list.
      */
-    public List<Stop> getStops(Query query) {
+    public List<Stop> getStops(final Query query) {
         List<Stop> stops = new ArrayList<>();
         try (InputStream is = requestInstant(REQUEST_STOP, query);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
@@ -281,7 +281,7 @@ public class UraClient {
      * @return Input stream of the URL
      * @throws IOException on errors
      */
-    private InputStream requestInstant(String[] returnList, Query query) throws IOException {
+    private InputStream requestInstant(final String[] returnList, final Query query) throws IOException {
         String urlStr = baseURL + instantURL + "?ReturnList=" + String.join(",", returnList);
 
         if (query.stopIDs != null && query.stopIDs.length > 0) {
@@ -317,7 +317,7 @@ public class UraClient {
     /**
      * Request meta object.
      */
-    public class Query {
+    public final class Query {
         private String[] stopIDs;
         private String[] stopNames;
         private String[] lineIDs;
