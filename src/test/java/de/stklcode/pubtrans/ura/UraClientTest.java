@@ -32,6 +32,7 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 
@@ -69,9 +70,13 @@ public class UraClientTest {
                 throw new IOException("Provoked exception 1.");
             }
         });
-        assertThat(new UraClient("mocked").getStops(), hasSize(0));
-        PowerMockito.when(mockURL.openStream()).thenThrow(new IOException("Provoked exception 2."));
-        assertThat(new UraClient("mocked").getStops(), hasSize(0));
+        try {
+            new UraClient("mocked").getStops();
+        } catch (RuntimeException e) {
+            assertThat(e, is(instanceOf(IllegalStateException.class)));
+            assertThat(e.getCause(), is(instanceOf(IOException.class)));
+            assertThat(e.getCause().getMessage(), is("Provoked exception 1."));
+        }
     }
 
     @Test
@@ -221,9 +226,13 @@ public class UraClientTest {
                 throw new IOException("Provoked exception 1.");
             }
         });
-        assertThat(new UraClient("mocked").getTrips(), hasSize(0));
-        PowerMockito.when(mockURL.openStream()).thenThrow(new IOException("Provoked exception 2."));
-        assertThat(new UraClient("mocked").getTrips(), hasSize(0));
+        try {
+            new UraClient("mocked").getTrips();
+        } catch (RuntimeException e) {
+            assertThat(e, is(instanceOf(IllegalStateException.class)));
+            assertThat(e.getCause(), is(instanceOf(IOException.class)));
+            assertThat(e.getCause().getMessage(), is("Provoked exception 1."));
+        }
     }
 
     @Test

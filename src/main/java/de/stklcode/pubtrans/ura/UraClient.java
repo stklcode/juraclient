@@ -233,7 +233,7 @@ public class UraClient {
                 line = br.readLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Failed to read from API", e);
         }
         return trips;
     }
@@ -268,7 +268,7 @@ public class UraClient {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Failed to read from API", e);
         }
         return stops;
     }
