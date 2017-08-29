@@ -223,7 +223,7 @@ public class UraClient {
             while (line != null && (limit == null || trips.size() < limit)) {
                 List l = mapper.readValue(line, List.class);
                 /* Check if result exists and has correct response type */
-                if (l != null && l.size() > 0) {
+                if (l != null && !l.isEmpty()) {
                     if (l.get(0).equals(RES_TYPE_URA_VERSION)) {
                         version = l.get(1).toString();
                     } else if (l.get(0).equals(RES_TYPE_PREDICTION)) {
@@ -259,11 +259,10 @@ public class UraClient {
         try (InputStream is = requestInstant(REQUEST_STOP, query);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String line;
-            String version;
             while ((line = br.readLine()) != null) {
                 List l = mapper.readValue(line, List.class);
                 /* Check if result exists and has correct response type */
-                if (l != null && l.size() > 0 && l.get(0).equals(RES_TYPE_STOP)) {
+                if (l != null && !l.isEmpty() && l.get(0).equals(RES_TYPE_STOP)) {
                     stops.add(new Stop(l));
                 }
             }
