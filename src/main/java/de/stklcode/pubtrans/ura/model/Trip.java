@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author Stefan Kalscheuer
  */
-public final class Trip {
+public final class Trip implements Model {
     private static final int VISIT_ID = 7;
     private static final int LINE_ID = 8;
     private static final int LINE_NAME = 9;
@@ -161,22 +161,19 @@ public final class Trip {
         if (raw.get(VISIT_ID) instanceof Integer) {
             visitID = (Integer) raw.get(VISIT_ID);
         } else {
-            throw new IOException("Field " + VISIT_ID + " not of expected type Integer, found "
-                    + raw.get(VISIT_ID).getClass().getSimpleName());
+            throw Model.typeError(VISIT_ID, raw.get(VISIT_ID).getClass(), "Integer");
         }
 
         if (raw.get(LINE_ID) instanceof String) {
             lineID = (String) raw.get(LINE_ID);
         } else {
-            throw new IOException("Field " + LINE_ID + " not of expected type String, found "
-                    + raw.get(LINE_ID).getClass().getSimpleName());
+            throw Model.typeErrorString(LINE_ID, raw.get(LINE_ID).getClass());
         }
 
         if (raw.get(LINE_NAME) instanceof String) {
             lineName = (String) raw.get(LINE_NAME);
         } else {
-            throw new IOException("Field " + LINE_NAME + " not of expected type String, found "
-                    + raw.get(LINE_NAME).getClass().getSimpleName());
+            throw Model.typeErrorString(LINE_NAME, raw.get(LINE_NAME).getClass());
         }
 
         if (raw.get(DIRECTION_ID) instanceof Integer) {
@@ -185,22 +182,19 @@ public final class Trip {
                 throw new IOException("Direction out of range. Expected 1 or 2, found " + directionID);
             }
         } else {
-            throw new IOException("Field " + DIRECTION_ID + " not of expected type Integer, found "
-                    + raw.get(DIRECTION_ID).getClass().getSimpleName());
+            throw Model.typeError(DIRECTION_ID, raw.get(DIRECTION_ID).getClass(), "Integer");
         }
 
         if (raw.get(DESTINATION_NAME) instanceof String) {
             destinationName = (String) raw.get(DESTINATION_NAME);
         } else {
-            throw new IOException("Field " + DESTINATION_NAME + " not of expected type String, found "
-                    + raw.get(DESTINATION_NAME).getClass().getSimpleName());
+            throw Model.typeErrorString(DESTINATION_NAME, raw.get(DESTINATION_NAME).getClass());
         }
 
         if (raw.get(DESTINATION_TEXT) instanceof String) {
             destinationText = (String) raw.get(DESTINATION_TEXT);
         } else {
-            throw new IOException("Field " + DESTINATION_TEXT + " not of expected type String, found "
-                    + raw.get(DESTINATION_TEXT).getClass().getSimpleName());
+            throw Model.typeErrorString(DESTINATION_TEXT, raw.get(DESTINATION_TEXT).getClass());
         }
 
         /* TFL and ASEAG deliver different types with the same API version, so this field is a little more tolerant */
@@ -209,8 +203,7 @@ public final class Trip {
                 || raw.get(VEHICLE_ID) instanceof Long) {
             vehicleID = raw.get(VEHICLE_ID).toString();
         } else {
-            throw new IOException("Field " + VEHICLE_ID + " not of expected type String/Integer/Long, found "
-                    + raw.get(VEHICLE_ID).getClass().getSimpleName());
+            throw Model.typeError(VEHICLE_ID, raw.get(VEHICLE_ID).getClass(), "String/Integer/Long");
         }
 
         if (raw.get(TRIP_ID) instanceof String
@@ -218,15 +211,13 @@ public final class Trip {
                 || raw.get(TRIP_ID) instanceof Long) {
             id = raw.get(TRIP_ID).toString();
         } else {
-            throw new IOException("Field " + TRIP_ID + " not of expected type String/Integer/Long, found "
-                    + raw.get(TRIP_ID).getClass().getSimpleName());
+            throw Model.typeError(TRIP_ID, raw.get(TRIP_ID).getClass(), "String/Integer/Long");
         }
 
         if (raw.get(ESTIMATED_TIME) instanceof Long) {
             estimatedTime = (Long) raw.get(ESTIMATED_TIME);
         } else {
-            throw new IOException("Field " + ESTIMATED_TIME + " not of expected type Long, found "
-                    + raw.get(ESTIMATED_TIME).getClass().getSimpleName());
+            throw Model.typeError(ESTIMATED_TIME, raw.get(ESTIMATED_TIME).getClass(), "Long");
         }
     }
 

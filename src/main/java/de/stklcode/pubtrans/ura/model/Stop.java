@@ -24,14 +24,14 @@ import java.util.List;
  *
  * @author Stefan Kalscheuer
  */
-public final class Stop {
-    private static final int STOP_NAME = 1;
-    private static final int STOP_ID = 2;
-    private static final int INDICATOR = 3;
-    private static final int STATE = 4;
-    private static final int LATITUDE = 5;
-    private static final int LONGITUDE = 6;
-    private static final int NUM_OF_FIELDS = 7;
+public final class Stop implements Model {
+    private static final int F_STOP_NAME = 1;
+    private static final int F_STOP_ID = 2;
+    private static final int F_INDICATOR = 3;
+    private static final int F_STATE = 4;
+    private static final int F_LATITUDE = 5;
+    private static final int F_LONGITUDE = 6;
+    private static final int F_NUM_OF_FIELDS = 7;
 
     private final String id;
     private final String name;
@@ -71,52 +71,46 @@ public final class Stop {
      * @throws IOException Thrown on invalid line format.
      */
     public Stop(final List raw) throws IOException {
-        if (raw == null || raw.size() < NUM_OF_FIELDS) {
+        if (raw == null || raw.size() < F_NUM_OF_FIELDS) {
             throw new IOException("Invalid number of fields");
         }
 
         if (raw.get(1) instanceof String) {
-            name = (String) raw.get(STOP_NAME);
+            name = (String) raw.get(F_STOP_NAME);
         } else {
-            throw new IOException("Field " + STOP_NAME + " not of expected type String, found "
-                    + raw.get(STOP_NAME).getClass().getSimpleName());
+            throw Model.typeErrorString(F_STOP_NAME, raw.get(F_STOP_NAME).getClass());
         }
 
-        if (raw.get(STOP_ID) instanceof String) {
-            id = (String) raw.get(STOP_ID);
+        if (raw.get(F_STOP_ID) instanceof String) {
+            id = (String) raw.get(F_STOP_ID);
         } else {
-            throw new IOException("Field " + STOP_ID + " not of expected type String, found "
-                    + raw.get(STOP_ID).getClass().getSimpleName());
+            throw Model.typeErrorString(F_STOP_ID, raw.get(F_STOP_ID).getClass());
         }
 
-        if (raw.get(INDICATOR) instanceof String) {
-            indicator = (String) raw.get(INDICATOR);
-        } else if (raw.get(INDICATOR) == null) {
+        if (raw.get(F_INDICATOR) instanceof String) {
+            indicator = (String) raw.get(F_INDICATOR);
+        } else if (raw.get(F_INDICATOR) == null) {
             indicator = null;
-            } else {
-            throw new IOException("Field " + INDICATOR + " not of expected type String, found "
-                    + raw.get(INDICATOR).getClass().getSimpleName());
+        } else {
+            throw Model.typeErrorString(F_INDICATOR, raw.get(F_INDICATOR).getClass());
         }
 
-        if (raw.get(STATE) instanceof Integer) {
-            state = (Integer) raw.get(STATE);
+        if (raw.get(F_STATE) instanceof Integer) {
+            state = (Integer) raw.get(F_STATE);
         } else {
-            throw new IOException("Field " + STATE + " not of expected type Integer, found "
-                    + raw.get(STATE).getClass().getSimpleName());
+            throw Model.typeError(F_STATE, raw.get(F_STATE).getClass(), "Integer");
         }
 
-        if (raw.get(LATITUDE) instanceof Double) {
-            latitude = (Double) raw.get(LATITUDE);
+        if (raw.get(F_LATITUDE) instanceof Double) {
+            latitude = (Double) raw.get(F_LATITUDE);
         } else {
-            throw new IOException("Field " + LATITUDE + " not of expected type Double, found "
-                    + raw.get(LATITUDE).getClass().getSimpleName());
+            throw Model.typeError(F_LATITUDE, raw.get(F_LATITUDE).getClass(), "Double");
         }
 
-        if (raw.get(LONGITUDE) instanceof Double) {
-            longitude = (Double) raw.get(LONGITUDE);
+        if (raw.get(F_LONGITUDE) instanceof Double) {
+            longitude = (Double) raw.get(F_LONGITUDE);
         } else {
-            throw new IOException("Field " + LONGITUDE + " not of expected type Double, found "
-                    + raw.get(LONGITUDE).getClass().getSimpleName());
+            throw Model.typeError(F_LONGITUDE, raw.get(F_LONGITUDE).getClass(), "Double");
         }
     }
 
