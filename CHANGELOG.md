@@ -1,3 +1,6 @@
+## 1.1.2 [unreleased]
+* [improvement] Added automatic module name for JPMS compatibility
+
 ## 1.1.1 [2018-02-20]
 * [improvement] On connection or parsing errors, the `IOException` is no longer ignored, but encapsulated in `RuntimeException` (no StackTraces printed)
 * [internal] Code cleanup and minor improvements
