@@ -1,4 +1,4 @@
-## 1.1.2 [unreleased]
+## 1.1.2 [2018-03-24]
 * [improvement] Added automatic module name for JPMS compatibility
 
 ## 1.1.1 [2018-02-20]

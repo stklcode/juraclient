@@ -55,7 +55,7 @@ List<Trip> trips = ura.forStopByName("Piccadilly Circus")
 <dependency>
     <groupId>de.stklcode.pubtrans</groupId>
     <artifactId>juraclient</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
 </dependency>
 ```
 
