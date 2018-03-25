@@ -17,6 +17,7 @@
 package de.stklcode.pubtrans.ura.model;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * Interface for model classes to bundle common methods.
@@ -24,7 +25,7 @@ import java.io.IOException;
  * @author Stefan Kalscheuer
  * @since 1.1.1
  */
-interface Model {
+interface Model extends Serializable {
     /**
      * Generate exception for unmatched type when String is expected.
      *

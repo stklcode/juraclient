@@ -1,3 +1,6 @@
+## [unreleased]
+* [improvement] Client and model classes implement `Serializable`
+
 ## 1.1.2 [2018-03-24]
 * [improvement] Added automatic module name for JPMS compatibility
 

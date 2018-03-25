@@ -20,10 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.stklcode.pubtrans.ura.model.Stop;
 import de.stklcode.pubtrans.ura.model.Trip;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +32,7 @@ import java.util.List;
  *
  * @author Stefan Kalscheuer
  */
-public class UraClient {
+public class UraClient implements Serializable {
     private static final String DEFAULT_INSTANT_URL = "/interfaces/ura/instant_V1";
     private static final String DEFAULT_STREAM_URL = "/interfaces/ura/stream_V1";
 
