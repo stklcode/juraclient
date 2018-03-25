@@ -19,6 +19,8 @@ package de.stklcode.pubtrans.ura.model;
 import java.io.IOException;
 
 /**
+ * Interface for model classes to bundle common methods.
+ *
  * @author Stefan Kalscheuer
  * @since 1.1.1
  */

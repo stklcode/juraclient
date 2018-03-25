@@ -30,6 +30,8 @@ import java.util.List;
 
 /**
  * Client for URA based public transport API.
+ * <p>
+ * This client features builder pattern style query functionality to obtain {@link Trip} and {@link Stop} information.
  *
  * @author Stefan Kalscheuer
  */
