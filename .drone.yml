@@ -1,0 +1,16 @@
+clone:
+  git:
+    image: plugins/git
+    depth: 1
+    skip_verify: true
+
+pipeline:
+  test:
+    image: ${MVN_IMAGE}
+    commands:
+      - mvn clean test
+
+matrix:
+  MVN_IMAGE:
+  - maven:3.5-jdk-8-alpine
+  - maven:3.5-jdk-10-slim
