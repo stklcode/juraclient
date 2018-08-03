@@ -307,9 +307,18 @@ public class UraClient implements Serializable {
             urlStr += "&" + PAR_CIRCLE + "=" + String.join(",", query.circle);
         }
 
-        URL url = new URL(urlStr);
+        return request(urlStr);
+    }
 
-        return url.openStream();
+    /**
+     * Open given URL as InputStream.
+     *
+     * @param url The URL.
+     * @return Input Stream of results.
+     * @throws IOException Error opening conneciton or reading data.
+     */
+    private InputStream request(String url) throws IOException {
+        return new URL(url).openStream();
     }
 
     /**
