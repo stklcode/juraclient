@@ -13,4 +13,4 @@ pipeline:
 matrix:
   MVN_IMAGE:
   - maven:3.5-jdk-8-alpine
-  - maven:3.5-jdk-10-slim
+  - maven:3.5-jdk-11-slim
