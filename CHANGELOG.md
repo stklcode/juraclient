@@ -1,4 +1,4 @@
-## 1.1.3 [unreleased]
+## 1.1.3 [2018-11-13]
 * [security] Updates Jackson dependency 2.9.4 to 2.9.7 (CVE-2018-7489)
 * [improvement] Client and model classes implement `Serializable`
 * [dependeny] Dependency updates
