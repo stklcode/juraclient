@@ -163,7 +163,7 @@ public class TripTest {
 
         invalid = new ArrayList<>(raw);
         invalid.remove(10);
-        invalid.add(10, "1");
+        invalid.add(10, "7");   // Strings are generally OK, but 7 is out of range (#2).
         try {
             new Trip(invalid);
             fail("Creation of Trip with invalid directionID field successfull");

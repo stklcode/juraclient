@@ -176,13 +176,15 @@ public final class Trip implements Model {
             throw Model.typeErrorString(LINE_NAME, raw.get(LINE_NAME).getClass());
         }
 
-        if (raw.get(DIRECTION_ID) instanceof Integer) {
-            directionID = (Integer) raw.get(DIRECTION_ID);
+        if (raw.get(DIRECTION_ID) instanceof String                 // Also accept Strings (#2)
+                || raw.get(DIRECTION_ID) instanceof Integer
+                || raw.get(DIRECTION_ID) instanceof Long) {
+            directionID = Integer.valueOf(raw.get(DIRECTION_ID).toString());
             if (directionID < 0 || directionID > 2) {
                 throw new IOException("Direction out of range. Expected 1 or 2, found " + directionID);
             }
         } else {
-            throw Model.typeError(DIRECTION_ID, raw.get(DIRECTION_ID).getClass(), "Integer");
+            throw Model.typeError(DIRECTION_ID, raw.get(DIRECTION_ID).getClass(), "String/Long/Integer");
         }
 
         if (raw.get(DESTINATION_NAME) instanceof String) {
