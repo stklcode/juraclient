@@ -1,5 +1,6 @@
-## 1.1.3 [unreleased]
+## 1.1.4 [unreleased]
 * [fix] Fixed issue with direction ID as `String` instead if `Integer` (#2)
+* [fix] Fixed issue with vehicle ID being `null` (#3)
 
 ## 1.1.3 [2018-11-13]
 * [security] Updates Jackson dependency 2.9.4 to 2.9.7 (CVE-2018-7489)

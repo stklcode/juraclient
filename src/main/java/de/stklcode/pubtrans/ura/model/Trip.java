@@ -204,6 +204,8 @@ public final class Trip implements Model {
                 || raw.get(VEHICLE_ID) instanceof Integer
                 || raw.get(VEHICLE_ID) instanceof Long) {
             vehicleID = raw.get(VEHICLE_ID).toString();
+        } else if (raw.get(VEHICLE_ID) == null) {   // Only fail of field is not NULL (#3).
+            vehicleID = null;
         } else {
             throw Model.typeError(VEHICLE_ID, raw.get(VEHICLE_ID).getClass(), "String/Integer/Long");
         }
@@ -287,7 +289,7 @@ public final class Trip implements Model {
     }
 
     /**
-     * @return The vehicle ID.
+     * @return The vehicle ID or {@code null} if not present.
      */
     public String getVehicleID() {
         return vehicleID;
