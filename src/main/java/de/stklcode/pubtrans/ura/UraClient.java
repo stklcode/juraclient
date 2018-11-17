@@ -22,8 +22,11 @@ import de.stklcode.pubtrans.ura.model.Trip;
 
 import java.io.*;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Client for URA based public transport API.
@@ -283,28 +286,28 @@ public class UraClient implements Serializable {
         String urlStr = baseURL + instantURL + "?ReturnList=" + String.join(",", returnList);
 
         if (query.stopIDs != null && query.stopIDs.length > 0) {
-            urlStr += "&" + PAR_STOP_ID + "=" + String.join(",", query.stopIDs);
+            urlStr += "&" + PAR_STOP_ID + "=" + URLEncoder.encode(String.join(",", query.stopIDs), UTF_8.name());
         }
         if (query.stopNames != null && query.stopNames.length > 0) {
-            urlStr += "&" + PAR_STOP_NAME + "=" + String.join(",", query.stopNames);
+            urlStr += "&" + PAR_STOP_NAME + "=" + URLEncoder.encode(String.join(",", query.stopNames), UTF_8.name());
         }
         if (query.lineIDs != null && query.lineIDs.length > 0) {
-            urlStr += "&" + PAR_LINE_ID + "=" + String.join(",", query.lineIDs);
+            urlStr += "&" + PAR_LINE_ID + "=" + URLEncoder.encode(String.join(",", query.lineIDs), UTF_8.name());
         }
         if (query.lineNames != null && query.lineNames.length > 0) {
-            urlStr += "&" + PAR_LINE_NAME + "=" + String.join(",", query.lineNames);
+            urlStr += "&" + PAR_LINE_NAME + "=" + URLEncoder.encode(String.join(",", query.lineNames), UTF_8.name());
         }
         if (query.direction != null) {
             urlStr += "&" + PAR_DIR_ID + "=" + query.direction;
         }
         if (query.destinationNames != null) {
-            urlStr += "&" + PAR_DEST_NAME + "=" + String.join(",", query.destinationNames);
+            urlStr += "&" + PAR_DEST_NAME + "=" + URLEncoder.encode(String.join(",", query.destinationNames), UTF_8.name());
         }
         if (query.towards != null) {
-            urlStr += "&" + PAR_TOWARDS + "=" + String.join(",", query.towards);
+            urlStr += "&" + PAR_TOWARDS + "=" + URLEncoder.encode(String.join(",", query.towards), UTF_8.name());
         }
         if (query.circle != null) {
-            urlStr += "&" + PAR_CIRCLE + "=" + String.join(",", query.circle);
+            urlStr += "&" + PAR_CIRCLE + "=" + URLEncoder.encode(query.circle, UTF_8.name());
         }
 
         return request(urlStr);
