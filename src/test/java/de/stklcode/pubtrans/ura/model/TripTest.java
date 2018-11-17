@@ -130,6 +130,26 @@ public class TripTest {
             fail("Creation of Trip from valid list failed: " + e.getMessage());
         }
 
+        raw.remove(10);
+        raw.add(10, 0L);    // Long values are OK.
+        try {
+            Trip trip = new Trip(raw);
+            assertThat(trip, is(notNullValue()));
+            assertThat(trip.getDirectionID(), is(0));
+        } catch (IOException e) {
+            fail("Creation of Trip from valid list failed: " + e.getMessage());
+        }
+
+        raw.remove(10);
+        raw.add(10, "0");    // String values are OK.
+        try {
+            Trip trip = new Trip(raw);
+            assertThat(trip, is(notNullValue()));
+            assertThat(trip.getDirectionID(), is(0));
+        } catch (IOException e) {
+            fail("Creation of Trip from valid list failed: " + e.getMessage());
+        }
+
         /* Test exceptions on invalid data */
         List<Object> invalid = new ArrayList<>(raw);
         invalid.remove(7);
