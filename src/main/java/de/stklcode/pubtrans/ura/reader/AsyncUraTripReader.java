@@ -66,7 +66,7 @@ public class AsyncUraTripReader implements AutoCloseable {
         this.future = CompletableFuture.runAsync(() -> {
             ObjectMapper mapper = new ObjectMapper();
 
-            try (InputStream is = url.openStream();
+            try (InputStream is = getInputStream(url);
                  BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
                 String version = null;
                 String line = br.readLine();
@@ -123,5 +123,16 @@ public class AsyncUraTripReader implements AutoCloseable {
             // Task failed to finish within 1 second.
             future.cancel(true);
         }
+    }
+
+    /**
+     * Get input stream from given URL.
+     *
+     * @param url URL to read from.
+     * @return Input Stream.
+     * @throws IOException On errors.
+     */
+    private static InputStream getInputStream(URL url) throws IOException {
+        return url.openStream();
     }
 }
