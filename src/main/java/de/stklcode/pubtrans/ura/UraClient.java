@@ -19,12 +19,15 @@ package de.stklcode.pubtrans.ura;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.stklcode.pubtrans.ura.model.Stop;
 import de.stklcode.pubtrans.ura.model.Trip;
+import de.stklcode.pubtrans.ura.reader.AsyncUraTripReader;
 
 import java.io.*;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -241,6 +244,38 @@ public class UraClient implements Serializable {
     }
 
     /**
+     * Get trips for given stopIDs and lineIDs using stream API and pass each result to given consumer.
+     *
+     * @param query    The query.
+     * @param consumer Consumer(s) for single trips.
+     * @see #getTripsStream(Query, List)
+     * @since 1.2.0
+     */
+    public AsyncUraTripReader getTripsStream(final Query query, final Consumer<Trip> consumer) throws IOException {
+        return getTripsStream(query, Collections.singletonList(consumer));
+    }
+
+    /**
+     * Get trips for given stopIDs and lineIDs using stream API and pass each result to given consumers.
+     *
+     * @param query     The query.
+     * @param consumers Consumer(s) for single trips.
+     * @since 1.2.0
+     */
+    public AsyncUraTripReader getTripsStream(final Query query, final List<Consumer<Trip>> consumers) throws IOException {
+        // Create the reader.
+        AsyncUraTripReader reader = new AsyncUraTripReader(
+                new URL(requestURL(baseURL + streamURL, REQUEST_TRIP, query)),
+                consumers
+        );
+
+        // Open the reader, i.e. start reading from API.
+        reader.open();
+
+        return reader;
+    }
+
+    /**
      * Get list of stops without filters.
      *
      * @return Lhe list.
@@ -283,7 +318,21 @@ public class UraClient implements Serializable {
      * @throws IOException on errors
      */
     private InputStream requestInstant(final String[] returnList, final Query query) throws IOException {
-        String urlStr = baseURL + instantURL + "?ReturnList=" + String.join(",", returnList);
+        return request(requestURL(baseURL + instantURL, returnList, query));
+    }
+
+    /**
+     * Build request URL from given parameters.
+     *
+     * @param endpointURL Endpoint URL.
+     * @param returnList  Fields to fetch.
+     * @param query       The query.
+     * @return The URL
+     * @throws IOException on errors
+     * @since 1.2.0
+     */
+    private String requestURL(final String endpointURL, final String[] returnList, final Query query) throws IOException {
+        String urlStr = endpointURL + "?ReturnList=" + String.join(",", returnList);
 
         if (query.stopIDs != null && query.stopIDs.length > 0) {
             urlStr += "&" + PAR_STOP_ID + "=" + URLEncoder.encode(String.join(",", query.stopIDs), UTF_8.name());
@@ -310,7 +359,7 @@ public class UraClient implements Serializable {
             urlStr += "&" + PAR_CIRCLE + "=" + URLEncoder.encode(query.circle, UTF_8.name());
         }
 
-        return request(urlStr);
+        return urlStr;
     }
 
     /**
@@ -446,6 +495,27 @@ public class UraClient implements Serializable {
          */
         public List<Trip> getTrips() {
             return UraClient.this.getTrips(this);
+        }
+
+        /**
+         * Get trips for set filters.
+         *
+         * @param consumer Consumer for single trips.
+         * @see #getTripsStream(List)
+         * @since 1.2.0
+         */
+        public AsyncUraTripReader getTripsStream(Consumer<Trip> consumer) throws IOException {
+            return UraClient.this.getTripsStream(this, consumer);
+        }
+
+        /**
+         * Get trips for set filters.
+         *
+         * @param consumers Consumers for single trips.
+         * @since 1.2.0
+         */
+        public AsyncUraTripReader getTripsStream(List<Consumer<Trip>> consumers) throws IOException {
+            return UraClient.this.getTripsStream(this, consumers);
         }
     }
 }
