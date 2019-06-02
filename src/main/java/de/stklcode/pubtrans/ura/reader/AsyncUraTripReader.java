@@ -49,6 +49,18 @@ public class AsyncUraTripReader implements AutoCloseable {
     /**
      * Initialize trip reader.
      *
+     * @param url      URL to read trips from.
+     * @param consumer Initial consumer.
+     */
+    public AsyncUraTripReader(URL url, Consumer<Trip> consumer) {
+        this.url = url;
+        this.consumers = new ArrayList<>();
+        this.consumers.add(consumer);
+    }
+
+    /**
+     * Initialize trip reader.
+     *
      * @param url       URL to read trips from.
      * @param consumers Initial list of consumers.
      */
