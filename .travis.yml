@@ -1,7 +1,7 @@
 language: java
 jdk:
-  - oraclejdk8
-  - oraclejdk11
+  - openjdk8
+  - openjdk11
 install: true
 addons:
   sonarcloud:
@@ -13,4 +13,4 @@ cache:
     - '$HOME/.m2/repository'
     - '$HOME/.sonar/cache'
 script:
-  - mvn -P jacoco clean package sonar:sonar
+  - if [ "$TRAVIS_JDK_VERSION" == "openjdk11" ]; then mvn -P jacoco clean package sonar:sonar; else mvn clean test; fi
