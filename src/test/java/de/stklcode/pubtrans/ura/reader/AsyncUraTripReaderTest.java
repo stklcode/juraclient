@@ -200,6 +200,10 @@ public class AsyncUraTripReaderTest {
         // Open the reader.
         tr.open();
 
+        // Read for 100ms.
+        TimeUnit.MILLISECONDS.sleep(100);
+        assumeThat("Trips should empty after 100ms without reading", trips, is(empty()));
+
         // Now write a single line to the stream pipe.
         assumeTrue("First line (version info) should be written", writeNextLine());
         assumeTrue("Second line (first record) should be written", writeNextLine());
