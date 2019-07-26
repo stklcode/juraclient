@@ -1,12 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## unreleased
+### Security
+* Updated dependencies
+
+
 ## 1.2.0 - 2019-06-20
 ### Security
 * Updated dependencies
 
 ### Features
 * Added support for stream API with asynchronous reader, using `getTripsStream()` method (#1)
+
 
 ## 1.1.4 - 2018-11-19
 ### Fixed
