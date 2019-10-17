@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## unreleased
+### Breaking
+* Java 11 or later required
+
+
 ## 1.3.0 - 2019-12-04
 ### Security
 * Updated dependencies

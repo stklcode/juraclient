@@ -1,16 +1,5 @@
 kind: pipeline
 type: docker
-name: java8
-
-steps:
-  - name: test
-    image: maven:3-jdk-8-alpine
-    commands:
-      - mvn clean test
-
----
-kind: pipeline
-type: docker
 name: java11
 
 steps:
