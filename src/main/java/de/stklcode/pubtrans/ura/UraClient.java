@@ -23,8 +23,12 @@ import de.stklcode.pubtrans.ura.model.Trip;
 import de.stklcode.pubtrans.ura.reader.AsyncUraTripReader;
 
 import java.io.*;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -383,7 +387,7 @@ public class UraClient implements Serializable {
      *
      * @param returnList Fields to fetch.
      * @param query      The query.
-     * @return Input stream of the URL
+     * @return Response {@link InputStream}.
      * @throws IOException on errors
      */
     private InputStream requestInstant(final String[] returnList, final Query query) throws IOException {
@@ -435,11 +439,19 @@ public class UraClient implements Serializable {
      * Open given URL as InputStream.
      *
      * @param url The URL.
-     * @return Input Stream of results.
+     * @return Response {@link InputStream}.
      * @throws IOException Error opening connection or reading data.
      */
     private InputStream request(String url) throws IOException {
-        return new URL(url).openStream();
+        try {
+            return HttpClient.newHttpClient().send(
+                    HttpRequest.newBuilder(URI.create(url)).GET().build(),
+                    HttpResponse.BodyHandlers.ofInputStream()
+            ).body();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException("API request interrupted", e);
+        }
     }
 
     /**

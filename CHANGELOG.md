@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ### Breaking
 * Java 11 or later required
 
+### Changes
+* Using native Java 11 HTTP client
+
 
 ## 1.3.0 - 2019-12-04
 ### Security

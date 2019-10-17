@@ -23,10 +23,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 /**
@@ -145,6 +152,14 @@ public class AsyncUraTripReader implements AutoCloseable {
      * @throws IOException On errors.
      */
     private static InputStream getInputStream(URL url) throws IOException {
-        return url.openStream();
+        try {
+            return HttpClient.newHttpClient().send(
+                    HttpRequest.newBuilder().uri(URI.create(url.toString())).GET().build(),
+                    HttpResponse.BodyHandlers.ofInputStream()
+            ).body();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException("API request interrupted", e);
+        }
     }
 }
