@@ -27,7 +27,10 @@ import org.junit.jupiter.api.Test;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,10 +38,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static net.bytebuddy.implementation.MethodDelegation.to;
 import static net.bytebuddy.matcher.ElementMatchers.named;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assume.assumeThat;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Unit test for the asynchronous URA Trip reader.
@@ -95,11 +96,11 @@ public class AsyncUraTripReaderTest {
         tr.open();
         // Read for 1 second.
         TimeUnit.SECONDS.sleep(1);
-        assumeThat("Trips should empty after 1s without reading", trips, is(empty()));
+        assumeTrue(trips.isEmpty(), "Trips should empty after 1s without reading");
 
         // Now write a single line to the stream pipe.
-        assumeTrue("First line (version info) should be written", writeNextLine());
-        assumeTrue("Second line (first record) should be written", writeNextLine());
+        assumeTrue(writeNextLine(), "First line (version info) should be written");
+        assumeTrue(writeNextLine(), "Second line (first record) should be written");
 
         // Wait up to 1s for the callback to be triggered.
         int i = 10;
@@ -136,10 +137,10 @@ public class AsyncUraTripReaderTest {
         tr.open();
         // Read for 1 second.
         TimeUnit.SECONDS.sleep(1);
-        assumeThat("Trips should empty after 1s without reading", trips, is(empty()));
+        assumeTrue(trips.isEmpty(), "Trips should empty after 1s without reading");
 
-        assumeTrue("First line of v2 (version info) should be written", writeNextLine());
-        assumeTrue("Second line of v2 (first record) should be written", writeNextLine());
+        assumeTrue(writeNextLine(), "First line of v2 (version info) should be written");
+        assumeTrue(writeNextLine(), "Second line of v2 (first record) should be written");
 
         i = 10;
         counter.set(0);
@@ -202,11 +203,11 @@ public class AsyncUraTripReaderTest {
 
         // Read for 100ms.
         TimeUnit.MILLISECONDS.sleep(100);
-        assumeThat("Trips should empty after 100ms without reading", trips, is(empty()));
+        assumeTrue(trips.isEmpty(), "Trips should empty after 100ms without reading");
 
         // Now write a single line to the stream pipe.
-        assumeTrue("First line (version info) should be written", writeNextLine());
-        assumeTrue("Second line (first record) should be written", writeNextLine());
+        assumeTrue(writeNextLine(), "First line (version info) should be written");
+        assumeTrue(writeNextLine(), "Second line (first record) should be written");
 
         // Wait up to 1s for the callback to be triggered.
         int i = 10;
@@ -214,7 +215,7 @@ public class AsyncUraTripReaderTest {
             TimeUnit.MILLISECONDS.sleep(100);
         }
 
-        assumeThat("Unexpected number of trips after first entry", trips.size(), is(1));
+        assumeTrue(1 == trips.size(), "Unexpected number of trips after first entry");
 
         // Close the stream.
         mockOutputStream.close();
