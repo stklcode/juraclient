@@ -1,4 +1,5 @@
 kind: pipeline
+type: docker
 name: java8
 
 steps:
@@ -9,6 +10,7 @@ steps:
 
 ---
 kind: pipeline
+type: docker
 name: java11
 
 steps:
@@ -19,6 +21,7 @@ steps:
 
 ---
 kind: pipeline
+type: docker
 name: java13
 
 steps:
