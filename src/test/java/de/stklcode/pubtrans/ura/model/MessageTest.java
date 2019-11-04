@@ -29,7 +29,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Unit test for the {@link Message} metamodel.
+ * Unit test for the {@link Message} meta model.
  *
  * @author Stefan Kalscheuer
  */

@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ### Security
 * Updated dependencies
 
+### Features
+* Added support for reading messages, using `getMessages()` method (#5)
+
 
 ## 1.2.0 - 2019-06-20
 ### Security

@@ -1,0 +1,2 @@
+[4,"2.0",1572882473479]
+[2,"Berensberger Str.","100707","",0,50.8087069,6.0607177,"016e1231d4e30014_100707",0,3,"Sehr geehrte Fahrgäste, wegen Strassenbauarbeiten kann diese Haltestelle nicht von den Bussen der Linien 17, 44 und N2 angefahren werden."]
