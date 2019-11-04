@@ -145,7 +145,7 @@ public final class Trip implements Model {
     }
 
     /**
-     * Construct Stop object from raw list of attributes parsed from JSON with explicitly specified version.
+     * Construct Trip object from raw list of attributes parsed from JSON with explicitly specified version.
      *
      * @param raw     List of attributes from JSON line
      * @param version API version

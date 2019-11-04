@@ -29,7 +29,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Unit test for the Trip metamodel.
+ * Unit test for the {@link Trip} meta model.
  *
  * @author Stefan Kalscheuer
  */
@@ -156,7 +156,7 @@ public class TripTest {
         invalid.add(7, "123");
         try {
             new Trip(invalid);
-            fail("Creation of Trip with invalid visitID field successfull");
+            fail("Creation of Trip with invalid visitID field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
         }
@@ -166,7 +166,7 @@ public class TripTest {
         invalid.add(8, 25);
         try {
             new Trip(invalid);
-            fail("Creation of Trip with invalid lineID field successfull");
+            fail("Creation of Trip with invalid lineID field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
         }
@@ -176,7 +176,7 @@ public class TripTest {
         invalid.add(9, 234L);
         try {
             new Trip(invalid);
-            fail("Creation of Trip with invalid line name field successfull");
+            fail("Creation of Trip with invalid line name field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
         }
@@ -186,7 +186,7 @@ public class TripTest {
         invalid.add(10, "7");   // Strings are generally OK, but 7 is out of range (#2).
         try {
             new Trip(invalid);
-            fail("Creation of Trip with invalid directionID field successfull");
+            fail("Creation of Trip with invalid directionID field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
         }
@@ -196,7 +196,7 @@ public class TripTest {
         invalid.add(11, 987);
         try {
             new Trip(invalid);
-            fail("Creation of Trip with invalid destinationName field successfull");
+            fail("Creation of Trip with invalid destinationName field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
         }
@@ -206,7 +206,7 @@ public class TripTest {
         invalid.add(12, 456.78);
         try {
             new Trip(invalid);
-            fail("Creation of Trip with invalid destinationText field successfull");
+            fail("Creation of Trip with invalid destinationText field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
         }
@@ -216,7 +216,7 @@ public class TripTest {
         invalid.add(13, 'x');
         try {
             new Trip(invalid);
-            fail("Creation of Trip with invalid vehicleID field successfull");
+            fail("Creation of Trip with invalid vehicleID field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
         }
@@ -226,7 +226,7 @@ public class TripTest {
         invalid.add(14, 1.2);
         try {
             new Trip(invalid);
-            fail("Creation of Trip with invalid id field successfull");
+            fail("Creation of Trip with invalid id field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
         }
@@ -236,7 +236,7 @@ public class TripTest {
         invalid.add(15, 456);
         try {
             new Trip(invalid);
-            fail("Creation of Trip with invalid estimatedTime field successfull");
+            fail("Creation of Trip with invalid estimatedTime field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
         }
@@ -245,7 +245,7 @@ public class TripTest {
         invalid.remove(15);
         try {
             new Trip(invalid);
-            fail("Creation of Trip with too short list successfull");
+            fail("Creation of Trip with too short list successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
         }
@@ -254,7 +254,7 @@ public class TripTest {
         invalid.set(10, 3);
         try {
             new Trip(invalid);
-            fail("Creation of Trip with direction ID 3 successfull");
+            fail("Creation of Trip with direction ID 3 successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
         }

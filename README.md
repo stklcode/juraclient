@@ -17,7 +17,7 @@ local bus station or any other custom queries. API versions 1.x and 2.x are supp
 // Instantiate the client (e.g. using the TFL API)
 UraClient ura = new UraClient("http://countdown.api.tfl.gov.uk");
 
-// Initiailize the API with non-standard endpoints (e.g. ASEAG with API V2)
+// Initialize the API with non-standard endpoints (e.g. ASEAG with API V2)
 UraClient ura = new UraClient("http://ivu.aseag.de", 
                               "interfaces/ura/instant_V2", 
                               "interfaces/ura/stream_V2");

@@ -92,7 +92,7 @@ public class AsyncUraTripReaderTest {
                 )
         );
 
-        // Open the rewader.
+        // Open the reader.
         tr.open();
         // Read for 1 second.
         TimeUnit.SECONDS.sleep(1);
@@ -253,7 +253,7 @@ public class AsyncUraTripReaderTest {
      * Write next line from the buffer to the mocked stream pipe.
      *
      * @return {@code true} if a line has been written.
-     * @throws IOException Errir writing the data.
+     * @throws IOException Error writing the data.
      */
     private static boolean writeNextLine() throws IOException {
         String line = MOCK_LINES.poll();

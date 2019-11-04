@@ -29,7 +29,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Unit test for the Stop metamodel.
+ * Unit test for the {@link Stop} meta model.
  *
  * @author Stefan Kalscheuer
  */
@@ -85,7 +85,7 @@ public class StopTest {
         invalid.add(1, 5);
         try {
             new Stop(invalid);
-            fail("Creation of Stop with invalid name field successfull");
+            fail("Creation of Stop with invalid name field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
         }
@@ -95,7 +95,7 @@ public class StopTest {
         invalid.add(2, 0);
         try {
             new Stop(invalid);
-            fail("Creation of Stop with invalid id field successfull");
+            fail("Creation of Stop with invalid id field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
         }
@@ -105,7 +105,7 @@ public class StopTest {
         invalid.add(3, -1.23);
         try {
             new Stop(invalid);
-            fail("Creation of Stop with invalid indicator field successfull");
+            fail("Creation of Stop with invalid indicator field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
         }
@@ -115,7 +115,7 @@ public class StopTest {
         invalid.add(4, "foo");
         try {
             new Stop(invalid);
-            fail("Creation of Stop with invalid state field successfull");
+            fail("Creation of Stop with invalid state field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
         }
@@ -125,7 +125,7 @@ public class StopTest {
         invalid.add(5, "123");
         try {
             new Stop(invalid);
-            fail("Creation of Stop with invalid latitude field successfull");
+            fail("Creation of Stop with invalid latitude field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
         }
@@ -135,7 +135,7 @@ public class StopTest {
         invalid.add(6, 456);
         try {
             new Stop(invalid);
-            fail("Creation of Stop with invalid longitude field successfull");
+            fail("Creation of Stop with invalid longitude field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
         }
@@ -144,7 +144,7 @@ public class StopTest {
         invalid.remove(6);
         try {
             new Stop(invalid);
-            fail("Creation of Stop with too short list successfull");
+            fail("Creation of Stop with too short list successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
         }

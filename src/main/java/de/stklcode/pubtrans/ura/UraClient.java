@@ -367,7 +367,7 @@ public class UraClient implements Serializable {
      *
      * @param url The URL.
      * @return Input Stream of results.
-     * @throws IOException Error opening conneciton or reading data.
+     * @throws IOException Error opening connection or reading data.
      */
     private InputStream request(String url) throws IOException {
         return new URL(url).openStream();

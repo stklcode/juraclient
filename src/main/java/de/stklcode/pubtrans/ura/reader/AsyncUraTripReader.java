@@ -70,7 +70,7 @@ public class AsyncUraTripReader implements AutoCloseable {
     }
 
     public void open() {
-        // Throw exeption, if future is already present.
+        // Throw exception, if future is already present.
         if (future != null) {
             throw new IllegalStateException("Reader already opened");
         }
@@ -113,7 +113,7 @@ public class AsyncUraTripReader implements AutoCloseable {
 
     /**
      * Close the reader.
-     * This is done by signaliung cancel to the asyncronous task. If the task is not completed
+     * This is done by signaling cancel to the asynchronous task. If the task is not completed
      * within 1 second however it is cancelled hard.
      */
     @Override

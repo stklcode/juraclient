@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 * Fixed issue with direction ID as `String` instead if `Integer` (#2)
 * Fixed issue with vehicle ID being `null` (#3)
-* Fixed issue with spaces in search parametes (#4)
+* Fixed issue with spaces in search parameters (#4)
 
 
 ## 1.1.3 - 2018-11-13
