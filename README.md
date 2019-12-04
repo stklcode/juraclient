@@ -50,19 +50,22 @@ List<Trip> trips = ura.forStopByName("Piccadilly Circus")
                       .getTrips();
 ```
 
-## Maven Artifact
+### Get Messages
+
+```java
+// Get next 10 trips for given stops and lines in a single direction (all filters optional)
+List<Message> msgs = ura.forStop("100000")
+                        .getMessages();
 ```
+
+## Maven Artifact
+```xml
 <dependency>
     <groupId>de.stklcode.pubtrans</groupId>
     <artifactId>juraclient</artifactId>
-    <version>1.1.4</version>
+    <version>1.3.0</version>
 </dependency>
 ```
-
-## Planned Features
-
-* More refined query parameters
-* Stream API with asynchronous consumer
 
 ## License
 
