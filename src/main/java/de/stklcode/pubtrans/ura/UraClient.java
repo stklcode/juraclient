@@ -17,6 +17,7 @@
 package de.stklcode.pubtrans.ura;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.stklcode.pubtrans.ura.model.Message;
 import de.stklcode.pubtrans.ura.model.Stop;
 import de.stklcode.pubtrans.ura.model.Trip;
 import de.stklcode.pubtrans.ura.reader.AsyncUraTripReader;
@@ -58,14 +59,21 @@ public class UraClient implements Serializable {
     private static final String PAR_ESTTIME = "EstimatedTime";
     private static final String PAR_TOWARDS = "Towards";
     private static final String PAR_CIRCLE = "Circle";
+    private static final String PAR_MSG_UUID = "MessageUUID";
+    private static final String PAR_MSG_TYPE = "MessageType";
+    private static final String PAR_MSG_PRIORITY = "MessagePriority";
+    private static final String PAR_MSG_TEXT = "MessageText";
 
     private static final Integer RES_TYPE_STOP = 0;
     private static final Integer RES_TYPE_PREDICTION = 1;
+    private static final Integer RES_TYPE_FLEX_MESSAGE = 2;
     private static final Integer RES_TYPE_URA_VERSION = 4;
 
     private static final String[] REQUEST_STOP = {PAR_STOP_NAME, PAR_STOP_ID, PAR_STOP_INDICATOR, PAR_STOP_STATE, PAR_GEOLOCATION};
     private static final String[] REQUEST_TRIP = {PAR_STOP_NAME, PAR_STOP_ID, PAR_STOP_INDICATOR, PAR_STOP_STATE, PAR_GEOLOCATION,
             PAR_VISIT_NUMBER, PAR_LINE_ID, PAR_LINE_NAME, PAR_DIR_ID, PAR_DEST_NAME, PAR_DEST_TEXT, PAR_VEHICLE_ID, PAR_TRIP_ID, PAR_ESTTIME};
+    private static final String[] REQUEST_MESSAGE = {PAR_STOP_NAME, PAR_STOP_ID, PAR_STOP_INDICATOR, PAR_STOP_STATE, PAR_GEOLOCATION,
+            PAR_MSG_UUID, PAR_MSG_TYPE, PAR_MSG_PRIORITY, PAR_MSG_TEXT};
 
     private final String baseURL;
     private final String instantURL;
@@ -310,6 +318,61 @@ public class UraClient implements Serializable {
     }
 
     /**
+     * Get list of messages.
+     *
+     * @return List of messages.
+     * @since 1.3
+     */
+    public List<Message> getMessages() {
+        return getMessages(new Query(), null);
+    }
+
+
+    /**
+     * Get list of messages.
+     * If forStops() has been called, those will be used as filter.
+     *
+     * @param query The query.
+     * @return List of trips.
+     * @since 1.3
+     */
+    public List<Message> getMessages(final Query query) {
+        return getMessages(query, null);
+    }
+
+    /**
+     * Get list of messages for given stopIDs with result limit.
+     *
+     * @param query The query.
+     * @param limit Maximum number of results.
+     * @return List of trips.
+     * @since 1.3
+     */
+    public List<Message> getMessages(final Query query, final Integer limit) {
+        List<Message> messages = new ArrayList<>();
+        try (InputStream is = requestInstant(REQUEST_MESSAGE, query);
+             BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+            String version = null;
+            String line = br.readLine();
+            while (line != null && (limit == null || messages.size() < limit)) {
+                List l = mapper.readValue(line, List.class);
+                /* Check if result exists and has correct response type */
+                if (l != null && !l.isEmpty()) {
+                    if (l.get(0).equals(RES_TYPE_URA_VERSION)) {
+                        version = l.get(1).toString();
+                    } else if (l.get(0).equals(RES_TYPE_FLEX_MESSAGE)) {
+                        messages.add(new Message(l, version));
+                    }
+                }
+                line = br.readLine();
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to read from API", e);
+        }
+        return messages;
+    }
+
+    /**
      * Issue request to instant endpoint and return input stream.
      *
      * @param returnList Fields to fetch.
@@ -516,6 +579,16 @@ public class UraClient implements Serializable {
          */
         public AsyncUraTripReader getTripsStream(List<Consumer<Trip>> consumers) throws IOException {
             return UraClient.this.getTripsStream(this, consumers);
+        }
+
+        /**
+         * Get trips for set filters.
+         *
+         * @return List of matching messages.
+         * @since 1.3
+         */
+        public List<Message> getMessages() {
+            return UraClient.this.getMessages(this);
         }
     }
 }
