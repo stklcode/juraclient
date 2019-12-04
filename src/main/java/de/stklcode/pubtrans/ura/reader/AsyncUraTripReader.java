@@ -30,7 +30,7 @@ import java.util.concurrent.*;
 import java.util.function.Consumer;
 
 /**
- * Asynchronous stream reader foR URA stream API.
+ * Asynchronous stream reader for URA stream API.
  * <p>
  * This reader provides a handler for asynchronous stream events.
  *
@@ -44,7 +44,7 @@ public class AsyncUraTripReader implements AutoCloseable {
     private final List<Consumer<Trip>> consumers;
     private final URL url;
     private CompletableFuture<Void> future;
-    private boolean cancelled;
+    private boolean canceled;
 
     /**
      * Initialize trip reader.
@@ -82,7 +82,7 @@ public class AsyncUraTripReader implements AutoCloseable {
                  BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
                 String version = null;
                 String line = br.readLine();
-                while (line != null && !this.cancelled) {
+                while (line != null && !this.canceled) {
                     List l = mapper.readValue(line, List.class);
                     // Check if result exists and has correct response type.
                     if (l != null && !l.isEmpty()) {
@@ -114,7 +114,7 @@ public class AsyncUraTripReader implements AutoCloseable {
     /**
      * Close the reader.
      * This is done by signaling cancel to the asynchronous task. If the task is not completed
-     * within 1 second however it is cancelled hard.
+     * within 1 second however it is canceled hard.
      */
     @Override
     public void close() {
@@ -124,7 +124,7 @@ public class AsyncUraTripReader implements AutoCloseable {
         }
 
         // Signal cancelling to gracefully stop future.
-        cancelled = true;
+        canceled = true;
         try {
             future.get(1, TimeUnit.SECONDS);
         } catch (InterruptedException e) {

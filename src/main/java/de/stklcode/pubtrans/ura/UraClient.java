@@ -256,6 +256,8 @@ public class UraClient implements Serializable {
      *
      * @param query    The query.
      * @param consumer Consumer(s) for single trips.
+     * @return Trip reader.
+     * @throws IOException Error reading response.
      * @see #getTripsStream(Query, List)
      * @since 1.2.0
      */
@@ -268,6 +270,8 @@ public class UraClient implements Serializable {
      *
      * @param query     The query.
      * @param consumers Consumer(s) for single trips.
+     * @return Trip reader.
+     * @throws IOException Error retrieving stream response.
      * @since 1.2.0
      */
     public AsyncUraTripReader getTripsStream(final Query query, final List<Consumer<Trip>> consumers) throws IOException {
@@ -286,7 +290,7 @@ public class UraClient implements Serializable {
     /**
      * Get list of stops without filters.
      *
-     * @return Lhe list.
+     * @return The list of stops.
      */
     public List<Stop> getStops() {
         return getStops(new Query());
@@ -564,6 +568,8 @@ public class UraClient implements Serializable {
          * Get trips for set filters.
          *
          * @param consumer Consumer for single trips.
+         * @return Trip reader.
+         * @throws IOException Errors retrieving stream response.
          * @see #getTripsStream(List)
          * @since 1.2.0
          */
@@ -575,6 +581,8 @@ public class UraClient implements Serializable {
          * Get trips for set filters.
          *
          * @param consumers Consumers for single trips.
+         * @return Trip reader.
+         * @throws IOException Errors retrieving stream response.
          * @since 1.2.0
          */
         public AsyncUraTripReader getTripsStream(List<Consumer<Trip>> consumers) throws IOException {
