@@ -15,7 +15,7 @@ name: java11
 
 steps:
   - name: test
-    image: maven:3-jdk-11-slim
+    image: maven:3-jdk-11
     commands:
       - mvn clean test
 
@@ -26,6 +26,6 @@ name: java13
 
 steps:
   - name: test
-    image: maven:3-jdk-13
+    image: maven:3-jdk-14
     commands:
       - mvn clean test
