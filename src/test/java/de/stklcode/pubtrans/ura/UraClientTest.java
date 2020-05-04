@@ -16,23 +16,23 @@
 
 package de.stklcode.pubtrans.ura;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import de.stklcode.pubtrans.ura.model.Message;
 import de.stklcode.pubtrans.ura.model.Stop;
 import de.stklcode.pubtrans.ura.model.Trip;
-import net.bytebuddy.ByteBuddy;
-import net.bytebuddy.agent.ByteBuddyAgent;
-import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
-import static net.bytebuddy.implementation.MethodDelegation.to;
-import static net.bytebuddy.matcher.ElementMatchers.named;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
@@ -46,29 +46,29 @@ import static org.hamcrest.core.Is.is;
  * @author Stefan Kalscheuer
  */
 public class UraClientTest {
-    // Mocked resource URL and exception message.
-    private static String mockResource = null;
-    private static String mockException = null;
+    private static WireMockServer httpMock;
 
     @BeforeAll
-    public static void initByteBuddy() {
-        // Install ByteBuddy Agent.
-        ByteBuddyAgent.install();
+    public static void setUp() {
+        // Initialize HTTP mock.
+        httpMock = new WireMockServer(WireMockConfiguration.options().dynamicPort());
+        httpMock.start();
+        WireMock.configureFor("localhost", httpMock.port());
+    }
 
-        new ByteBuddy().redefine(UraClient.class)
-                .method(named("request"))
-                .intercept(to(UraClientTest.class))
-                .make()
-                .load(UraClient.class.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
+    @AfterAll
+    public static void tearDown() {
+        httpMock.stop();
+        httpMock = null;
     }
 
     @Test
     public void getStopsTest() {
         // Mock the HTTP call.
-        mockHttpToFile("instant_V2_stops.txt");
+        mockHttpToFile(2, "instant_V2_stops.txt");
 
         // List stops and verify some values.
-        List<Stop> stops = new UraClient("mocked").getStops();
+        List<Stop> stops = new UraClient(httpMock.baseUrl(), "/interfaces/ura/instant_V2", "/interfaces/ura/stream").getStops();
         assertThat(stops, hasSize(10));
         assertThat(stops.get(0).getId(), is("100210"));
         assertThat(stops.get(1).getName(), is("Brockenberg"));
@@ -77,36 +77,26 @@ public class UraClientTest {
         assertThat(stops.get(4).getLongitude(), is(6.0708663));
 
         // Test Exception handling.
-        mockHttpToException("Provoked Exception 1");
+        mockHttpToError(500);
 
         try {
-            new UraClient("mocked").getStops();
+            new UraClient(httpMock.baseUrl()).getStops();
         } catch (RuntimeException e) {
             assertThat(e, is(instanceOf(IllegalStateException.class)));
             assertThat(e.getCause(), is(instanceOf(IOException.class)));
-            assertThat(e.getCause().getMessage(), is("Provoked Exception 1"));
+            assertThat(e.getCause().getMessage(), startsWith("Server returned HTTP response code: 500 for URL"));
         }
-    }
-
-    public static InputStream request(String originalURL) throws IOException {
-        if (mockResource == null && mockException != null) {
-            IOException e = new IOException(mockException);
-            mockException = null;
-            throw e;
-        }
-
-        InputStream res = UraClientTest.class.getResourceAsStream(mockResource);
-        mockResource = null;
-        return res;
     }
 
     @Test
     public void getStopsForLineTest() {
         // Mock the HTTP call.
-        mockHttpToFile("instant_V2_stops_line.txt");
+        mockHttpToFile(2, "instant_V2_stops_line.txt");
 
         // List stops and verify some values.
-        List<Stop> stops = new UraClient("mocked").forLines("33").getStops();
+        List<Stop> stops = new UraClient(httpMock.baseUrl(), "/interfaces/ura/instant_V2", "/interfaces/ura/stream")
+                .forLines("33")
+                .getStops();
         assertThat(stops, hasSize(47));
         assertThat(stops.get(0).getId(), is("100000"));
         assertThat(stops.get(1).getName(), is("Kuckelkorn"));
@@ -119,10 +109,10 @@ public class UraClientTest {
     @Test
     public void getStopsForPositionTest() {
         // Mock the HTTP call.
-        mockHttpToFile("instant_V1_stops_circle.txt");
+        mockHttpToFile(1, "instant_V1_stops_circle.txt");
 
         // List stops and verify some values.
-        List<Stop> stops = new UraClient("mocked")
+        List<Stop> stops = new UraClient(httpMock.baseUrl())
                 .forPosition(51.51009, -0.1345734, 200)
                 .getStops();
         assertThat(stops, hasSize(13));
@@ -133,8 +123,8 @@ public class UraClientTest {
         assertThat(stops.get(4).getLongitude(), is(-0.134172));
         assertThat(stops.get(5).getIndicator(), is(nullValue()));
 
-        mockHttpToFile("instant_V1_stops_circle_name.txt");
-        stops = new UraClient("mocked")
+        mockHttpToFile(1, "instant_V1_stops_circle_name.txt");
+        stops = new UraClient(httpMock.baseUrl())
                 .forStopsByName("Piccadilly Circus")
                 .forPosition(51.51009, -0.1345734, 200)
                 .getStops();
@@ -145,16 +135,16 @@ public class UraClientTest {
     @Test
     public void getTripsForDestinationNamesTest() {
         // Mock the HTTP call.
-        mockHttpToFile("instant_V1_trips_destination.txt");
+        mockHttpToFile(1, "instant_V1_trips_destination.txt");
 
         // List stops and verify some values.
-        List<Trip> trips = new UraClient("mocked").forDestinationNames("Piccadilly Circus").getTrips();
+        List<Trip> trips = new UraClient(httpMock.baseUrl()).forDestinationNames("Piccadilly Circus").getTrips();
         assertThat(trips, hasSize(9));
         assertThat(trips.stream().filter(t -> !t.getDestinationName().equals("Piccadilly Cir")).findAny(),
                 is(Optional.empty()));
 
-        mockHttpToFile("instant_V1_trips_stop_destination.txt");
-        trips = new UraClient("mocked")
+        mockHttpToFile(1, "instant_V1_trips_stop_destination.txt");
+        trips = new UraClient(httpMock.baseUrl())
                 .forStops("156")
                 .forDestinationNames("Marble Arch")
                 .getTrips();
@@ -168,14 +158,14 @@ public class UraClientTest {
     @Test
     public void getTripsTowardsTest() {
         // Mock the HTTP call.
-        mockHttpToFile("instant_V1_trips_towards.txt");
+        mockHttpToFile(1, "instant_V1_trips_towards.txt");
 
         /* List stops and verify some values */
-        List<Trip> trips = new UraClient("mocked").towards("Marble Arch").getTrips();
+        List<Trip> trips = new UraClient(httpMock.baseUrl()).towards("Marble Arch").getTrips();
         assertThat(trips, hasSize(10));
 
-        mockHttpToFile("instant_V1_trips_stop_towards.txt");
-        trips = new UraClient("mocked").forStops("156").towards("Marble Arch").getTrips();
+        mockHttpToFile(1, "instant_V1_trips_stop_towards.txt");
+        trips = new UraClient(httpMock.baseUrl()).forStops("156").towards("Marble Arch").getTrips();
         assertThat(trips, hasSize(17));
         assertThat(trips.stream().filter(t -> !t.getStop().getId().equals("156")).findAny(), is(Optional.empty()));
     }
@@ -183,10 +173,10 @@ public class UraClientTest {
     @Test
     public void getTripsTest() {
         // Mock the HTTP call.
-        mockHttpToFile("instant_V1_trips_all.txt");
+        mockHttpToFile(1, "instant_V1_trips_all.txt");
 
         // Get trips without filters and verify some values.
-        List<Trip> trips = new UraClient("mocked").getTrips();
+        List<Trip> trips = new UraClient(httpMock.baseUrl()).getTrips();
         assertThat(trips, hasSize(10));
         assertThat(trips.get(0).getId(), is("27000165015001"));
         assertThat(trips.get(1).getLineID(), is("55"));
@@ -200,10 +190,11 @@ public class UraClientTest {
         assertThat(trips.get(9).getStop().getId(), is("100002"));
 
         // Repeat test for API V2.
-        mockHttpToFile("instant_V2_trips_all.txt");
+        mockHttpToFile(2, "instant_V2_trips_all.txt");
 
         // Get trips without filters and verify some values.
-        trips = new UraClient("mocked").getTrips();
+        trips = new UraClient(httpMock.baseUrl(), "/interfaces/ura/instant_V2", "/interfaces/ura/stream")
+                .getTrips();
         assertThat(trips, hasSize(10));
         assertThat(trips.get(0).getId(), is("27000165015001"));
         assertThat(trips.get(1).getLineID(), is("55"));
@@ -217,28 +208,28 @@ public class UraClientTest {
         assertThat(trips.get(9).getStop().getId(), is("100002"));
 
         // Get limited number of trips.
-        mockHttpToFile("instant_V1_trips_all.txt");
-        trips = new UraClient("mocked").getTrips(5);
+        mockHttpToFile(1, "instant_V1_trips_all.txt");
+        trips = new UraClient(httpMock.baseUrl()).getTrips(5);
         assertThat(trips, hasSize(5));
 
         // Test mockException handling.
-        mockHttpToException("Provoked mockException 2");
+        mockHttpToError(502);
         try {
-            new UraClient("mocked").getTrips();
+            new UraClient(httpMock.baseUrl()).getTrips();
         } catch (RuntimeException e) {
             assertThat(e, is(instanceOf(IllegalStateException.class)));
             assertThat(e.getCause(), is(instanceOf(IOException.class)));
-            assertThat(e.getCause().getMessage(), is("Provoked mockException 2"));
+            assertThat(e.getCause().getMessage(), startsWith("Server returned HTTP response code: 502 for URL"));
         }
     }
 
     @Test
     public void getTripsForStopTest() {
         // Mock the HTTP call.
-        mockHttpToFile("instant_V1_trips_stop.txt");
+        mockHttpToFile(1, "instant_V1_trips_stop.txt");
 
         // Get trips for stop ID 100000 (Aachen Bushof) and verify some values.
-        List<Trip> trips = new UraClient("mocked")
+        List<Trip> trips = new UraClient(httpMock.baseUrl())
                 .forStops("100000")
                 .getTrips();
         assertThat(trips, hasSize(10));
@@ -249,8 +240,8 @@ public class UraClientTest {
         assertThat(trips.get(3).getStop().getIndicator(), is("H.15"));
 
         // Get trips for stop name "Uniklinik" and verify some values.
-        mockHttpToFile("instant_V1_trips_stop_name.txt");
-        trips = new UraClient("mocked")
+        mockHttpToFile(1, "instant_V1_trips_stop_name.txt");
+        trips = new UraClient(httpMock.baseUrl())
                 .forStopsByName("Uniklinik")
                 .getTrips();
         assertThat(trips, hasSize(10));
@@ -265,10 +256,10 @@ public class UraClientTest {
     @Test
     public void getTripsForLine() {
         // Mock the HTTP call.
-        mockHttpToFile("instant_V1_trips_line.txt");
+        mockHttpToFile(1, "instant_V1_trips_line.txt");
 
         // Get trips for line ID 3 and verify some values.
-        List<Trip> trips = new UraClient("mocked")
+        List<Trip> trips = new UraClient(httpMock.baseUrl())
                 .forLines("3")
                 .getTrips();
         assertThat(trips, hasSize(10));
@@ -279,8 +270,8 @@ public class UraClientTest {
         assertThat(trips.get(3).getStop().getIndicator(), is("H.4 (Pontwall)"));
 
         // Get trips for line name "3.A" and verify some values.
-        mockHttpToFile("instant_V1_trips_line_name.txt");
-        trips = new UraClient("mocked")
+        mockHttpToFile(1, "instant_V1_trips_line_name.txt");
+        trips = new UraClient(httpMock.baseUrl())
                 .forLinesByName("3.A")
                 .getTrips();
         assertThat(trips, hasSize(10));
@@ -291,8 +282,8 @@ public class UraClientTest {
         assertThat(trips.get(3).getStop().getName(), is("Aachen Gartenstraße"));
 
         // Get trips for line 3 with direction 1 and verify some values.
-        mockHttpToFile("instant_V1_trips_line_direction.txt");
-        trips = new UraClient("mocked")
+        mockHttpToFile(1, "instant_V1_trips_line_direction.txt");
+        trips = new UraClient(httpMock.baseUrl())
                 .forLines("412")
                 .forDirection(2)
                 .getTrips();
@@ -301,8 +292,8 @@ public class UraClientTest {
         assertThat(trips.stream().filter(t -> !t.getDirectionID().equals(2)).findAny(), is(Optional.empty()));
 
         // Test lineID and direction in different order.
-        mockHttpToFile("instant_V1_trips_line_direction.txt");
-        trips = new UraClient("mocked")
+        mockHttpToFile(1, "instant_V1_trips_line_direction.txt");
+        trips = new UraClient(httpMock.baseUrl())
                 .forDirection(2)
                 .forLines("412")
                 .getTrips();
@@ -314,10 +305,10 @@ public class UraClientTest {
     @Test
     public void getTripsForStopAndLine() {
         // Mock the HTTP call.
-        mockHttpToFile("instant_V1_trips_stop_line.txt");
+        mockHttpToFile(1, "instant_V1_trips_stop_line.txt");
 
         // Get trips for line ID 25 and 25 at stop 100000 and verify some values.
-        List<Trip> trips = new UraClient("mocked")
+        List<Trip> trips = new UraClient(httpMock.baseUrl())
                 .forLines("25", "35")
                 .forStops("100000")
                 .getTrips();
@@ -335,10 +326,10 @@ public class UraClientTest {
     @Test
     public void getMessages() {
         // Mock the HTTP call.
-        mockHttpToFile("instant_V1_messages.txt");
+        mockHttpToFile(1, "instant_V1_messages.txt");
 
         // Get messages without filter and verify some values.
-        List<Message> messages = new UraClient("mocked")
+        List<Message> messages = new UraClient(httpMock.baseUrl())
                 .getMessages();
         assertThat(messages, hasSize(2));
         assertThat(messages.get(0).getStop().getId(), is("100707"));
@@ -354,10 +345,10 @@ public class UraClientTest {
     @Test
     public void getMessagesForStop() {
         // Mock the HTTP call.
-        mockHttpToFile("instant_V2_messages_stop.txt");
+        mockHttpToFile(2, "instant_V2_messages_stop.txt");
 
         // Get trips for stop ID 100707 (Berensberger Str.) and verify some values.
-        List<Message> messages = new UraClient("mocked")
+        List<Message> messages = new UraClient(httpMock.baseUrl(), "/interfaces/ura/instant_V2", "/interfaces/ura/stream")
                 .forStops("100707")
                 .getMessages();
         assertThat(messages, hasSize(1));
@@ -369,11 +360,19 @@ public class UraClientTest {
     }
 
 
-    private static void mockHttpToFile(String newResourceFile) {
-        mockResource = newResourceFile;
+    private static void mockHttpToFile(int version, String resourceFile) {
+        WireMock.stubFor(
+                get(urlPathEqualTo("/interfaces/ura/instant_V" + version)).willReturn(
+                        aResponse().withBodyFile(resourceFile)
+                )
+        );
     }
 
-    private static void mockHttpToException(String newException) {
-        mockException = newException;
+    private static void mockHttpToError(int code) {
+        WireMock.stubFor(
+                get(anyUrl()).willReturn(
+                        aResponse().withStatus(code)
+                )
+        );
     }
 }
