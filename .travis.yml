@@ -14,4 +14,4 @@ cache:
     - '$HOME/.m2/repository'
     - '$HOME/.sonar/cache'
 script:
-  - if [ "$TRAVIS_JDK_VERSION" == "openjdk11" ]; then mvn -P jacoco clean package sonar:sonar; else mvn clean test; fi
+  - if [ "$TRAVIS_JDK_VERSION" == "openjdk11" ]; then mvn -P coverage clean package sonar:sonar; else mvn clean test; fi
