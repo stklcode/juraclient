@@ -46,9 +46,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class UraClient implements Serializable {
     private static final long serialVersionUID = -1183740075816686611L;
 
-    private static final String DEFAULT_INSTANT_URL = "/interfaces/ura/instant_V1";
-    private static final String DEFAULT_STREAM_URL = "/interfaces/ura/stream_V1";
-
     private static final String PAR_STOP_ID = "StopID";
     private static final String PAR_STOP_NAME = "StopPointName";
     private static final String PAR_STOP_STATE = "StopPointState";
@@ -81,10 +78,19 @@ public class UraClient implements Serializable {
     private static final String[] REQUEST_MESSAGE = {PAR_STOP_NAME, PAR_STOP_ID, PAR_STOP_INDICATOR, PAR_STOP_STATE, PAR_GEOLOCATION,
             PAR_MSG_UUID, PAR_MSG_TYPE, PAR_MSG_PRIORITY, PAR_MSG_TEXT};
 
-    private final String baseURL;
-    private final String instantURL;
-    private final String streamURL;
+    private final UraClientConfiguration config;
     private final ObjectMapper mapper;
+
+    /**
+     * Constructor from {@link UraClientConfiguration}.
+     *
+     * @param config The configuration.
+     * @since 2.0
+     */
+    public UraClient(final UraClientConfiguration config) {
+        this.config = config;
+        this.mapper = new ObjectMapper();
+    }
 
     /**
      * Constructor with base URL and default API paths.
@@ -92,21 +98,23 @@ public class UraClient implements Serializable {
      * @param baseURL The base URL (with protocol, without trailing slash).
      */
     public UraClient(final String baseURL) {
-        this(baseURL, DEFAULT_INSTANT_URL, DEFAULT_STREAM_URL);
+        this(UraClientConfiguration.forBaseURL(baseURL).build());
     }
 
     /**
      * Constructor with base URL and custom API paths.
      *
-     * @param baseURL    The base URL (including protocol).
-     * @param instantURL The path for instant requests.
-     * @param streamURL  The path for stream requests.
+     * @param baseURL     The base URL (including protocol).
+     * @param instantPath The path for instant requests.
+     * @param streamPath  The path for stream requests.
      */
-    public UraClient(final String baseURL, final String instantURL, final String streamURL) {
-        this.baseURL = baseURL;
-        this.instantURL = instantURL;
-        this.streamURL = streamURL;
-        this.mapper = new ObjectMapper();
+    public UraClient(final String baseURL, final String instantPath, final String streamPath) {
+        this(
+                UraClientConfiguration.forBaseURL(baseURL)
+                        .withInstantPath(instantPath)
+                        .withStreamPath(streamPath)
+                        .build()
+        );
     }
 
     /**
@@ -283,7 +291,7 @@ public class UraClient implements Serializable {
     public AsyncUraTripReader getTripsStream(final Query query, final List<Consumer<Trip>> consumers) throws IOException {
         // Create the reader.
         AsyncUraTripReader reader = new AsyncUraTripReader(
-                new URL(requestURL(baseURL + streamURL, REQUEST_TRIP, query)),
+                new URL(requestURL(config.getBaseURL() + config.getStreeamPath(), REQUEST_TRIP, query)),
                 consumers
         );
 
@@ -391,7 +399,7 @@ public class UraClient implements Serializable {
      * @throws IOException on errors
      */
     private InputStream requestInstant(final String[] returnList, final Query query) throws IOException {
-        return request(requestURL(baseURL + instantURL, returnList, query));
+        return request(requestURL(config.getBaseURL() + config.getInstantPath(), returnList, query));
     }
 
     /**

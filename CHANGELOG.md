@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changes
 * Using native Java 11 HTTP client
+* Client configuration with separate `UraClientConfiguration` class and builder
 
 
 ## 1.3.0 - 2019-12-04
