@@ -49,7 +49,7 @@ Feel free to adapt these naming scheme to your forks.
 ### Merge Requirements
 
 To be merged into the master branch, your code has to pass the automated continuous integration tests, to ensure compatibility.
-In Addition your code has to be approved by a project member.
+In addition, your code has to be approved by a project member.
 
 #### What if my code fails the tests?
 
@@ -77,7 +77,7 @@ You might sign your work, although that's no must.
 
 Short answer: When it makes sense.
 
-Bugfixes should be merged in time - assuming they pass the above criteria.
+Bug fixes should be merged in time - assuming they pass the above criteria.
 New features might be assigned to a certain milestone and as a result of this be scheduled according to the planned release cycle.
 
 
@@ -87,7 +87,7 @@ This projects tries to adapt the [Semantic Versioning](https://semver.org).
 In short, bug fixes without do not affect any compatibility will raise the third number only, new features will be reflected in the second number and any change breaking compatibility with the public API require raising the first number.
 
 If you have to make a decision for which version to go please keep this in mind.
-However for most non-member commits this is mostly informative, as the decision will be made by the project team later.
+However, for most non-member commits this is mostly informative, as the decision will be made by the project team later.
 
 
 ## Build Environment
@@ -114,5 +114,5 @@ Keep in mind that the ruleset is not yet perfect, so not every minor issue has t
 
 ## Still Open Questions?
 
-If anything is still left unanswered and you're unsure if you got it right, don't hesitate to contact a team member.
+If anything is still left unanswered, and you're unsure if you got it right, don't hesitate to contact a team member.
 In any case you might submit your request/issue anyway, we won't refuse good code only for formal reasons.

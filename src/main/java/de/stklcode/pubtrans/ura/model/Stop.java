@@ -143,7 +143,7 @@ public final class Stop implements Model {
     }
 
     /**
-     * @return The stop geoloaction latitude.
+     * @return The stop geolocation latitude.
      */
     public Double getLatitude() {
         return latitude;
