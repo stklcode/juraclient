@@ -40,6 +40,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @author Stefan Kalscheuer
  */
 public class UraClient implements Serializable {
+    private static final long serialVersionUID = -1183740075816686611L;
+
     private static final String DEFAULT_INSTANT_URL = "/interfaces/ura/instant_V1";
     private static final String DEFAULT_STREAM_URL = "/interfaces/ura/stream_V1";
 

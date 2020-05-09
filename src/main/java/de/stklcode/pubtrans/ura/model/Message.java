@@ -10,6 +10,8 @@ import java.util.List;
  * @since 1.3
  */
 public class Message implements Model {
+    private static final long serialVersionUID = 5233610751062774273L;
+
     private static final int MSG_UUID = 7;
     private static final int MSG_TYPE = 8;
     private static final int MSG_PRIORITY = 9;

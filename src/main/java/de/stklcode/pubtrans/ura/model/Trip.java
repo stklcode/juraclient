@@ -25,6 +25,8 @@ import java.util.List;
  * @author Stefan Kalscheuer
  */
 public final class Trip implements Model {
+    private static final long serialVersionUID = 7477381188869237381L;
+
     private static final int VISIT_ID = 7;
     private static final int LINE_ID = 8;
     private static final int LINE_NAME = 9;

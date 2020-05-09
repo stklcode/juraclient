@@ -25,6 +25,8 @@ import java.util.List;
  * @author Stefan Kalscheuer
  */
 public final class Stop implements Model {
+    private static final long serialVersionUID = 202040044477267787L;
+
     private static final int F_STOP_NAME = 1;
     private static final int F_STOP_ID = 2;
     private static final int F_INDICATOR = 3;
