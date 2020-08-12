@@ -260,7 +260,7 @@ public class UraClient implements Serializable {
                 line = br.readLine();
             }
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to read from API", e);
+            throw new IllegalStateException("Failed to read trips from API", e);
         }
         return trips;
     }
@@ -330,7 +330,7 @@ public class UraClient implements Serializable {
                 }
             }
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to read from API", e);
+            throw new IllegalStateException("Failed to read stops from API", e);
         }
         return stops;
     }
@@ -385,7 +385,7 @@ public class UraClient implements Serializable {
                 line = br.readLine();
             }
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to read from API", e);
+            throw new IllegalStateException("Failed to read messages from API", e);
         }
         return messages;
     }

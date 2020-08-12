@@ -134,7 +134,7 @@ public class AsyncUraTripReader implements AutoCloseable {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
-            throw new IllegalStateException("Failed to read from API", e);
+            throw new IllegalStateException("Failed to close API connection", e);
         } catch (TimeoutException e) {
             // Task failed to finish within 1 second.
             future.cancel(true);
