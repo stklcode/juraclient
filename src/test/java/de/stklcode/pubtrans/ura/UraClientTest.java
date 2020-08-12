@@ -19,6 +19,7 @@ package de.stklcode.pubtrans.ura;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import de.stklcode.pubtrans.ura.exception.UraClientException;
 import de.stklcode.pubtrans.ura.model.Message;
 import de.stklcode.pubtrans.ura.model.Stop;
 import de.stklcode.pubtrans.ura.model.Trip;
@@ -63,7 +64,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getStopsTest() {
+    public void getStopsTest() throws UraClientException {
         // Mock the HTTP call.
         mockHttpToFile(2, "instant_V2_stops.txt");
 
@@ -89,7 +90,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getStopsForLineTest() {
+    public void getStopsForLineTest() throws UraClientException {
         // Mock the HTTP call.
         mockHttpToFile(2, "instant_V2_stops_line.txt");
 
@@ -107,7 +108,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getStopsForPositionTest() {
+    public void getStopsForPositionTest() throws UraClientException {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_stops_circle.txt");
 
@@ -133,7 +134,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getTripsForDestinationNamesTest() {
+    public void getTripsForDestinationNamesTest() throws UraClientException {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_trips_destination.txt");
 
@@ -156,7 +157,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getTripsTowardsTest() {
+    public void getTripsTowardsTest() throws UraClientException {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_trips_towards.txt");
 
@@ -171,7 +172,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getTripsTest() {
+    public void getTripsTest() throws UraClientException {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_trips_all.txt");
 
@@ -224,7 +225,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getTripsForStopTest() {
+    public void getTripsForStopTest() throws UraClientException {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_trips_stop.txt");
 
@@ -254,7 +255,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getTripsForLine() {
+    public void getTripsForLine() throws UraClientException {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_trips_line.txt");
 
@@ -303,7 +304,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getTripsForStopAndLine() {
+    public void getTripsForStopAndLine() throws UraClientException {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_trips_stop_line.txt");
 
@@ -324,7 +325,7 @@ public class UraClientTest {
 
 
     @Test
-    public void getMessages() {
+    public void getMessages() throws UraClientException {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_messages.txt");
 
@@ -343,7 +344,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getMessagesForStop() {
+    public void getMessagesForStop() throws UraClientException {
         // Mock the HTTP call.
         mockHttpToFile(2, "instant_V2_messages_stop.txt");
 

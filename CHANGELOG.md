@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 ### Changes
 * Using native Java 11 HTTP client
 * Client configuration with separate `UraClientConfiguration` class and builder
+* Client throws custom checked exception `UraClientException` instead of runtime exceptions on errors (#10)
 
 
 ## 1.3.0 - 2019-12-04
