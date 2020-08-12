@@ -17,6 +17,7 @@
 package de.stklcode.pubtrans.ura.model;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -142,7 +143,7 @@ public final class Trip implements Model {
      * @param raw List of attributes from JSON line
      * @throws IOException Thrown on invalid line format.
      */
-    public Trip(final List raw) throws IOException {
+    public Trip(final List<Serializable> raw) throws IOException {
         this(raw, null);
     }
 
@@ -153,7 +154,7 @@ public final class Trip implements Model {
      * @param version API version
      * @throws IOException Thrown on invalid line format.
      */
-    public Trip(final List raw, final String version) throws IOException {
+    public Trip(final List<Serializable> raw, final String version) throws IOException {
         if (raw == null || raw.size() < NUM_OF_FIELDS) {
             throw new IOException("Invalid number of fields");
         }

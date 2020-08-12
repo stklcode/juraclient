@@ -33,7 +33,7 @@ interface Model extends Serializable {
      * @param actual Actual class.
      * @return The Exception.
      */
-    static IOException typeErrorString(int field, Class actual) {
+    static IOException typeErrorString(int field, Class<?> actual) {
         return typeError(field, actual, "String");
     }
 
@@ -45,7 +45,7 @@ interface Model extends Serializable {
      * @param expected Expected type.
      * @return The Exception.
      */
-    static IOException typeError(int field, Class actual, String expected) {
+    static IOException typeError(int field, Class<?> actual, String expected) {
         return new IOException(String.format("Field %d not of expected type %s, found %s",
                 field, expected, actual.getSimpleName()));
     }

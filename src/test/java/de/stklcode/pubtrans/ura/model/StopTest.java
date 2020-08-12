@@ -19,6 +19,7 @@ package de.stklcode.pubtrans.ura.model;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class StopTest {
     @Test
     public void listConstructorTest() {
         /* Create valid raw data list */
-        List<Object> raw = new ArrayList<>();
+        List<Serializable> raw = new ArrayList<>();
         raw.add(1);
         raw.add("stopName");
         raw.add("stopId");
@@ -80,7 +81,7 @@ public class StopTest {
         }
 
         /* Test exceptions on invalid data */
-        List<Object> invalid = new ArrayList<>(raw);
+        List<Serializable> invalid = new ArrayList<>(raw);
         invalid.remove(1);
         invalid.add(1, 5);
         try {

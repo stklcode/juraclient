@@ -19,10 +19,7 @@ package de.stklcode.pubtrans.ura.reader;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.stklcode.pubtrans.ura.model.Trip;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.net.http.HttpClient;
@@ -90,7 +87,7 @@ public class AsyncUraTripReader implements AutoCloseable {
                 String version = null;
                 String line = br.readLine();
                 while (line != null && !this.canceled) {
-                    List l = mapper.readValue(line, List.class);
+                    List<Serializable> l = mapper.readValue(line, mapper.getTypeFactory().constructCollectionType(List.class, Serializable.class));
                     // Check if result exists and has correct response type.
                     if (l != null && !l.isEmpty()) {
                         if (l.get(0).equals(RES_TYPE_URA_VERSION)) {

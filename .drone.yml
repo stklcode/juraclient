@@ -11,7 +11,7 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: java13
+name: java14
 
 steps:
   - name: test

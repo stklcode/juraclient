@@ -1,6 +1,7 @@
 package de.stklcode.pubtrans.ura.model;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -87,7 +88,7 @@ public class Message implements Model {
      * @param raw List of attributes from JSON line
      * @throws IOException Thrown on invalid line format.
      */
-    public Message(final List raw) throws IOException {
+    public Message(final List<Serializable> raw) throws IOException {
         this(raw, null);
     }
 
@@ -98,7 +99,7 @@ public class Message implements Model {
      * @param version API version
      * @throws IOException Thrown on invalid line format.
      */
-    public Message(final List raw, final String version) throws IOException {
+    public Message(final List<Serializable> raw, final String version) throws IOException {
         if (raw == null || raw.size() < NUM_OF_FIELDS) {
             throw new IOException("Invalid number of fields");
         }
