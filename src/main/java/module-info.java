@@ -16,6 +16,7 @@
 
 module de.stklcode.pubtrans.juraclient {
     exports de.stklcode.pubtrans.ura;
+    exports de.stklcode.pubtrans.ura.exception;
     exports de.stklcode.pubtrans.ura.model;
     exports de.stklcode.pubtrans.ura.reader;
 

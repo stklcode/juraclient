@@ -17,12 +17,15 @@
 package de.stklcode.pubtrans.ura;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.stklcode.pubtrans.ura.exception.UraClientConfigurationException;
+import de.stklcode.pubtrans.ura.exception.UraClientException;
 import de.stklcode.pubtrans.ura.model.Message;
 import de.stklcode.pubtrans.ura.model.Stop;
 import de.stklcode.pubtrans.ura.model.Trip;
 import de.stklcode.pubtrans.ura.reader.AsyncUraTripReader;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -207,8 +210,11 @@ public class UraClient implements Serializable {
      * If forStops() and/or forLines() has been called, those will be used as filter.
      *
      * @return List of trips.
+     * @throws UraClientException Error with API communication.
+     * @since 1.0
+     * @since 2.0 Throws {@link UraClientException}.
      */
-    public List<Trip> getTrips() {
+    public List<Trip> getTrips() throws UraClientException {
         return getTrips(new Query(), null);
     }
 
@@ -218,8 +224,11 @@ public class UraClient implements Serializable {
      *
      * @param limit Maximum number of results.
      * @return List of trips.
+     * @throws UraClientException Error with API communication.
+     * @since 1.0
+     * @since 2.0 Throws {@link UraClientException}.
      */
-    public List<Trip> getTrips(final Integer limit) {
+    public List<Trip> getTrips(final Integer limit) throws UraClientException {
         return getTrips(new Query(), limit);
     }
 
@@ -229,8 +238,12 @@ public class UraClient implements Serializable {
      *
      * @param query The query.
      * @return List of trips.
+     * @throws UraClientException Error with API communication.
+     * @throws UraClientException Error with API communication.
+     * @since 1.0
+     * @since 2.0 Throws {@link UraClientException}.
      */
-    public List<Trip> getTrips(final Query query) {
+    public List<Trip> getTrips(final Query query) throws UraClientException {
         return getTrips(query, null);
     }
 
@@ -240,8 +253,11 @@ public class UraClient implements Serializable {
      * @param query The query.
      * @param limit Maximum number of results.
      * @return List of trips.
+     * @throws UraClientException Error with API communication.
+     * @since 1.0
+     * @since 2.0 Throws {@link UraClientException}.
      */
-    public List<Trip> getTrips(final Query query, final Integer limit) {
+    public List<Trip> getTrips(final Query query, final Integer limit) throws UraClientException {
         List<Trip> trips = new ArrayList<>();
         try (InputStream is = requestInstant(REQUEST_TRIP, query);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
@@ -260,7 +276,7 @@ public class UraClient implements Serializable {
                 line = br.readLine();
             }
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to read trips from API", e);
+            throw new UraClientException("Failed to read trips from API", e);
         }
         return trips;
     }
@@ -271,11 +287,11 @@ public class UraClient implements Serializable {
      * @param query    The query.
      * @param consumer Consumer(s) for single trips.
      * @return Trip reader.
-     * @throws IOException Error reading response.
+     * @throws UraClientConfigurationException Error reading response.
      * @see #getTripsStream(Query, List)
-     * @since 1.2.0
+     * @since 1.2
      */
-    public AsyncUraTripReader getTripsStream(final Query query, final Consumer<Trip> consumer) throws IOException {
+    public AsyncUraTripReader getTripsStream(final Query query, final Consumer<Trip> consumer) throws UraClientConfigurationException {
         return getTripsStream(query, Collections.singletonList(consumer));
     }
 
@@ -285,28 +301,36 @@ public class UraClient implements Serializable {
      * @param query     The query.
      * @param consumers Consumer(s) for single trips.
      * @return Trip reader.
-     * @throws IOException Error retrieving stream response.
-     * @since 1.2.0
+     * @throws UraClientConfigurationException Error retrieving stream response.
+     * @since 1.2
+     * @since 2.0 Throws {@link UraClientConfigurationException}.
      */
-    public AsyncUraTripReader getTripsStream(final Query query, final List<Consumer<Trip>> consumers) throws IOException {
+    public AsyncUraTripReader getTripsStream(final Query query, final List<Consumer<Trip>> consumers) throws UraClientConfigurationException {
         // Create the reader.
-        AsyncUraTripReader reader = new AsyncUraTripReader(
-                new URL(requestURL(config.getBaseURL() + config.getStreeamPath(), REQUEST_TRIP, query)),
-                consumers
-        );
+        try {
+            AsyncUraTripReader reader = new AsyncUraTripReader(
+                    new URL(requestURL(config.getBaseURL() + config.getStreeamPath(), REQUEST_TRIP, query)),
+                    consumers
+            );
 
-        // Open the reader, i.e. start reading from API.
-        reader.open();
+            // Open the reader, i.e. start reading from API.
+            reader.open();
 
-        return reader;
+            return reader;
+        } catch (MalformedURLException e) {
+            throw new UraClientConfigurationException("Invalid API URL, check client configuration.", e);
+        }
     }
 
     /**
      * Get list of stops without filters.
      *
      * @return The list of stops.
+     * @throws UraClientException Error with API communication.
+     * @since 1.0
+     * @since 2.0 Throws {@link UraClientException}.
      */
-    public List<Stop> getStops() {
+    public List<Stop> getStops() throws UraClientException {
         return getStops(new Query());
     }
 
@@ -316,8 +340,11 @@ public class UraClient implements Serializable {
      *
      * @param query The query.
      * @return The list.
+     * @throws UraClientException Error with API communication.
+     * @since 1.0
+     * @since 2.0 Throws {@link UraClientException}.
      */
-    public List<Stop> getStops(final Query query) {
+    public List<Stop> getStops(final Query query) throws UraClientException {
         List<Stop> stops = new ArrayList<>();
         try (InputStream is = requestInstant(REQUEST_STOP, query);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
@@ -330,7 +357,7 @@ public class UraClient implements Serializable {
                 }
             }
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to read stops from API", e);
+            throw new UraClientException("Failed to read stops from API", e);
         }
         return stops;
     }
@@ -339,9 +366,11 @@ public class UraClient implements Serializable {
      * Get list of messages.
      *
      * @return List of messages.
+     * @throws UraClientException Error with API communication.
      * @since 1.3
+     * @since 2.0 Throw {@link UraClientException}.
      */
-    public List<Message> getMessages() {
+    public List<Message> getMessages() throws UraClientException {
         return getMessages(new Query(), null);
     }
 
@@ -352,9 +381,11 @@ public class UraClient implements Serializable {
      *
      * @param query The query.
      * @return List of trips.
+     * @throws UraClientException Error with API communication.
      * @since 1.3
+     * @since 2.0 Throw {@link UraClientException}.
      */
-    public List<Message> getMessages(final Query query) {
+    public List<Message> getMessages(final Query query) throws UraClientException {
         return getMessages(query, null);
     }
 
@@ -364,9 +395,11 @@ public class UraClient implements Serializable {
      * @param query The query.
      * @param limit Maximum number of results.
      * @return List of trips.
+     * @throws UraClientException Error with API communication.
      * @since 1.3
+     * @since 2.0 Throw {@link UraClientException}.
      */
-    public List<Message> getMessages(final Query query, final Integer limit) {
+    public List<Message> getMessages(final Query query, final Integer limit) throws UraClientException {
         List<Message> messages = new ArrayList<>();
         try (InputStream is = requestInstant(REQUEST_MESSAGE, query);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
@@ -385,7 +418,7 @@ public class UraClient implements Serializable {
                 line = br.readLine();
             }
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to read messages from API", e);
+            throw new UraClientException("Failed to read messages from API", e);
         }
         return messages;
     }
@@ -409,35 +442,35 @@ public class UraClient implements Serializable {
      * @param returnList  Fields to fetch.
      * @param query       The query.
      * @return The URL
-     * @throws IOException on errors
-     * @since 1.2.0
+     * @since 1.2
+     * @since 2.0 Does not throw exception anymore.
      */
-    private String requestURL(final String endpointURL, final String[] returnList, final Query query) throws IOException {
+    private String requestURL(final String endpointURL, final String[] returnList, final Query query) {
         String urlStr = endpointURL + "?ReturnList=" + String.join(",", returnList);
 
         if (query.stopIDs != null && query.stopIDs.length > 0) {
-            urlStr += "&" + PAR_STOP_ID + "=" + URLEncoder.encode(String.join(",", query.stopIDs), UTF_8.name());
+            urlStr += "&" + PAR_STOP_ID + "=" + URLEncoder.encode(String.join(",", query.stopIDs), UTF_8);
         }
         if (query.stopNames != null && query.stopNames.length > 0) {
-            urlStr += "&" + PAR_STOP_NAME + "=" + URLEncoder.encode(String.join(",", query.stopNames), UTF_8.name());
+            urlStr += "&" + PAR_STOP_NAME + "=" + URLEncoder.encode(String.join(",", query.stopNames), UTF_8);
         }
         if (query.lineIDs != null && query.lineIDs.length > 0) {
-            urlStr += "&" + PAR_LINE_ID + "=" + URLEncoder.encode(String.join(",", query.lineIDs), UTF_8.name());
+            urlStr += "&" + PAR_LINE_ID + "=" + URLEncoder.encode(String.join(",", query.lineIDs), UTF_8);
         }
         if (query.lineNames != null && query.lineNames.length > 0) {
-            urlStr += "&" + PAR_LINE_NAME + "=" + URLEncoder.encode(String.join(",", query.lineNames), UTF_8.name());
+            urlStr += "&" + PAR_LINE_NAME + "=" + URLEncoder.encode(String.join(",", query.lineNames), UTF_8);
         }
         if (query.direction != null) {
             urlStr += "&" + PAR_DIR_ID + "=" + query.direction;
         }
         if (query.destinationNames != null) {
-            urlStr += "&" + PAR_DEST_NAME + "=" + URLEncoder.encode(String.join(",", query.destinationNames), UTF_8.name());
+            urlStr += "&" + PAR_DEST_NAME + "=" + URLEncoder.encode(String.join(",", query.destinationNames), UTF_8);
         }
         if (query.towards != null) {
-            urlStr += "&" + PAR_TOWARDS + "=" + URLEncoder.encode(String.join(",", query.towards), UTF_8.name());
+            urlStr += "&" + PAR_TOWARDS + "=" + URLEncoder.encode(String.join(",", query.towards), UTF_8);
         }
         if (query.circle != null) {
-            urlStr += "&" + PAR_CIRCLE + "=" + URLEncoder.encode(query.circle, UTF_8.name());
+            urlStr += "&" + PAR_CIRCLE + "=" + URLEncoder.encode(query.circle, UTF_8);
         }
 
         return urlStr;
@@ -572,8 +605,11 @@ public class UraClient implements Serializable {
          * Get stops for set filters.
          *
          * @return List of matching trips.
+         * @throws UraClientException Error with API communication.
+         * @since 1.0
+         * @since 2.0 Throws {@link UraClientException}.
          */
-        public List<Stop> getStops() {
+        public List<Stop> getStops() throws UraClientException {
             return UraClient.this.getStops(this);
         }
 
@@ -581,8 +617,11 @@ public class UraClient implements Serializable {
          * Get trips for set filters.
          *
          * @return List of matching trips.
+         * @throws UraClientException Error with API communication.
+         * @since 1.0
+         * @since 2.0 Throws {@link UraClientException}.
          */
-        public List<Trip> getTrips() {
+        public List<Trip> getTrips() throws UraClientException {
             return UraClient.this.getTrips(this);
         }
 
@@ -591,11 +630,11 @@ public class UraClient implements Serializable {
          *
          * @param consumer Consumer for single trips.
          * @return Trip reader.
-         * @throws IOException Errors retrieving stream response.
+         * @throws UraClientConfigurationException Error reading response.
          * @see #getTripsStream(List)
-         * @since 1.2.0
+         * @since 1.2
          */
-        public AsyncUraTripReader getTripsStream(Consumer<Trip> consumer) throws IOException {
+        public AsyncUraTripReader getTripsStream(Consumer<Trip> consumer) throws UraClientConfigurationException {
             return UraClient.this.getTripsStream(this, consumer);
         }
 
@@ -604,10 +643,10 @@ public class UraClient implements Serializable {
          *
          * @param consumers Consumers for single trips.
          * @return Trip reader.
-         * @throws IOException Errors retrieving stream response.
-         * @since 1.2.0
+         * @throws UraClientConfigurationException Errors retrieving stream response.
+         * @since 1.2
          */
-        public AsyncUraTripReader getTripsStream(List<Consumer<Trip>> consumers) throws IOException {
+        public AsyncUraTripReader getTripsStream(List<Consumer<Trip>> consumers) throws UraClientConfigurationException {
             return UraClient.this.getTripsStream(this, consumers);
         }
 
@@ -615,9 +654,11 @@ public class UraClient implements Serializable {
          * Get trips for set filters.
          *
          * @return List of matching messages.
+         * @throws UraClientException Error with API communication.
          * @since 1.3
+         * @since 2.0 Throws {@link UraClientException}.
          */
-        public List<Message> getMessages() {
+        public List<Message> getMessages() throws UraClientException {
             return UraClient.this.getMessages(this);
         }
     }
