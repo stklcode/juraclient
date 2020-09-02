@@ -446,34 +446,24 @@ public class UraClient implements Serializable {
      * @since 2.0 Does not throw exception anymore.
      */
     private String requestURL(final String endpointURL, final String[] returnList, final Query query) {
-        String urlStr = endpointURL + "?ReturnList=" + String.join(",", returnList);
+        StringBuilder urlStr = new StringBuilder(endpointURL)
+                .append("?ReturnList=")
+                .append(String.join(",", returnList));
 
-        if (query.stopIDs != null && query.stopIDs.length > 0) {
-            urlStr += "&" + PAR_STOP_ID + "=" + URLEncoder.encode(String.join(",", query.stopIDs), UTF_8);
-        }
-        if (query.stopNames != null && query.stopNames.length > 0) {
-            urlStr += "&" + PAR_STOP_NAME + "=" + URLEncoder.encode(String.join(",", query.stopNames), UTF_8);
-        }
-        if (query.lineIDs != null && query.lineIDs.length > 0) {
-            urlStr += "&" + PAR_LINE_ID + "=" + URLEncoder.encode(String.join(",", query.lineIDs), UTF_8);
-        }
-        if (query.lineNames != null && query.lineNames.length > 0) {
-            urlStr += "&" + PAR_LINE_NAME + "=" + URLEncoder.encode(String.join(",", query.lineNames), UTF_8);
-        }
+        addParameterArray(urlStr, PAR_STOP_ID, query.stopIDs);
+        addParameterArray(urlStr, PAR_STOP_NAME, query.stopNames);
+        addParameterArray(urlStr, PAR_LINE_ID, query.lineIDs);
+        addParameterArray(urlStr, PAR_LINE_NAME, query.lineNames);
         if (query.direction != null) {
-            urlStr += "&" + PAR_DIR_ID + "=" + query.direction;
+            urlStr.append("&").append(PAR_DIR_ID).append("=").append(query.direction);
         }
-        if (query.destinationNames != null) {
-            urlStr += "&" + PAR_DEST_NAME + "=" + URLEncoder.encode(String.join(",", query.destinationNames), UTF_8);
-        }
-        if (query.towards != null) {
-            urlStr += "&" + PAR_TOWARDS + "=" + URLEncoder.encode(String.join(",", query.towards), UTF_8);
-        }
+        addParameterArray(urlStr, PAR_DEST_NAME, query.destinationNames);
+        addParameterArray(urlStr, PAR_TOWARDS, query.towards);
         if (query.circle != null) {
-            urlStr += "&" + PAR_CIRCLE + "=" + URLEncoder.encode(query.circle, UTF_8);
+            urlStr.append("&").append(PAR_CIRCLE).append("=").append(URLEncoder.encode(query.circle, UTF_8));
         }
 
-        return urlStr;
+        return urlStr.toString();
     }
 
     /**
@@ -492,6 +482,20 @@ public class UraClient implements Serializable {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new IOException("API request interrupted", e);
+        }
+    }
+
+    /**
+     * Add a URL parameter with list of values, if filled.
+     *
+     * @param urlBuilder StringBuilder holding the current URL.
+     * @param parameter  Parameter key.
+     * @param values     List of parameter values (might be {@code null} or empty)
+     */
+    private static void addParameterArray(StringBuilder urlBuilder, String parameter, String[] values) {
+        if (values != null && values.length > 0) {
+            urlBuilder.append("&").append(parameter)
+                    .append("=").append(URLEncoder.encode(String.join(",", values), UTF_8));
         }
     }
 
