@@ -1,5 +1,5 @@
 # jURAclient 
-[![Build status](https://travis-ci.org/stklcode/juraclient.svg?branch=master)](https://travis-ci.org/stklcode/juraclient)
+[![Build Status](https://travis-ci.com/stklcode/juraclient.svg?branch=master)](https://travis-ci.com/stklcode/juraclient)
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=de.stklcode.pubtrans%3Ajuraclient&metric=alert_status)](https://sonarcloud.io/dashboard?id=de.stklcode.pubtrans%3Ajuraclient) 
 [![Javadocs](https://www.javadoc.io/badge/de.stklcode.pubtrans/juraclient.svg)](https://www.javadoc.io/doc/de.stklcode.pubtrans/juraclient)
 [![Maven Central](https://img.shields.io/maven-central/v/de.stklcode.pubtrans/juraclient.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22de.stklcode.pubtrans%22%20AND%20a%3A%22juraclient%22)
