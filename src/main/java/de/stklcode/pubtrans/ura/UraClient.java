@@ -309,7 +309,7 @@ public class UraClient implements Serializable {
         // Create the reader.
         try {
             AsyncUraTripReader reader = new AsyncUraTripReader(
-                    new URL(requestURL(config.getBaseURL() + config.getStreeamPath(), REQUEST_TRIP, query)),
+                    URI.create(requestURL(config.getBaseURL() + config.getStreeamPath(), REQUEST_TRIP, query)),
                     consumers
             );
 
@@ -317,7 +317,7 @@ public class UraClient implements Serializable {
             reader.open();
 
             return reader;
-        } catch (MalformedURLException e) {
+        } catch (IllegalArgumentException e) {
             throw new UraClientConfigurationException("Invalid API URL, check client configuration.", e);
         }
     }
