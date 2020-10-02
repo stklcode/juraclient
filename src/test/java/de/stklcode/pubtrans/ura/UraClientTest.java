@@ -19,6 +19,7 @@ package de.stklcode.pubtrans.ura;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.http.Fault;
 import de.stklcode.pubtrans.ura.exception.UraClientException;
 import de.stklcode.pubtrans.ura.model.Message;
 import de.stklcode.pubtrans.ura.model.Stop;
@@ -38,6 +39,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for the URA Client.
@@ -222,6 +224,15 @@ public class UraClientTest {
             assertThat(e.getCause(), is(instanceOf(IOException.class)));
             assertThat(e.getCause().getMessage(), startsWith("Server returned HTTP response code: 502 for URL"));
         }
+
+        mockHttpToException();
+        UraClientException exception = assertThrows(
+                UraClientException.class,
+                () -> new UraClient(httpMock.baseUrl()).getTrips(),
+                "Expected reader to raise an exception"
+        );
+        assertEquals("Failed to read trips from API", exception.getMessage(), "Unexpected error message");
+        assertTrue(exception.getCause() instanceof IOException, "Unexpected error cause");
     }
 
     @Test
@@ -252,6 +263,15 @@ public class UraClientTest {
         assertThat(trips.get(1).getLineID(), is("5"));
         assertThat(trips.get(2).getVehicleID(), is("317"));
         assertThat(trips.get(3).getDirectionID(), is(1));
+
+        mockHttpToException();
+        UraClientException exception = assertThrows(
+                UraClientException.class,
+                () -> new UraClient(httpMock.baseUrl()).getStops(),
+                "Expected reader to raise an exception"
+        );
+        assertEquals("Failed to read stops from API", exception.getMessage(), "Unexpected error message");
+        assertTrue(exception.getCause() instanceof IOException, "Unexpected error cause");
     }
 
     @Test
@@ -341,6 +361,15 @@ public class UraClientTest {
         assertThat(messages.get(1).getPriority(), is(0));
         assertThat(messages.get(0).getText(), is("Sehr geehrte Fahrgäste, wegen Strassenbauarbeiten kann diese Haltestelle nicht von den Bussen der Linien 17, 44 und N2 angefahren werden."));
         assertThat(messages.get(1).getText(), is("Sehr geehrte Fahrgäste, diese Haltestelle wird vorübergehend von den Linien 47, 147 und N3 nicht angefahren."));
+
+        mockHttpToException();
+        UraClientException exception = assertThrows(
+                UraClientException.class,
+                () -> new UraClient(httpMock.baseUrl()).getMessages(),
+                "Expected reader to raise an exception"
+        );
+        assertEquals("Failed to read messages from API", exception.getMessage(), "Unexpected error message");
+        assertTrue(exception.getCause() instanceof IOException, "Unexpected error cause");
     }
 
     @Test
@@ -373,6 +402,14 @@ public class UraClientTest {
         WireMock.stubFor(
                 get(anyUrl()).willReturn(
                         aResponse().withStatus(code)
+                )
+        );
+    }
+
+    private static void mockHttpToException() {
+        WireMock.stubFor(
+                get(anyUrl()).willReturn(
+                        aResponse().withFault(Fault.MALFORMED_RESPONSE_CHUNK)
                 )
         );
     }
