@@ -31,6 +31,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Deque;
@@ -91,7 +92,7 @@ public class AsyncUraTripReaderTest {
         readLinesToMock(1, "/__files/stream_V1_stops_all.txt", 8);
 
         AsyncUraTripReader tr = new AsyncUraTripReader(
-                new URL(httpMock.baseUrl() + "/interfaces/ura/stream_V1"),
+                URI.create(httpMock.baseUrl() + "/interfaces/ura/stream_V1"),
                 Collections.singletonList(
                         trip -> {
                             trips.add(trip);
@@ -121,7 +122,7 @@ public class AsyncUraTripReaderTest {
         readLinesToMock(2, "/__files/stream_V2_stops_all.txt", 8);
 
         tr = new AsyncUraTripReader(
-                new URL(httpMock.baseUrl() + "/interfaces/ura/stream_V2"),
+                URI.create(httpMock.baseUrl() + "/interfaces/ura/stream_V2"),
                 Collections.singletonList(trips::add)
         );
 
@@ -166,7 +167,7 @@ public class AsyncUraTripReaderTest {
         readLinesToMock(1, "/__files/stream_V1_stops_all.txt", 8);
 
         AsyncUraTripReader tr = new AsyncUraTripReader(
-                new URL(httpMock.baseUrl() + "/interfaces/ura/stream_V1"),
+                URI.create(httpMock.baseUrl() + "/interfaces/ura/stream_V1"),
                 Collections.singletonList(
                         trip -> {
                             trips.add(trip);
@@ -191,7 +192,7 @@ public class AsyncUraTripReaderTest {
         tr.close();
 
         // Wait for another second.
-        TimeUnit.MILLISECONDS.sleep(100);
+        TimeUnit.MILLISECONDS.sleep(1);
         assertThat("Unexpected number of trips after all lines have been flushed", trips.size(), is(1));
 
     }
