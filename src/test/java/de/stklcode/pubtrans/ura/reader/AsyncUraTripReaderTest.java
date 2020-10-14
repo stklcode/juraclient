@@ -30,9 +30,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -42,6 +40,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
@@ -78,10 +78,9 @@ public class AsyncUraTripReaderTest {
      * as 1s is most likely more than enough time on any reasonable build system to parse some simple JSON lines.
      *
      * @throws InterruptedException Thread interrupted.
-     * @throws IOException          Error reading or writing mocked data.
      */
     @Test
-    public void readerTest() throws InterruptedException, IOException {
+    public void readerTest() throws InterruptedException {
         // Callback counter for some unhandy async mockery.
         final AtomicInteger counter = new AtomicInteger(0);
 
@@ -123,7 +122,7 @@ public class AsyncUraTripReaderTest {
 
         tr = new AsyncUraTripReader(
                 URI.create(httpMock.baseUrl() + "/interfaces/ura/stream_V2"),
-                Collections.singletonList(trips::add)
+                trips::add
         );
 
         // Open the reader.
@@ -147,16 +146,20 @@ public class AsyncUraTripReaderTest {
         assertThat("Unexpected number of v2 trips after all lines have been flushed", trips.size(), is(7));
         assertThat("Unexpected number of v2 trips in list 2 after all lines have been flushed", trips2.size(), is(5));
         assertThat("Same object should have been pushed to both lists", trips.containsAll(trips2));
+
+        // Opening the reader twice should raise an exception.
+        assertDoesNotThrow(tr::open, "Opening the reader after closing should not fail");
+        assertThrows(IllegalStateException.class, tr::open, "Opening the reader twice should raise an exception");
+        tr.close();
     }
 
     /**
      * Test behavior if the stream is closed.
      *
      * @throws InterruptedException Thread interrupted.
-     * @throws IOException          Error reading or writing mocked data.
      */
     @Test
-    public void streamClosedTest() throws InterruptedException, IOException {
+    public void streamClosedTest() throws InterruptedException {
         // Callback counter for some unhandy async mockery.
         final AtomicInteger counter = new AtomicInteger(0);
 
