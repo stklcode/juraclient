@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## unreleased
+### Fixed
+* Allow reopening an `AsyncUraTripReader` without raising an exception (#13)
+
+
 ## 1.3.0 - 2019-12-04
 ### Security
 * Updated dependencies
