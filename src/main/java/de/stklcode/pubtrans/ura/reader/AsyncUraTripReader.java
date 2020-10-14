@@ -134,6 +134,8 @@ public class AsyncUraTripReader implements AutoCloseable {
         } catch (TimeoutException e) {
             // Task failed to finish within 1 second.
             future.cancel(true);
+        } finally {
+            future = null;
         }
     }
 
