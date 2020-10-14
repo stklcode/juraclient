@@ -10,6 +10,9 @@ All notable changes to this project will be documented in this file.
 * Client configuration with separate `UraClientConfiguration` class and builder
 * Client throws custom checked exception `UraClientException` instead of runtime exceptions on errors (#10)
 
+### Fixed
+* Allow reopening an `AsyncUraTripReader` without raising an exception (#12)
+
 
 ## 1.3.0 - 2019-12-04
 ### Security
