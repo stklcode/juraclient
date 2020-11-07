@@ -29,6 +29,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.net.http.HttpConnectTimeoutException;
+import java.net.http.HttpTimeoutException;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
@@ -387,6 +390,57 @@ public class UraClientTest {
         assertThat(messages.get(0).getType(), is(0));
         assertThat(messages.get(0).getPriority(), is(3));
         assertThat(messages.get(0).getText(), is("Sehr geehrte Fahrgäste, wegen Strassenbauarbeiten kann diese Haltestelle nicht von den Bussen der Linien 17, 44 und N2 angefahren werden."));
+    }
+
+    @Test
+    public void timeoutTest() throws IOException {
+        // Try to read trips from TEST-NET-1 IP that is not routed (hopefully) and will not connect within 100ms.
+        UraClientException exception = assertThrows(
+                UraClientException.class,
+                () -> new UraClient(
+                        UraClientConfiguration.forBaseURL("http://192.0.2.1")
+                                .withConnectTimeout(Duration.ofMillis(100))
+                                .build()
+                ).forDestinationNames("Piccadilly Circus").getTrips(),
+                "Connection to TEST-NET-1 address should fail"
+        );
+        assertTrue(exception.getCause() instanceof HttpConnectTimeoutException, "Exception cause is not HttpConnectionTimeoutException");
+
+        // Mock the HTTP call with delay of 200ms, but immediate connection.
+        WireMock.stubFor(
+                get(urlPathEqualTo("/interfaces/ura/instant_V1")).willReturn(
+                        aResponse().withFixedDelay(200).withBodyFile("instant_V1_trips_destination.txt")
+                )
+        );
+        assertDoesNotThrow(
+                () -> new UraClient(
+                        UraClientConfiguration.forBaseURL(httpMock.baseUrl())
+                                .withConnectTimeout(Duration.ofMillis(100))
+                                .build()
+                ).forDestinationNames("Piccadilly Circus").getTrips(),
+                "Connection timeout should not affect response time."
+        );
+
+        // Now specify response timeout.
+        exception = assertThrows(
+                UraClientException.class,
+                () -> new UraClient(
+                        UraClientConfiguration.forBaseURL(httpMock.baseUrl())
+                                .withTimeout(Duration.ofMillis(100))
+                                .build()
+                ).forDestinationNames("Piccadilly Circus").getTrips(),
+                "Response timeout did not raise an exception"
+        );
+        assertTrue(exception.getCause() instanceof HttpTimeoutException, "Exception cause is not HttpTimeoutException");
+
+        assertDoesNotThrow(
+                () -> new UraClient(
+                        UraClientConfiguration.forBaseURL(httpMock.baseUrl())
+                                .withTimeout(Duration.ofMillis(300))
+                                .build()
+                ).forDestinationNames("Piccadilly Circus").getTrips(),
+                "Response timeout of 300ms with 100ms delay must not fail"
+        );
     }
 
 

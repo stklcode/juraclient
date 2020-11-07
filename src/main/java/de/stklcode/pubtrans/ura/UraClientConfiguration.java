@@ -1,6 +1,7 @@
 package de.stklcode.pubtrans.ura;
 
 import java.io.Serializable;
+import java.time.Duration;
 
 /**
  * Configurstion Object for the {@link UraClient}.
@@ -17,6 +18,8 @@ public class UraClientConfiguration implements Serializable {
     private final String baseURL;
     private final String instantPath;
     private final String streamPath;
+    private final Duration connectTimeout;
+    private final Duration timeout;
 
     /**
      * Get new configuration {@link Builder} for given base URL.
@@ -38,6 +41,8 @@ public class UraClientConfiguration implements Serializable {
         this.baseURL = builder.baseURL;
         this.instantPath = builder.instantPath;
         this.streamPath = builder.streamPath;
+        this.connectTimeout = builder.connectTimeout;
+        this.timeout = builder.timeout;
     }
 
     /**
@@ -68,12 +73,32 @@ public class UraClientConfiguration implements Serializable {
     }
 
     /**
+     * Get the connection timeout, if any.
+     *
+     * @return Timeout duration or {@code null} if none specified.
+     */
+    public Duration getConnectTimeout() {
+        return this.connectTimeout;
+    }
+
+    /**
+     * Get the response timeout, if any.
+     *
+     * @return Timeout duration or {@code null} if none specified.
+     */
+    public Duration getTimeout() {
+        return this.timeout;
+    }
+
+    /**
      * Builder for {@link UraClientConfiguration} objects.
      */
     public static class Builder {
         private final String baseURL;
         private String instantPath;
         private String streamPath;
+        private Duration connectTimeout;
+        private Duration timeout;
 
         /**
          * Initialize the builder with mandatory base URL.
@@ -85,6 +110,8 @@ public class UraClientConfiguration implements Serializable {
             this.baseURL = baseURL;
             this.instantPath = DEFAULT_INSTANT_PATH;
             this.streamPath = DEFAULT_STREAM_PATH;
+            this.connectTimeout = null;
+            this.timeout = null;
         }
 
         /**
@@ -106,6 +133,28 @@ public class UraClientConfiguration implements Serializable {
          */
         public Builder withStreamPath(String streamPath) {
             this.streamPath = streamPath;
+            return this;
+        }
+
+        /**
+         * Specify a custom connection timeout duration.
+         *
+         * @param connectTimeout Timeout duration.
+         * @return The builder.
+         */
+        public Builder withConnectTimeout(Duration connectTimeout) {
+            this.connectTimeout = connectTimeout;
+            return this;
+        }
+
+        /**
+         * Specify a custom timeout duration.
+         *
+         * @param timeout Timeout duration.
+         * @return The builder.
+         */
+        public Builder withTimeout(Duration timeout) {
+            this.timeout = timeout;
             return this;
         }
 

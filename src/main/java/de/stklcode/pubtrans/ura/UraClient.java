@@ -475,10 +475,17 @@ public class UraClient implements Serializable {
      */
     private InputStream request(String url) throws IOException {
         try {
-            return HttpClient.newHttpClient().send(
-                    HttpRequest.newBuilder(URI.create(url)).GET().build(),
-                    HttpResponse.BodyHandlers.ofInputStream()
-            ).body();
+            var clientBuilder = HttpClient.newBuilder();
+            if (config.getConnectTimeout() != null) {
+                clientBuilder.connectTimeout(config.getConnectTimeout());
+            }
+
+            var reqBuilder = HttpRequest.newBuilder(URI.create(url)).GET();
+            if (config.getTimeout() != null) {
+                reqBuilder.timeout(config.getTimeout());
+            }
+
+            return clientBuilder.build().send(reqBuilder.build(), HttpResponse.BodyHandlers.ofInputStream()).body();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new IOException("API request interrupted", e);
