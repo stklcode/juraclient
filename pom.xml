@@ -5,7 +5,7 @@
 
     <groupId>de.stklcode.pubtrans</groupId>
     <artifactId>juraclient</artifactId>
-    <version>1.3.1-SNAPSHOT</version>
+    <version>1.3.1</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
