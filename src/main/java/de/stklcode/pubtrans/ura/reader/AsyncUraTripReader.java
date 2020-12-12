@@ -17,6 +17,7 @@
 package de.stklcode.pubtrans.ura.reader;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.stklcode.pubtrans.ura.UraClientConfiguration;
 import de.stklcode.pubtrans.ura.model.Trip;
 
 import java.io.IOException;
@@ -44,6 +45,7 @@ public class AsyncUraTripReader implements AutoCloseable {
 
     private final List<Consumer<Trip>> consumers;
     private final URI uri;
+    private final UraClientConfiguration config;
     private JsonLineSubscriber subscriber;
     private CompletableFuture<Void> future;
 
@@ -55,8 +57,7 @@ public class AsyncUraTripReader implements AutoCloseable {
      * @since 2.0 Parameter of Type {@link URI} instead of {@link java.net.URL}.
      */
     public AsyncUraTripReader(URI uri, Consumer<Trip> consumer) {
-        this.uri = uri;
-        this.consumers = new ArrayList<>();
+        this(uri, null, new ArrayList<>(0));
         this.consumers.add(consumer);
     }
 
@@ -68,7 +69,20 @@ public class AsyncUraTripReader implements AutoCloseable {
      * @since 2.0 Parameter of Type {@link URI} instead of {@link java.net.URL}.
      */
     public AsyncUraTripReader(URI uri, List<Consumer<Trip>> consumers) {
+        this(uri, null, consumers);
+    }
+
+    /**
+     * Initialize trip reader.
+     *
+     * @param uri       URL to read trips from.
+     * @param config    Client configuration for additional parameters.
+     * @param consumers Initial list of consumers.
+     * @since 2.0 Configuration added.
+     */
+    public AsyncUraTripReader(URI uri, UraClientConfiguration config, List<Consumer<Trip>> consumers) {
         this.uri = uri;
+        this.config = config;
         this.consumers = new ArrayList<>(consumers);
     }
 
@@ -82,8 +96,19 @@ public class AsyncUraTripReader implements AutoCloseable {
         }
 
         this.subscriber = new JsonLineSubscriber();
-        HttpClient.newHttpClient().sendAsync(
-                HttpRequest.newBuilder(uri).GET().build(),
+
+        HttpClient.Builder clientBuilder = HttpClient.newBuilder();
+        if (config != null && config.getConnectTimeout() != null) {
+            clientBuilder.connectTimeout(config.getConnectTimeout());
+        }
+
+        HttpRequest.Builder reqBuilder = HttpRequest.newBuilder(uri).GET();
+        if (config != null && config.getTimeout() != null) {
+            reqBuilder.timeout(config.getTimeout());
+        }
+
+        clientBuilder.build().sendAsync(
+                reqBuilder.build(),
                 HttpResponse.BodyHandlers.fromLineSubscriber(subscriber)
         ).exceptionally(throwable -> {
             subscriber.onError(throwable);

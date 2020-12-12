@@ -393,7 +393,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void timeoutTest() throws IOException {
+    public void timeoutTest() {
         // Try to read trips from TEST-NET-1 IP that is not routed (hopefully) and will not connect within 100ms.
         UraClientException exception = assertThrows(
                 UraClientException.class,
@@ -442,7 +442,6 @@ public class UraClientTest {
                 "Response timeout of 300ms with 100ms delay must not fail"
         );
     }
-
 
     private static void mockHttpToFile(int version, String resourceFile) {
         WireMock.stubFor(
