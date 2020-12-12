@@ -4,7 +4,7 @@ name: java8
 
 steps:
   - name: test
-    image: maven:3-jdk-8-alpine
+    image: maven:3-openjdk-8
     commands:
       - mvn clean test
 
@@ -15,17 +15,17 @@ name: java11
 
 steps:
   - name: test
-    image: maven:3-jdk-11
+    image: maven:3-openjdk-11
     commands:
       - mvn clean test
 
 ---
 kind: pipeline
 type: docker
-name: java13
+name: java15
 
 steps:
   - name: test
-    image: maven:3-jdk-14
+    image: maven:3-openjdk-15
     commands:
       - mvn clean test

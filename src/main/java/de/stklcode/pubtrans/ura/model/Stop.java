@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Stefan Kalscheuer
+ * Copyright 2016-2020 Stefan Kalscheuer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import java.util.List;
  * @author Stefan Kalscheuer
  */
 public final class Stop implements Model {
+    private static final long serialVersionUID = 202040044477267787L;
+
     private static final int F_STOP_NAME = 1;
     private static final int F_STOP_ID = 2;
     private static final int F_INDICATOR = 3;
@@ -143,7 +145,7 @@ public final class Stop implements Model {
     }
 
     /**
-     * @return The stop geoloaction latitude.
+     * @return The stop geolocation latitude.
      */
     public Double getLatitude() {
         return latitude;
