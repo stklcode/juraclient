@@ -25,12 +25,14 @@ import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
 import com.github.tomakehurst.wiremock.http.ChunkedDribbleDelay;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.Response;
+import de.stklcode.pubtrans.ura.UraClientConfiguration;
 import de.stklcode.pubtrans.ura.model.Trip;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -197,7 +199,78 @@ public class AsyncUraTripReaderTest {
         // Wait for another second.
         TimeUnit.MILLISECONDS.sleep(1);
         assertThat("Unexpected number of trips after all lines have been flushed", trips.size(), is(1));
+    }
 
+    @Test
+    public void timeoutTest() throws InterruptedException {
+        // Callback counter for some unhandy async mockery.
+        final AtomicInteger counter = new AtomicInteger(0);
+
+        // The list which will be populated by the callback.
+        Deque<Trip> trips = new ConcurrentLinkedDeque<>();
+
+        // Start with V1 data and read file to mock list.
+        readLinesToMock(1, "/__files/stream_V1_stops_all.txt", 8);
+
+        AsyncUraTripReader tr = new AsyncUraTripReader(
+                URI.create(httpMock.baseUrl() + "/interfaces/ura/stream_V1"),
+                UraClientConfiguration.forBaseURL(httpMock.baseUrl())
+                        .withConnectTimeout(Duration.ofMillis(100))
+                        .build(),
+                Collections.singletonList(
+                        trip -> {
+                            trips.add(trip);
+                            counter.incrementAndGet();
+                        }
+                )
+        );
+
+        // Open the reader.
+        tr.open();
+        // Read for 1 second.
+        TimeUnit.SECONDS.sleep(1);
+        assumeTrue(trips.isEmpty(), "Trips should empty after 1s without reading");
+
+        // Wait another 1s for the callback to be triggered.
+        TimeUnit.SECONDS.sleep(1);
+
+        assertThat("Unexpected number of trips after first entry", trips.size(), is(2));
+
+        // Flush all remaining lines.
+        TimeUnit.SECONDS.sleep(3);
+
+        assertThat("Unexpected number of trips after all lines have been flushed", trips.size(), is(7));
+
+        // Clear trip list and repeat with V2 data.
+        trips.clear();
+        readLinesToMock(2, "/__files/stream_V2_stops_all.txt", 8);
+
+        tr = new AsyncUraTripReader(
+                URI.create(httpMock.baseUrl() + "/interfaces/ura/stream_V2"),
+                Collections.singletonList(trips::add)
+        );
+
+        // Open the reader.
+        tr.open();
+        // Read for 1 second.
+        TimeUnit.SECONDS.sleep(1);
+        assumeTrue(trips.isEmpty(), "Trips should empty after 1s without reading");
+
+        TimeUnit.SECONDS.sleep(1);
+        assertThat("Unexpected number of v2 trips after first entry", trips.size(), is(2));
+
+        // Add a second consumer that pushes to another list.
+        Deque<Trip> trips2 = new ConcurrentLinkedDeque<>();
+        tr.addConsumer(trips2::add);
+
+        // Flush all remaining lines.
+        TimeUnit.SECONDS.sleep(3);
+
+        tr.close();
+
+        assertThat("Unexpected number of v2 trips after all lines have been flushed", trips.size(), is(7));
+        assertThat("Unexpected number of v2 trips in list 2 after all lines have been flushed", trips2.size(), is(5));
+        assertThat("Same object should have been pushed to both lists", trips.containsAll(trips2));
     }
 
     /**

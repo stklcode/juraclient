@@ -25,9 +25,7 @@ import de.stklcode.pubtrans.ura.model.Trip;
 import de.stklcode.pubtrans.ura.reader.AsyncUraTripReader;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -310,6 +308,7 @@ public class UraClient implements Serializable {
         try {
             AsyncUraTripReader reader = new AsyncUraTripReader(
                     URI.create(requestURL(config.getBaseURL() + config.getStreeamPath(), REQUEST_TRIP, query)),
+                    config,
                     consumers
             );
 
