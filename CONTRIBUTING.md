@@ -64,9 +64,10 @@ If you feel like you have to _briefly_ explain your changes, do it (for long exp
 
 **Example commit:**
 ```text
-Fix nasty bug from #1337
+Fix nasty bug (#1337)
 
-This example commit fixes the issue that some people write non-speaking commit messages like 'done magic'.
+This example commit fixes the issue that some people write non-speaking
+commit messages like 'done magic'.
 A short description is helpful sometimes.
 ```
 
@@ -106,7 +107,7 @@ Files ending with `Test.java` will be automatically included into the test suite
 
 ## Continuous Integration
 
-Automated tests are run using [Travis CI](https://travis-ci.org/stklcode/juraclient) for every commit including pull requests.
+Automated tests are run using [Travis CI](https://travis-ci.com/stklcode/juraclient) for every commit including pull requests.
 
 There is also a code quality analysis pushing results to [SonarCloud](https://sonarcloud.io/dashboard?id=de.stklcode.pubtrans%3Ajuraclient).
 Keep in mind that the ruleset is not yet perfect, so not every minor issue has to be fixed immediately.

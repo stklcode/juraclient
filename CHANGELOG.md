@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## unreleased
+## 2.0.0 - 2021-01-30
 ### Breaking
 * Java 11 or later required
 
@@ -10,8 +10,21 @@ All notable changes to this project will be documented in this file.
 * Client configuration with separate `UraClientConfiguration` class and builder
 * Client throws custom checked exception `UraClientException` instead of runtime exceptions on errors (#10)
 
+### Features
+* Configuration builder for client initialization (#9)
+* Configurable connect and read timeouts (#14)
+
 ### Fixed
 * Allow reopening an `AsyncUraTripReader` without raising an exception (#12)
+
+----
+
+## 1.3.1 - 2020-12-12
+### Fixed
+* Allow reopening an `AsyncUraTripReader` without raising an exception (#13)
+
+### Improvements
+* Dependency updates
 
 
 ## 1.3.0 - 2019-12-04

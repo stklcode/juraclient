@@ -10,6 +10,14 @@ Java client for URA based public transport APIs.
 This client allows to simply connect any Java application to the public transport API to implement a monitor for the 
 local bus station or any other custom queries. API versions 1.x and 2.x are supported.
 
+## Supported versions
+Version 2.x requires Java 11 or later.
+It also contains some new features and allows configuration using a dedicated configuration object.
+
+Version 1.x requires Java 8 or later.
+This version currently receives security and bugfix updates.
+However, new features might not be backported.
+
 ## Usage Examples
 
 ### Initialization
@@ -21,6 +29,16 @@ UraClient ura = new UraClient("http://countdown.api.tfl.gov.uk");
 UraClient ura = new UraClient("http://ivu.aseag.de", 
                               "interfaces/ura/instant_V2", 
                               "interfaces/ura/stream_V2");
+
+// Initialization with configuration builder (Client v2.x)
+UraClient ura = new UraClient(
+    UraClientConfiguration.forBaseURL("http://ura.example.com")
+                          .withInstantPath("interfaces/ura/instant_V2")
+                          .withStreamPath("interfaces/ura/stream_V2")
+                          .withConnectTimeout(Duration.ofSeconds(2))
+                          .withTimeout(Duration.ofSeconds(10))
+                          .build()
+);
 ```
 
 ### List Stops
@@ -63,7 +81,7 @@ List<Message> msgs = ura.forStop("100000")
 <dependency>
     <groupId>de.stklcode.pubtrans</groupId>
     <artifactId>juraclient</artifactId>
-    <version>1.3.0</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
