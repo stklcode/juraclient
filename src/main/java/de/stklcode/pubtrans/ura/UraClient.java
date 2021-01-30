@@ -79,7 +79,14 @@ public class UraClient implements Serializable {
     private static final String[] REQUEST_MESSAGE = {PAR_STOP_NAME, PAR_STOP_ID, PAR_STOP_INDICATOR, PAR_STOP_STATE, PAR_GEOLOCATION,
             PAR_MSG_UUID, PAR_MSG_TYPE, PAR_MSG_PRIORITY, PAR_MSG_TEXT};
 
+    /**
+     * The client configuration.
+     */
     private final UraClientConfiguration config;
+
+    /**
+     * The JSON mapper.
+     */
     private final ObjectMapper mapper;
 
     /**

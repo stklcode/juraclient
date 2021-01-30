@@ -15,10 +15,29 @@ public class UraClientConfiguration implements Serializable {
     private static final String DEFAULT_INSTANT_PATH = "/interfaces/ura/instant_V1";
     private static final String DEFAULT_STREAM_PATH = "/interfaces/ura/stream_V1";
 
+    /**
+     * API base URL.
+     */
     private final String baseURL;
+
+    /**
+     * Path to instant API endpoint.
+     */
     private final String instantPath;
+
+    /**
+     * Path to stream API endpoint.
+     */
     private final String streamPath;
+
+    /**
+     * Optional connection timeout.
+     */
     private final Duration connectTimeout;
+
+    /**
+     * Optional read timeout.
+     */
     private final Duration timeout;
 
     /**

@@ -36,11 +36,34 @@ public final class Stop implements Model {
     private static final int F_LONGITUDE = 6;
     private static final int F_NUM_OF_FIELDS = 7;
 
+    /**
+     * Stop identifier.
+     */
     private final String id;
+
+    /**
+     * The name of the bus stop.
+     */
     private final String name;
+
+    /**
+     * The stop indicator.
+     */
     private final String indicator;
+
+    /**
+     * The stop state
+     */
     private final Integer state;
+
+    /**
+     * The stop geolocation latitude.
+     */
     private final Double latitude;
+
+    /**
+     * The stop geolocation longitude.
+     */
     private final Double longitude;
 
     /**
@@ -118,6 +141,8 @@ public final class Stop implements Model {
     }
 
     /**
+     * Stop identifier.
+     *
      * @return The stop ID.
      */
     public String getId() {
@@ -125,6 +150,8 @@ public final class Stop implements Model {
     }
 
     /**
+     * The name of the bus stop.
+     *
      * @return The stop name.
      */
     public String getName() {
@@ -132,6 +159,9 @@ public final class Stop implements Model {
     }
 
     /**
+     * The letter(s) that are displayed on top of the bus stop flag (e.g. SA).
+     * These are used to help passengers easily identify a bus stop from others in the locality.
+     *
      * @return The stop indicator.
      */
     public String getIndicator() {
@@ -139,13 +169,26 @@ public final class Stop implements Model {
     }
 
     /**
-     * @return The stop indicator.
+     * The different stop states and their definitions are provided below:
+     * <ul>
+     * <li>0: “Open”: Bus stop is being served as usual</li>
+     * <li>1: “Temporarily Closed” : Vehicles are not serving the stop but may be serving a nearby bus stop,
+     *                               predictions may be available</li>
+     * <li>2: “Closed” : Vehicles are not serving the stop.
+     *                   Stop should display the closed message and predictions should not be shown.</li>
+     * <li>3: “Suspended” : Vehicles are not serving the stop.
+     *                      Stop should display the closed message and predictions should not be shown.</li>
+     * </ul>
+     *
+     * @return The stop state.
      */
     public Integer getState() {
         return state;
     }
 
     /**
+     * The latitude of the stop. This is expressed using the WGS84 coordinate system.
+     *
      * @return The stop geolocation latitude.
      */
     public Double getLatitude() {
@@ -153,6 +196,8 @@ public final class Stop implements Model {
     }
 
     /**
+     * The longitude of the stop. This isexpressed using the WGS84 coordinate system.
+     *
      * @return The stop geolocation longitude.
      */
     public Double getLongitude() {

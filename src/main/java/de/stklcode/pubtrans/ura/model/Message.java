@@ -19,10 +19,29 @@ public class Message implements Model {
     private static final int MSG_TEXT = 10;
     private static final int NUM_OF_FIELDS = 11;
 
+    /**
+     * Corresponding stop.
+     */
     private final Stop stop;
+
+    /**
+     * Message UUID.
+     */
     private final String uuid;
+
+    /**
+     * Message type.
+     */
     private final Integer type;
+
+    /**
+     * Message priority.
+     */
     private final Integer priority;
+
+    /**
+     * Message text.
+     */
     private final String text;
 
     /**
@@ -132,6 +151,8 @@ public class Message implements Model {
     }
 
     /**
+     * The stop, the message is targeted.
+     *
      * @return The affected stop.
      */
     public Stop getStop() {
@@ -139,6 +160,8 @@ public class Message implements Model {
     }
 
     /**
+     * This is the unique identifier of the flexible message.
+     *
      * @return Message's unique identifier.
      */
     public String getUuid() {
@@ -146,6 +169,15 @@ public class Message implements Model {
     }
 
     /**
+     * Messages are assigned a type.
+     * This is predominantly in order to define how they should be displayed on on-street signs, however can be used to
+     * alter display on other devices.
+     * <ul>
+     * <li>0: “Normal”</li>
+     * <li>1: “Special”</li>
+     * <li>2: “Full Matrix” – Stop is temporarily out of service and predictions should not be presented</li>
+     * </ul>
+     *
      * @return Message type.
      */
     public Integer getType() {
@@ -153,13 +185,19 @@ public class Message implements Model {
     }
 
     /**
-     * @return Message priority. Lower value equals higher priority.
+     * Messages are assigned a priority in order for them to be ranked.
+     * Since it is possible for a stop to be assigned multiple messages it is important to ensure priority is given.
+     * Priorities are between 1 and 10 (where 1 is the highest priority). By default the message priority is set to 3.
+     *
+     * @return Message priority.
      */
     public Integer getPriority() {
         return priority;
     }
 
     /**
+     * The text of the message. This should be displayed to the public.
+     *
      * @return Message text.
      */
     public String getText() {

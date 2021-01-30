@@ -39,15 +39,54 @@ public final class Trip implements Model {
     private static final int ESTIMATED_TIME = 15;
     private static final int NUM_OF_FIELDS = 16;
 
+    /**
+     * The starting stop.
+     */
     private final Stop stop;
+
+    /**
+     * The identifier of the specific trip that the prediction is for.
+     */
     private final String id;
+
+    /**
+     * Visit identifier.
+     */
     private final Integer visitID;
+
+    /**
+     * The line ID.
+     */
     private final String lineID;
+
+    /**
+     * The line name
+     */
     private final String lineName;
+
+    /**
+     * The direction ID.
+     */
     private final Integer directionID;
+
+    /**
+     * The destination name.
+     */
     private final String destinationName;
+
+    /**
+     * The destination text.
+     */
     private final String destinationText;
+
+    /**
+     * The estimated departure time.
+     */
     private final Long estimatedTime;
+
+    /**
+     * The vehicle ID.
+     */
     private final String vehicleID;
 
     /**
@@ -229,6 +268,8 @@ public final class Trip implements Model {
     }
 
     /**
+     * The starting stop.
+     *
      * @return The (starting) stop.
      */
     public Stop getStop() {
@@ -243,6 +284,8 @@ public final class Trip implements Model {
     }
 
     /**
+     * Visit identifier.
+     *
      * @return The visit ID.
      */
     public Integer getVisitID() {
@@ -250,6 +293,9 @@ public final class Trip implements Model {
     }
 
     /**
+     * The identifier of a route. This is an internal identifier and is not equal to the route number displayed on
+     * the front of the bus. It should not be displayed to the public.
+     *
      * @return The line ID.
      */
     public String getLineID() {
@@ -257,6 +303,8 @@ public final class Trip implements Model {
     }
 
     /**
+     * This is the route number that is displayed on the front of the bus and on any publicity advertising the route.
+     *
      * @return The line name.
      */
     public String getLineName() {
@@ -264,6 +312,9 @@ public final class Trip implements Model {
     }
 
     /**
+     * This identifies the direction of the trip that the vehicle is on.
+     * It indicates whether the vehicle is on an outbound or inbound trip.
+     *
      * @return The direction ID.
      */
     public Integer getDirectionID() {
@@ -271,6 +322,9 @@ public final class Trip implements Model {
     }
 
     /**
+     * The full length destination name of the trip the vehicle is on.
+     * The destination name is based on the route and end point of the trip.
+     *
      * @return The destination name.
      */
     public String getDestinationName() {
@@ -278,6 +332,9 @@ public final class Trip implements Model {
     }
 
     /**
+     * The abbreviated destination name of the trip the vehicle is on.
+     * The destination text is based on the route and end point of the trip.
+     *
      * @return The destination text.
      */
     public String getDestinationText() {
@@ -285,6 +342,9 @@ public final class Trip implements Model {
     }
 
     /**
+     * This is the predicted time of arrival for the vehicle at a specific stop.
+     * It is an absolute time in UTC as per Unix epoch (in milliseconds).
+     *
      * @return The estimated departure time.
      */
     public Long getEstimatedTime() {
@@ -292,6 +352,8 @@ public final class Trip implements Model {
     }
 
     /**
+     * The unique identifier of the vehicle. This is an internal identifier and should not be displayed to the public.
+     *
      * @return The vehicle ID or {@code null} if not present.
      */
     public String getVehicleID() {

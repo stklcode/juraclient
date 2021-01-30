@@ -15,15 +15,6 @@
  */
 
 /**
- * jURAclient main module.
+ * jURAclient exceptions thrown by the client.
  */
-module de.stklcode.pubtrans.juraclient {
-    exports de.stklcode.pubtrans.ura;
-    exports de.stklcode.pubtrans.ura.exception;
-    exports de.stklcode.pubtrans.ura.model;
-    exports de.stklcode.pubtrans.ura.reader;
-
-    requires java.base;
-    requires java.net.http;
-    requires com.fasterxml.jackson.databind;
-}
+package de.stklcode.pubtrans.ura.exception;
