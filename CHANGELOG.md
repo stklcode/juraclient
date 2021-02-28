@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## unreleased
+
+### Features
+* New methods for asynchronous trip, stop and message retrieval (#15)
+
 ## 2.0.0 - 2021-01-30
 ### Breaking
 * Java 11 or later required
