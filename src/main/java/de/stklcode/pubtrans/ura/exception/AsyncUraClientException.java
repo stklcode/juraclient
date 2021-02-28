@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2024 Stefan Kalscheuer
+ * Copyright 2016-2021 Stefan Kalscheuer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,14 @@
 
 package de.stklcode.pubtrans.ura.exception;
 
-import java.io.IOException;
-
 /**
  * Custom exception class indicating an error with the URA API communication.
  *
  * @author Stefan Kalscheuer
- * @since 2.0
+ * @since 2.1
  */
-public class UraClientException extends IOException {
-    private static final long serialVersionUID = 4585240685746203433L;
+public class AsyncUraClientException extends RuntimeException {
+    private static final long serialVersionUID = -7530123149703928296L;
 
     /**
      * Default constructor.
@@ -33,16 +31,7 @@ public class UraClientException extends IOException {
      * @param message The detail message (which is saved for later retrieval by the {@link #getMessage()} method)
      * @param cause   The cause (which is saved for later retrieval by the {@link #getCause()} method).
      */
-    public UraClientException(String message, Throwable cause) {
+    public AsyncUraClientException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    /**
-     * Constructor from asynchronous exception.
-     *
-     * @param e Asynchronous exception to wrap.
-     */
-    public UraClientException(AsyncUraClientException e) {
-        super(e.getMessage(), e.getCause());
     }
 }

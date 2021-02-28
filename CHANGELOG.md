@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## unreleased
+
+### Features
+* New methods for asynchronous trip, stop and message retrieval (#15)
+
+
 ## 2.0.8 - 2024-10-03
 
 ### Fixed
