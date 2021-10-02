@@ -1,5 +1,5 @@
 # jURAclient 
-[![Build Status](https://travis-ci.com/stklcode/juraclient.svg?branch=master)](https://travis-ci.com/stklcode/juraclient)
+[![Build Status](https://github.com/stklcode/juraclient/actions/workflows/ci.yml/badge.svg)](https://github.com/stklcode/juraclient/actions/workflows/ci.yml)
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=de.stklcode.pubtrans%3Ajuraclient&metric=alert_status)](https://sonarcloud.io/dashboard?id=de.stklcode.pubtrans%3Ajuraclient) 
 [![Javadocs](https://www.javadoc.io/badge/de.stklcode.pubtrans/juraclient.svg)](https://www.javadoc.io/doc/de.stklcode.pubtrans/juraclient)
 [![Maven Central](https://img.shields.io/maven-central/v/de.stklcode.pubtrans/juraclient.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22de.stklcode.pubtrans%22%20AND%20a%3A%22juraclient%22)
@@ -22,17 +22,17 @@ However, new features might not be backported.
 
 ### Initialization
 ```java
-// Instantiate the client (e.g. using the TFL API)
-UraClient ura = new UraClient("http://countdown.api.tfl.gov.uk");
+// Instantiate the client.
+UraClient ura = new UraClient("https://ura.example.com");
 
-// Initialize the API with non-standard endpoints (e.g. ASEAG with API V2)
-UraClient ura = new UraClient("http://ivu.aseag.de", 
+// Initialize the API with non-standard endpoints.
+UraClient ura = new UraClient("https://ura.example.com", 
                               "interfaces/ura/instant_V2", 
                               "interfaces/ura/stream_V2");
 
 // Initialization with configuration builder (Client v2.x)
 UraClient ura = new UraClient(
-    UraClientConfiguration.forBaseURL("http://ura.example.com")
+    UraClientConfiguration.forBaseURL("https://ura.example.com")
                           .withInstantPath("interfaces/ura/instant_V2")
                           .withStreamPath("interfaces/ura/stream_V2")
                           .withConnectTimeout(Duration.ofSeconds(2))
@@ -81,10 +81,10 @@ List<Message> msgs = ura.forStop("100000")
 <dependency>
     <groupId>de.stklcode.pubtrans</groupId>
     <artifactId>juraclient</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
 </dependency>
 ```
 
 ## License
 
-The project is licensed under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
+The project is licensed under [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).

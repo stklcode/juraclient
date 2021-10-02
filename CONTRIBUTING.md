@@ -107,7 +107,7 @@ Files ending with `Test.java` will be automatically included into the test suite
 
 ## Continuous Integration
 
-Automated tests are run using [Travis CI](https://travis-ci.com/stklcode/juraclient) for every commit including pull requests.
+Automated tests are run using [GitHub Actions](https://github.com/stklcode/juraclient/actions/) for every commit including pull requests.
 
 There is also a code quality analysis pushing results to [SonarCloud](https://sonarcloud.io/dashboard?id=de.stklcode.pubtrans%3Ajuraclient).
 Keep in mind that the ruleset is not yet perfect, so not every minor issue has to be fixed immediately.
