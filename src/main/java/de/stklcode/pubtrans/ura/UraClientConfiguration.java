@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.Duration;
 
 /**
- * Configurstion Object for the {@link UraClient}.
+ * Configuration Object for the {@link UraClient}.
  *
  * @author Stefan Kalscheuer
  * @since 2.0

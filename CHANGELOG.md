@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 2.0.1 - 2021-10-02
+### Security
+* Updated dependencies
+
+### Improvement
+* Built and tested with JDK 17
+
 ## 2.0.0 - 2021-01-30
 ### Breaking
 * Java 11 or later required
