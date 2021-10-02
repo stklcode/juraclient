@@ -11,10 +11,10 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: java15
+name: java17
 
 steps:
   - name: test
-    image: maven:3-openjdk-15
+    image: maven:3-openjdk-17
     commands:
       - mvn clean test
