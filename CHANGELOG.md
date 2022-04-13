@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 2.0.2 - 2022-04-13
+### Security
+* Updated dependencies
+
+
 ## 2.0.1 - 2021-10-02
 ### Security
 * Updated dependencies
