@@ -162,7 +162,7 @@ public class AsyncUraTripReaderTest {
      * @throws IOException          Error reading or writing mocked data.
      */
     @Test
-    public void streamClosedTest() throws InterruptedException, IOException {
+    void streamClosedTest() throws InterruptedException, IOException {
         // Callback counter for some unhandy async mockery.
         final AtomicInteger counter = new AtomicInteger(0);
 

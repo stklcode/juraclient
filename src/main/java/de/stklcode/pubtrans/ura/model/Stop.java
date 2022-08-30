@@ -72,7 +72,7 @@ public final class Stop implements Model {
      * @param raw List of attributes from JSON line
      * @throws IOException Thrown on invalid line format.
      */
-    public Stop(final List raw) throws IOException {
+    public Stop(final List<?> raw) throws IOException {
         if (raw == null || raw.size() < F_NUM_OF_FIELDS) {
             throw new IOException("Invalid number of fields");
         }

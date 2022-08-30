@@ -83,7 +83,7 @@ public class AsyncUraTripReader implements AutoCloseable {
                 String version = null;
                 String line = br.readLine();
                 while (line != null && !this.canceled) {
-                    List l = mapper.readValue(line, List.class);
+                    List<?> l = mapper.readValue(line, List.class);
                     // Check if result exists and has correct response type.
                     if (l != null && !l.isEmpty()) {
                         if (l.get(0).equals(RES_TYPE_URA_VERSION)) {

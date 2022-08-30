@@ -236,7 +236,7 @@ public class UraClient implements Serializable {
             String version = null;
             String line = br.readLine();
             while (line != null && (limit == null || trips.size() < limit)) {
-                List l = mapper.readValue(line, List.class);
+                List<?> l = mapper.readValue(line, List.class);
                 /* Check if result exists and has correct response type */
                 if (l != null && !l.isEmpty()) {
                     if (l.get(0).equals(RES_TYPE_URA_VERSION)) {
@@ -311,7 +311,7 @@ public class UraClient implements Serializable {
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String line;
             while ((line = br.readLine()) != null) {
-                List l = mapper.readValue(line, List.class);
+                List<?> l = mapper.readValue(line, List.class);
                 /* Check if result exists and has correct response type */
                 if (l != null && !l.isEmpty() && l.get(0).equals(RES_TYPE_STOP)) {
                     stops.add(new Stop(l));
@@ -361,7 +361,7 @@ public class UraClient implements Serializable {
             String version = null;
             String line = br.readLine();
             while (line != null && (limit == null || messages.size() < limit)) {
-                List l = mapper.readValue(line, List.class);
+                List<?> l = mapper.readValue(line, List.class);
                 /* Check if result exists and has correct response type */
                 if (l != null && !l.isEmpty()) {
                     if (l.get(0).equals(RES_TYPE_URA_VERSION)) {

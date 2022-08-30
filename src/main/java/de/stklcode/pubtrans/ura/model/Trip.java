@@ -142,7 +142,7 @@ public final class Trip implements Model {
      * @param raw List of attributes from JSON line
      * @throws IOException Thrown on invalid line format.
      */
-    public Trip(final List raw) throws IOException {
+    public Trip(final List<?> raw) throws IOException {
         this(raw, null);
     }
 
@@ -153,7 +153,7 @@ public final class Trip implements Model {
      * @param version API version
      * @throws IOException Thrown on invalid line format.
      */
-    public Trip(final List raw, final String version) throws IOException {
+    public Trip(final List<?> raw, final String version) throws IOException {
         if (raw == null || raw.size() < NUM_OF_FIELDS) {
             throw new IOException("Invalid number of fields");
         }

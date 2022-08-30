@@ -45,11 +45,11 @@ import static org.hamcrest.core.Is.is;
  *
  * @author Stefan Kalscheuer
  */
-public class UraClientTest {
+class UraClientTest {
     private static WireMockServer httpMock;
 
     @BeforeAll
-    public static void setUp() {
+    static void setUp() {
         // Initialize HTTP mock.
         httpMock = new WireMockServer(WireMockConfiguration.options().dynamicPort());
         httpMock.start();
@@ -57,13 +57,13 @@ public class UraClientTest {
     }
 
     @AfterAll
-    public static void tearDown() {
+    static void tearDown() {
         httpMock.stop();
         httpMock = null;
     }
 
     @Test
-    public void getStopsTest() {
+    void getStopsTest() {
         // Mock the HTTP call.
         mockHttpToFile(2, "instant_V2_stops.txt");
 
@@ -89,7 +89,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getStopsForLineTest() {
+    void getStopsForLineTest() {
         // Mock the HTTP call.
         mockHttpToFile(2, "instant_V2_stops_line.txt");
 
@@ -107,7 +107,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getStopsForPositionTest() {
+    void getStopsForPositionTest() {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_stops_circle.txt");
 
@@ -133,7 +133,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getTripsForDestinationNamesTest() {
+    void getTripsForDestinationNamesTest() {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_trips_destination.txt");
 
@@ -156,7 +156,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getTripsTowardsTest() {
+    void getTripsTowardsTest() {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_trips_towards.txt");
 
@@ -171,7 +171,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getTripsTest() {
+    void getTripsTest() {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_trips_all.txt");
 
@@ -224,7 +224,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getTripsForStopTest() {
+    void getTripsForStopTest() {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_trips_stop.txt");
 
@@ -254,7 +254,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getTripsForLine() {
+    void getTripsForLine() {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_trips_line.txt");
 
@@ -303,7 +303,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getTripsForStopAndLine() {
+    void getTripsForStopAndLine() {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_trips_stop_line.txt");
 
@@ -324,7 +324,7 @@ public class UraClientTest {
 
 
     @Test
-    public void getMessages() {
+    void getMessages() {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_messages.txt");
 
@@ -343,7 +343,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getMessagesForStop() {
+    void getMessagesForStop() {
         // Mock the HTTP call.
         mockHttpToFile(2, "instant_V2_messages_stop.txt");
 
