@@ -4,7 +4,7 @@ name: java11
 
 steps:
   - name: test
-    image: maven:3-openjdk-11
+    image: maven:3-eclipse-temurin-11
     commands:
       - mvn -B clean test
 
@@ -15,6 +15,17 @@ name: java17
 
 steps:
   - name: test
-    image: maven:3-openjdk-17
+    image: maven:3-eclipse-temurin-17
+    commands:
+      - mvn -B clean test
+
+---
+kind: pipeline
+type: docker
+name: java19
+
+steps:
+  - name: test
+    image: maven:3-eclipse-temurin-19
     commands:
       - mvn -B clean test
