@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## unreleased
+### Security
+* Updated dependencies
+
+### Misc
+* Tested with JDK 19
+
+
 ## 2.0.3 - 2022-08-30
 ### Security
 * Updated dependencies
