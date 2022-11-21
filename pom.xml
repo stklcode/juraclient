@@ -98,6 +98,10 @@
                 <version>3.2.2</version>
                 <configuration>
                     <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
                         <manifestEntries>
                             <Automatic-Module-Name>de.stklcode.pubtrans.juraclient</Automatic-Module-Name>
                         </manifestEntries>
