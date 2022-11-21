@@ -192,7 +192,7 @@ public class UraClient implements Serializable {
 
     /**
      * Get list of trips.
-     * If forStops() and/or forLines() has been called, those will be used as filter.
+     * If {@link #forStops(String...)} and/or {@link #forLines(String...)} has been called, those will be used as filter.
      *
      * @return List of trips.
      */
@@ -202,7 +202,7 @@ public class UraClient implements Serializable {
 
     /**
      * Get list of trips with limit.
-     * If forStops() and/or forLines() has been called, those will be used as filter.
+     * If {@link #forStops(String...)} and/or {@link #forLines(String...)} has been called, those will be used as filter.
      *
      * @param limit Maximum number of results.
      * @return List of trips.
@@ -564,6 +564,17 @@ public class UraClient implements Serializable {
          */
         public List<Trip> getTrips() {
             return UraClient.this.getTrips(this);
+        }
+
+        /**
+         * Get trips for set filters.
+         *
+         * @param limit Maximum number of results.
+         * @return List of matching trips.
+         * @since 1.3.3
+         */
+        public List<Trip> getTrips(final Integer limit) {
+            return UraClient.this.getTrips(this, limit);
         }
 
         /**

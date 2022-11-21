@@ -189,6 +189,12 @@ class UraClientTest {
         assertThat(trips.get(8).getVisitID(), is(30));
         assertThat(trips.get(9).getStop().getId(), is("100002"));
 
+        // With limit.
+        trips = new UraClient(httpMock.baseUrl()).getTrips(5);
+        assertThat(trips, hasSize(5));
+        trips = new UraClient(httpMock.baseUrl()).getTrips(11);
+        assertThat(trips, hasSize(10));
+
         // Repeat test for API V2.
         mockHttpToFile(2, "instant_V2_trips_all.txt");
 
@@ -238,6 +244,12 @@ class UraClientTest {
         assertThat(trips.get(1).getLineID(), is("7"));
         assertThat(trips.get(2).getLineName(), is("25"));
         assertThat(trips.get(3).getStop().getIndicator(), is("H.15"));
+
+        // With limit.
+        trips = new UraClient(httpMock.baseUrl())
+                .forStops("100000")
+                .getTrips(7);
+        assertThat(trips, hasSize(7));
 
         // Get trips for stop name "Uniklinik" and verify some values.
         mockHttpToFile(1, "instant_V1_trips_stop_name.txt");
