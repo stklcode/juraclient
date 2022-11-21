@@ -346,6 +346,18 @@ public class UraClient implements Serializable {
         return getMessages(query, null);
     }
 
+
+    /**
+     * Get list of messages with limit.
+     *
+     * @param limit Maximum number of results.
+     * @return List of trips.
+     * @since 1.3.3
+     */
+    public List<Message> getMessages(final Integer limit) {
+        return getMessages(new Query(), limit);
+    }
+
     /**
      * Get list of messages for given stopIDs with result limit.
      *
@@ -610,6 +622,17 @@ public class UraClient implements Serializable {
          */
         public List<Message> getMessages() {
             return UraClient.this.getMessages(this);
+        }
+
+        /**
+         * Get trips for set filters with limit.
+         *
+         * @param limit Maximum number of results.
+         * @return List of matching messages.
+         * @since 1.3.3
+         */
+        public List<Message> getMessages(final Integer limit) {
+            return UraClient.this.getMessages(this, limit);
         }
     }
 }

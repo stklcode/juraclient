@@ -337,12 +337,13 @@ class UraClientTest {
 
     @Test
     void getMessages() {
+        UraClient uraClient = new UraClient(httpMock.baseUrl());
+
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_messages.txt");
 
         // Get messages without filter and verify some values.
-        List<Message> messages = new UraClient(httpMock.baseUrl())
-                .getMessages();
+        List<Message> messages = uraClient.getMessages();
         assertThat(messages, hasSize(2));
         assertThat(messages.get(0).getStop().getId(), is("100707"));
         assertThat(messages.get(0).getUuid(), is("016e1231d4e30014_100707"));
@@ -352,23 +353,35 @@ class UraClientTest {
         assertThat(messages.get(1).getPriority(), is(0));
         assertThat(messages.get(0).getText(), is("Sehr geehrte Fahrgäste, wegen Strassenbauarbeiten kann diese Haltestelle nicht von den Bussen der Linien 17, 44 und N2 angefahren werden."));
         assertThat(messages.get(1).getText(), is("Sehr geehrte Fahrgäste, diese Haltestelle wird vorübergehend von den Linien 47, 147 und N3 nicht angefahren."));
+
+        // With limit.
+        messages = uraClient.getMessages(1);
+        assertThat(messages, hasSize(1));
+        messages = uraClient.getMessages(3);
+        assertThat(messages, hasSize(2));
     }
 
     @Test
     void getMessagesForStop() {
+        UraClient uraClient = new UraClient(httpMock.baseUrl(), "/interfaces/ura/instant_V2", "/interfaces/ura/stream");
+
         // Mock the HTTP call.
         mockHttpToFile(2, "instant_V2_messages_stop.txt");
 
         // Get trips for stop ID 100707 (Berensberger Str.) and verify some values.
-        List<Message> messages = new UraClient(httpMock.baseUrl(), "/interfaces/ura/instant_V2", "/interfaces/ura/stream")
-                .forStops("100707")
-                .getMessages();
+        List<Message> messages = uraClient.forStops("100707").getMessages();
         assertThat(messages, hasSize(1));
         assertThat(messages.stream().filter(t -> !t.getStop().getId().equals("100707")).findAny(), is(Optional.empty()));
         assertThat(messages.get(0).getUuid(), is("016e1231d4e30014_100707"));
         assertThat(messages.get(0).getType(), is(0));
         assertThat(messages.get(0).getPriority(), is(3));
         assertThat(messages.get(0).getText(), is("Sehr geehrte Fahrgäste, wegen Strassenbauarbeiten kann diese Haltestelle nicht von den Bussen der Linien 17, 44 und N2 angefahren werden."));
+
+        // With limit.
+        messages = uraClient.forStops("100707").getMessages(0);
+        assertThat(messages, hasSize(0));
+        messages = uraClient.forStops("100707").getMessages(2);
+        assertThat(messages, hasSize(1));
     }
 
 

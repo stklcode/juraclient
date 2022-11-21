@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 ## unreleased
 
 ### Fixed
-* Querying trips with limit directly from `Query` instance (#19)
+* Querying trips and messages with limit directly from `Query` instance (#19)
 
 
 ## 1.3.2 - 2022-08-30
