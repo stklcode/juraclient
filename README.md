@@ -57,13 +57,13 @@ List<Stop> stops = ura.forPosition(51.51009, -0.1345734, 200)
 
 ```java
 // Get next 10 trips for given stops and lines in a single direction (all filters optional)
-List<Trip> trips = ura.forStop("100000")
+List<Trip> trips = ura.forStops("100000")
                       .forLines("25", "35")
                       .forDirection(1)
                       .getTrips(10);
 
 // Get trips from given stop towards your destination
-List<Trip> trips = ura.forStopByName("Piccadilly Circus")
+List<Trip> trips = ura.forStopsByName("Piccadilly Circus")
                       .towards("Marble Arch")
                       .getTrips();
 ```
@@ -72,7 +72,7 @@ List<Trip> trips = ura.forStopByName("Piccadilly Circus")
 
 ```java
 // Get next 10 trips for given stops and lines in a single direction (all filters optional)
-List<Message> msgs = ura.forStop("100000")
+List<Message> msgs = ura.forStops("100000")
                         .getMessages();
 ```
 
