@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## unreleased
+## 1.3.3 - 2022-11-21
 ### Security
 * Updated Jackson dependency to 2.14.0
 
