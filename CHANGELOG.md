@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 ## unreleased
+### Security
+* Updated Jackson dependency to 2.14.0
 
 ### Fixed
 * Querying trips and messages with limit directly from `Query` instance (#19)
