@@ -22,7 +22,7 @@ jobs:
       - name: Test
         run: mvn -B -P coverage clean verify
       - name: Analysis
-        if: matrix.analysis && github.event_name == 'push'
+        if: matrix.analysis
         run: >
           mvn -B sonar:sonar
           -Dsonar.host.url=https://sonarcloud.io
