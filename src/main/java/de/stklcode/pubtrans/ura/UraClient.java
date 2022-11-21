@@ -395,6 +395,20 @@ public class UraClient implements Serializable {
         return getMessages(query, null);
     }
 
+
+    /**
+     * Get list of messages with limit.
+     * If forStops() has been called, those will be used as filter.
+     *
+     * @param limit Maximum number of results.
+     * @return List of trips.
+     * @throws UraClientException Error with API communication.
+     * @since 2.0.4
+     */
+    public List<Message> getMessages(final Integer limit) throws UraClientException {
+        return getMessages(new Query(), limit);
+    }
+
     /**
      * Get list of messages for given stopIDs with result limit.
      *
@@ -689,6 +703,18 @@ public class UraClient implements Serializable {
          */
         public List<Message> getMessages() throws UraClientException {
             return UraClient.this.getMessages(this);
+        }
+
+        /**
+         * Get trips for set filters.
+         *
+         * @param limit Maximum number of results.
+         * @return List of matching messages.
+         * @throws UraClientException Error with API communication.
+         * @since 2.0.4
+         */
+        public List<Message> getMessages(final Integer limit) throws UraClientException {
+            return UraClient.this.getMessages(this, limit);
         }
     }
 }
