@@ -81,7 +81,7 @@ List<Message> msgs = ura.forStops("100000")
 <dependency>
     <groupId>de.stklcode.pubtrans</groupId>
     <artifactId>juraclient</artifactId>
-    <version>2.0.4-SNAPSHOT</version>
+    <version>2.0.4</version>
 </dependency>
 ```
 

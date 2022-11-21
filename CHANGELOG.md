@@ -1,9 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## unreleased
+## 2.0.4 - 2022-11-21
 ### Security
-* Updated dependencies
+* Updated Jackson dependency to 2.14.0
 
 ### Fixed
 * Querying trips and messages with limit directly from `Query` instance (#18)
