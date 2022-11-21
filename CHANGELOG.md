@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ### Security
 * Updated dependencies
 
+### Fixed
+* Querying trips with limit directly from `Query` instance (#18)
+
 ### Misc
 * Tested with JDK 19
 
