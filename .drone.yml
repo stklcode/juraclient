@@ -22,10 +22,10 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: java19
+name: java20
 
 steps:
   - name: test
-    image: maven:3-eclipse-temurin-19
+    image: maven:3-eclipse-temurin-20
     commands:
       - mvn -B clean test
