@@ -68,7 +68,7 @@
         <dependency>
             <groupId>org.wiremock</groupId>
             <artifactId>wiremock</artifactId>
-            <version>3.0.4</version>
+            <version>3.2.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -78,7 +78,7 @@
             <dependency>
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
-                <version>3.9.1.2184</version>
+                <version>3.10.0.2594</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -182,7 +182,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.5.0</version>
+                        <version>3.6.0</version>
                         <configuration>
                             <overview>${basedir}/src/main/javadoc/overview.html</overview>
                             <source>11</source>
