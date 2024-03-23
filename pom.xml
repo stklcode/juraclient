@@ -56,7 +56,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.10.0</version>
+            <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -68,7 +68,7 @@
         <dependency>
             <groupId>org.wiremock</groupId>
             <artifactId>wiremock</artifactId>
-            <version>3.2.0</version>
+            <version>3.4.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -78,7 +78,7 @@
             <dependency>
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
-                <version>3.10.0.2594</version>
+                <version>3.11.0.3922</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -88,7 +88,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.13.0</version>
                 <configuration>
                     <release>11</release>
                     <source>11</source>
@@ -114,7 +114,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>3.2.5</version>
             </plugin>
         </plugins>
     </build>
@@ -127,7 +127,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.10</version>
+                        <version>0.8.11</version>
                         <executions>
                             <execution>
                                 <id>prepare-agent</id>
@@ -182,7 +182,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.6.0</version>
+                        <version>3.6.3</version>
                         <configuration>
                             <overview>${basedir}/src/main/javadoc/overview.html</overview>
                             <source>11</source>
@@ -207,7 +207,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>3.2.1</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
