@@ -15,8 +15,7 @@ Version 2.x requires Java 11 or later.
 It also contains some new features and allows configuration using a dedicated configuration object.
 
 Version 1.x requires Java 8 or later.
-This version currently receives security and bugfix updates.
-However, new features might not be backported.
+This version is no longer supported and will not receive any future updates.
 
 ## Usage Examples
 
@@ -81,7 +80,7 @@ List<Message> msgs = ura.forStops("100000")
 <dependency>
     <groupId>de.stklcode.pubtrans</groupId>
     <artifactId>juraclient</artifactId>
-    <version>2.0.5</version>
+    <version>2.0.6</version>
 </dependency>
 ```
 
