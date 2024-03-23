@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 2.0.5 - 2024-03-23
+### Dependencies
+* Updated Jackson dependency to 2.17.0
+
+### Misc
+* Tested with JDK 21
+
+
 ## 2.0.5 - 2023-10-03
 ### Dependencies
 * Updated Jackson dependency to 2.15.2
