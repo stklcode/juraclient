@@ -187,7 +187,7 @@ public class Message implements Model {
     /**
      * Messages are assigned a priority in order for them to be ranked.
      * Since it is possible for a stop to be assigned multiple messages it is important to ensure priority is given.
-     * Priorities are between 1 and 10 (where 1 is the highest priority). By default the message priority is set to 3.
+     * Priorities are between 1 and 10 (where 1 is the highest priority). By default, the message priority is set to 3.
      *
      * @return Message priority.
      */

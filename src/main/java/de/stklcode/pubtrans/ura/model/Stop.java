@@ -196,7 +196,7 @@ public final class Stop implements Model {
     }
 
     /**
-     * The longitude of the stop. This isexpressed using the WGS84 coordinate system.
+     * The longitude of the stop. This is expressed using the WGS84 coordinate system.
      *
      * @return The stop geolocation longitude.
      */
