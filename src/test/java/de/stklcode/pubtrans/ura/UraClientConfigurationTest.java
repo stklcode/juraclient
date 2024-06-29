@@ -25,7 +25,7 @@ class UraClientConfigurationTest {
         UraClientConfiguration config = UraClientConfiguration.forBaseURL(baseURL).build();
         assertEquals(baseURL, config.getBaseURL(), "Unexpected base URL");
         assertEquals("/interfaces/ura/instant_V1", config.getInstantPath(), "Unexpected default instant path");
-        assertEquals("/interfaces/ura/stream_V1", config.getStreeamPath(), "Unexpected default stream path");
+        assertEquals("/interfaces/ura/stream_V1", config.getStreamPath(), "Unexpected default stream path");
         assertNull(config.getConnectTimeout(), "No default connection timeout expected");
         assertNull(config.getTimeout(), "No default timeout expected");
 
@@ -36,7 +36,7 @@ class UraClientConfigurationTest {
                 .build();
         assertEquals(baseURL, config.getBaseURL(), "Unexpected base URL");
         assertEquals(instantPath, config.getInstantPath(), "Unexpected custom instant path");
-        assertEquals(streamPath, config.getStreeamPath(), "Unexpected custom stream path");
+        assertEquals(streamPath, config.getStreamPath(), "Unexpected custom stream path");
 
         // With timeouts. (#14)
         config = UraClientConfiguration.forBaseURL(baseURL)

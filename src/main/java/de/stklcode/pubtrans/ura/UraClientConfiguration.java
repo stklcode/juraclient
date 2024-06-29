@@ -87,7 +87,7 @@ public class UraClientConfiguration implements Serializable {
      *
      * @return Stream endpoint path.
      */
-    public String getStreeamPath() {
+    public String getStreamPath() {
         return this.streamPath;
     }
 

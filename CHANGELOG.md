@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 
 ## unreleased
+
+### Fixed
+* renamed `UraClientConfiguration#getStreeamPath()` to `getStreamPath()`
+
 ### Dependencies
 * Updated Jackson dependency to 2.17.1
 
@@ -70,6 +74,14 @@ All notable changes to this project will be documented in this file.
 * Allow reopening an `AsyncUraTripReader` without raising an exception (#12)
 
 ----
+
+## 1.3.3 - 2022-11-21
+### Security
+* Updated Jackson dependency to 2.14.0
+
+### Fixed
+* Querying trips and messages with limit directly from `Query` instance (#19)
+
 
 ## 1.3.2 - 2022-08-30
 

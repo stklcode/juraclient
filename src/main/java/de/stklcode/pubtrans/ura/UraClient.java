@@ -314,7 +314,7 @@ public class UraClient implements Serializable {
         // Create the reader.
         try {
             AsyncUraTripReader reader = new AsyncUraTripReader(
-                    URI.create(requestURL(config.getBaseURL() + config.getStreeamPath(), REQUEST_TRIP, query)),
+                    URI.create(requestURL(config.getBaseURL() + config.getStreamPath(), REQUEST_TRIP, query)),
                     config,
                     consumers
             );
