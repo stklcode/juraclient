@@ -30,13 +30,13 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Unit test for the {@link Stop} meta model.
+ * Unit test for the {@link Stop} model.
  *
  * @author Stefan Kalscheuer
  */
-public class StopTest {
+class StopTest {
     @Test
-    public void basicConstructorTest() {
+    void basicConstructorTest() {
         Stop stop = new Stop("id", "name", "indicator", 1, 2.345, 6.789);
         assertThat(stop.getId(), is("id"));
         assertThat(stop.getName(), is("name"));
@@ -47,7 +47,7 @@ public class StopTest {
     }
 
     @Test
-    public void listConstructorTest() {
+    void listConstructorTest() {
         /* Create valid raw data list */
         List<Serializable> raw = new ArrayList<>();
         raw.add(1);

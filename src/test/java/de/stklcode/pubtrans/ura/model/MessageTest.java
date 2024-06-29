@@ -30,13 +30,13 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Unit test for the {@link Message} meta model.
+ * Unit test for the {@link Message} model.
  *
  * @author Stefan Kalscheuer
  */
-public class MessageTest {
+class MessageTest {
     @Test
-    public void basicConstructorTest() {
+    void basicConstructorTest() {
         Message message = new Message("sid",
                 "name",
                 "indicator",
@@ -60,7 +60,7 @@ public class MessageTest {
     }
 
     @Test
-    public void listConstructorTest() {
+    void listConstructorTest() {
         /* Create valid raw data list */
         List<Serializable> raw = new ArrayList<>();
         raw.add(1);

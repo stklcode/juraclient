@@ -45,19 +45,19 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Unit test for the URA Client.
  * Tests run against mocked data collected from ASEAG API (no longer available) and
- * TFL API (http://countdown.api.tfl.gov.uk)
+ * TFL API (<a href="https://countdown.api.tfl.gov.uk">https://countdown.api.tfl.gov.uk</a>)
  *
  * @author Stefan Kalscheuer
  */
-public class UraClientTest {
+class UraClientTest {
 
     @RegisterExtension
-    public static WireMockExtension wireMock = WireMockExtension.newInstance()
+    static WireMockExtension wireMock = WireMockExtension.newInstance()
             .options(wireMockConfig().dynamicPort())
             .build();
 
     @Test
-    public void getStopsTest() throws UraClientException {
+    void getStopsTest() throws UraClientException {
         // Mock the HTTP call.
         mockHttpToFile(2, "instant_V2_stops.txt");
 
@@ -83,7 +83,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getStopsForLineTest() throws UraClientException {
+    void getStopsForLineTest() throws UraClientException {
         // Mock the HTTP call.
         mockHttpToFile(2, "instant_V2_stops_line.txt");
 
@@ -101,7 +101,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getStopsForPositionTest() throws UraClientException {
+    void getStopsForPositionTest() throws UraClientException {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_stops_circle.txt");
 
@@ -127,7 +127,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getTripsForDestinationNamesTest() throws UraClientException {
+    void getTripsForDestinationNamesTest() throws UraClientException {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_trips_destination.txt");
 
@@ -150,7 +150,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getTripsTowardsTest() throws UraClientException {
+    void getTripsTowardsTest() throws UraClientException {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_trips_towards.txt");
 
@@ -165,7 +165,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getTripsTest() throws UraClientException {
+    void getTripsTest() throws UraClientException {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_trips_all.txt");
 
@@ -229,11 +229,11 @@ public class UraClientTest {
                 "Expected reader to raise an exception"
         );
         assertEquals("Failed to read trips from API", exception.getMessage(), "Unexpected error message");
-        assertTrue(exception.getCause() instanceof IOException, "Unexpected error cause");
+        assertInstanceOf(IOException.class, exception.getCause(), "Unexpected error cause");
     }
 
     @Test
-    public void getTripsForStopTest() throws UraClientException {
+    void getTripsForStopTest() throws UraClientException {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_trips_stop.txt");
 
@@ -274,11 +274,11 @@ public class UraClientTest {
                 "Expected reader to raise an exception"
         );
         assertEquals("Failed to read stops from API", exception.getMessage(), "Unexpected error message");
-        assertTrue(exception.getCause() instanceof IOException, "Unexpected error cause");
+        assertInstanceOf(IOException.class, exception.getCause(), "Unexpected error cause");
     }
 
     @Test
-    public void getTripsForLine() throws UraClientException {
+    void getTripsForLine() throws UraClientException {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_trips_line.txt");
 
@@ -327,7 +327,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void getTripsForStopAndLine() throws UraClientException {
+    void getTripsForStopAndLine() throws UraClientException {
         // Mock the HTTP call.
         mockHttpToFile(1, "instant_V1_trips_stop_line.txt");
 
@@ -348,7 +348,7 @@ public class UraClientTest {
 
 
     @Test
-    public void getMessages() throws UraClientException {
+    void getMessages() throws UraClientException {
         UraClient uraClient = new UraClient(wireMock.baseUrl());
 
         // Mock the HTTP call.
@@ -379,11 +379,11 @@ public class UraClientTest {
                 "Expected reader to raise an exception"
         );
         assertEquals("Failed to read messages from API", exception.getMessage(), "Unexpected error message");
-        assertTrue(exception.getCause() instanceof IOException, "Unexpected error cause");
+        assertInstanceOf(IOException.class, exception.getCause(), "Unexpected error cause");
     }
 
     @Test
-    public void getMessagesForStop() throws UraClientException {
+    void getMessagesForStop() throws UraClientException {
         UraClient uraClient = new UraClient(wireMock.baseUrl(), "/interfaces/ura/instant_V2", "/interfaces/ura/stream");
 
         // Mock the HTTP call.
@@ -406,7 +406,7 @@ public class UraClientTest {
     }
 
     @Test
-    public void timeoutTest() {
+    void timeoutTest() {
         // Try to read trips from TEST-NET-1 IP that is not routed (hopefully) and will not connect within 100ms.
         UraClientException exception = assertThrows(
                 UraClientException.class,
@@ -417,7 +417,7 @@ public class UraClientTest {
                 ).forDestinationNames("Piccadilly Circus").getTrips(),
                 "Connection to TEST-NET-1 address should fail"
         );
-        assertTrue(exception.getCause() instanceof HttpConnectTimeoutException, "Exception cause is not HttpConnectionTimeoutException");
+        assertInstanceOf(HttpConnectTimeoutException.class, exception.getCause(), "Exception cause is not HttpConnectionTimeoutException");
 
         // Mock the HTTP call with delay of 200ms, but immediate connection.
         wireMock.stubFor(
@@ -444,7 +444,7 @@ public class UraClientTest {
                 ).forDestinationNames("Piccadilly Circus").getTrips(),
                 "Response timeout did not raise an exception"
         );
-        assertTrue(exception.getCause() instanceof HttpTimeoutException, "Exception cause is not HttpTimeoutException");
+        assertInstanceOf(HttpTimeoutException.class, exception.getCause(), "Exception cause is not HttpTimeoutException");
 
         assertDoesNotThrow(
                 () -> new UraClient(

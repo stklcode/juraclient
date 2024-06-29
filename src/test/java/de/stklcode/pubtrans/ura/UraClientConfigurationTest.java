@@ -12,9 +12,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  *
  * @author Stefan Kalscheuer
  */
-public class UraClientConfigurationTest {
+class UraClientConfigurationTest {
     @Test
-    public void configBuilderTest() {
+    void configBuilderTest() {
         final String baseURL = "https://ura.example.com";
         final String instantPath = "/path/to/instant";
         final String streamPath = "/path/to/stream";

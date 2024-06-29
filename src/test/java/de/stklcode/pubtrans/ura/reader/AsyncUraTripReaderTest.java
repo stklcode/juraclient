@@ -18,13 +18,12 @@ package de.stklcode.pubtrans.ura.reader;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.common.FileSource;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.extension.Parameters;
-import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
+import com.github.tomakehurst.wiremock.extension.ResponseTransformerV2;
 import com.github.tomakehurst.wiremock.http.ChunkedDribbleDelay;
-import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.Response;
+import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import de.stklcode.pubtrans.ura.UraClientConfiguration;
 import de.stklcode.pubtrans.ura.model.Trip;
 import org.junit.jupiter.api.AfterAll;
@@ -54,7 +53,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  *
  * @author Stefan Kalscheuer
  */
-public class AsyncUraTripReaderTest {
+class AsyncUraTripReaderTest {
     private static WireMockServer httpMock;
 
     @BeforeAll
@@ -82,7 +81,7 @@ public class AsyncUraTripReaderTest {
      * @throws InterruptedException Thread interrupted.
      */
     @Test
-    public void readerTest() throws InterruptedException {
+    void readerTest() throws InterruptedException {
         // Callback counter for some unhandy async mockery.
         final AtomicInteger counter = new AtomicInteger(0);
 
@@ -161,7 +160,7 @@ public class AsyncUraTripReaderTest {
      * @throws InterruptedException Thread interrupted.
      */
     @Test
-    public void streamClosedTest() throws InterruptedException {
+    void streamClosedTest() throws InterruptedException {
         // Callback counter for some unhandy async mockery.
         final AtomicInteger counter = new AtomicInteger(0);
 
@@ -202,7 +201,7 @@ public class AsyncUraTripReaderTest {
     }
 
     @Test
-    public void timeoutTest() throws InterruptedException {
+    void timeoutTest() throws InterruptedException {
         // Callback counter for some unhandy async mockery.
         final AtomicInteger counter = new AtomicInteger(0);
 
@@ -289,9 +288,10 @@ public class AsyncUraTripReaderTest {
         );
     }
 
-    public static class StreamTransformer extends ResponseTransformer {
+    public static class StreamTransformer implements ResponseTransformerV2 {
         @Override
-        public Response transform(Request request, Response response, FileSource files, Parameters parameters) {
+        public Response transform(Response response, ServeEvent serveEvent) {
+            Parameters parameters = serveEvent.getTransformerParameters();
             int chunks = parameters.getInt("chunks", 1);
             return Response.Builder.like(response)
                     // Read source file to response.
