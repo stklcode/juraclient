@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ### Dependencies
 * Updated Jackson dependency to 2.17.1
 
+### Improvement
+* Generate and attach CycloneDX SBOM
+
 
 ## 2.0.6 - 2024-03-23
 ### Dependencies
