@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## unreleased
+## 2.0.7 - 2024-06-29
 
 ### Fixed
 * renamed `UraClientConfiguration#getStreeamPath()` to `getStreamPath()`
