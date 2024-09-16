@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## unreleased
 
+### Fixed
+* Remove `Automatic-Module-Name` from JAR manifest
+
 ### Dependencies
 * Updated Jackson dependency to 2.17.2
 
