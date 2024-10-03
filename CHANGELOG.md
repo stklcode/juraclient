@@ -1,13 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## unreleased
+## 2.0.8 - 2024-10-03
 
 ### Fixed
 * Remove `Automatic-Module-Name` from JAR manifest
 
 ### Dependencies
-* Updated Jackson dependency to 2.17.2
+* Updated Jackson dependency to 2.18.0
 
 
 ## 2.0.7 - 2024-06-29
