@@ -1,8 +1,8 @@
 # jURAclient 
-[![Build Status](https://github.com/stklcode/juraclient/actions/workflows/ci.yml/badge.svg)](https://github.com/stklcode/juraclient/actions/workflows/ci.yml)
-[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=de.stklcode.pubtrans%3Ajuraclient&metric=alert_status)](https://sonarcloud.io/dashboard?id=de.stklcode.pubtrans%3Ajuraclient) 
+[![CI](https://github.com/stklcode/juraclient/actions/workflows/ci.yml/badge.svg)](https://github.com/stklcode/juraclient/actions/workflows/ci.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=de.stklcode.pubtrans%3Ajuraclient&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=de.stklcode.pubtrans%3Ajuraclient)
 [![Javadocs](https://www.javadoc.io/badge/de.stklcode.pubtrans/juraclient.svg)](https://www.javadoc.io/doc/de.stklcode.pubtrans/juraclient)
-[![Maven Central](https://img.shields.io/maven-central/v/de.stklcode.pubtrans/juraclient.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22de.stklcode.pubtrans%22%20AND%20a%3A%22juraclient%22)
+[![Maven Central Version](https://img.shields.io/maven-central/v/de.stklcode.pubtrans/juraclient.svg)](https://central.sonatype.com/artifact/de.stklcode.pubtrans/juraclient)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/stklcode/juraclient/blob/master/LICENSE.txt)
 
 Java client for URA based public transport APIs.
