@@ -17,6 +17,7 @@
 package de.stklcode.pubtrans.ura;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.stklcode.pubtrans.ura.exception.AsyncUraClientException;
 import de.stklcode.pubtrans.ura.exception.UraClientConfigurationException;
 import de.stklcode.pubtrans.ura.exception.UraClientException;
 import de.stklcode.pubtrans.ura.model.Message;
@@ -33,6 +34,8 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.function.Consumer;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -244,7 +247,6 @@ public class UraClient implements Serializable {
      * @param query The query.
      * @return List of trips.
      * @throws UraClientException Error with API communication.
-     * @throws UraClientException Error with API communication.
      * @since 1.0
      * @since 2.0 Throws {@link UraClientException}.
      */
@@ -263,27 +265,84 @@ public class UraClient implements Serializable {
      * @since 2.0 Throws {@link UraClientException}.
      */
     public List<Trip> getTrips(final Query query, final Integer limit) throws UraClientException {
-        List<Trip> trips = new ArrayList<>();
-        try (InputStream is = requestInstant(REQUEST_TRIP, query);
-             BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
-            String version = null;
-            String line = br.readLine();
-            while (line != null && (limit == null || trips.size() < limit)) {
-                List<Serializable> l = mapper.readValue(line, mapper.getTypeFactory().constructCollectionType(List.class, Serializable.class));
-                /* Check if result exists and has correct response type */
-                if (l != null && !l.isEmpty()) {
-                    if (l.get(0).equals(RES_TYPE_URA_VERSION)) {
-                        version = l.get(1).toString();
-                    } else if (l.get(0).equals(RES_TYPE_PREDICTION)) {
-                        trips.add(new Trip(l, version));
-                    }
-                }
-                line = br.readLine();
+        try {
+            return getTripsAsync(query, limit).join();
+        } catch (CompletionException e) {
+            if (e.getCause() instanceof AsyncUraClientException) {
+                throw new UraClientException((AsyncUraClientException) e.getCause());
+            } else {
+                throw new UraClientException("Asynchronous trip request failed to complete", e.getCause());
             }
-        } catch (IOException e) {
-            throw new UraClientException("Failed to read trips from API", e);
         }
-        return trips;
+    }
+
+    /**
+     * Get list of trips asynchronously.
+     * If forStops() and/or forLines() has been called, those will be used as filter.
+     *
+     * @return List of trips.
+     * @since 2.1
+     */
+    public CompletableFuture<List<Trip>> getTripsAsync() {
+        return getTripsAsync(new Query(), null);
+    }
+
+    /**
+     * Get list of trips with limit asynchronously.
+     * If forStops() and/or forLines() has been called, those will be used as filter.
+     *
+     * @param limit Maximum number of results.
+     * @return List of trips.
+     * @since 2.1
+     */
+    public CompletableFuture<List<Trip>> getTripsAsync(final Integer limit) {
+        return getTripsAsync(new Query(), limit);
+    }
+
+    /**
+     * Get list of trips asynchronously.
+     * If forStops() and/or forLines() has been called, those will be used as filter.
+     *
+     * @param query The query.
+     * @return List of trips.
+     * @since 2.1
+     */
+    public CompletableFuture<List<Trip>> getTripsAsync(final Query query) {
+        return getTripsAsync(query, null);
+    }
+
+    /**
+     * Get list of trips for given stopIDs and lineIDs with result limit asynchronously.
+     *
+     * @param query The query.
+     * @param limit Maximum number of results.
+     * @return List of trips.
+     * @since 2.1
+     */
+    public CompletableFuture<List<Trip>> getTripsAsync(final Query query, final Integer limit) {
+        return requestInstantAsync(REQUEST_TRIP, query).thenApply(is -> {
+            List<Trip> trips = new ArrayList<>();
+            try (is; BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+                String version = null;
+                String line = br.readLine();
+                while (line != null && (limit == null || trips.size() < limit)) {
+                    List<Serializable> l = mapper.readValue(line, mapper.getTypeFactory().constructCollectionType(List.class, Serializable.class));
+                    /* Check if result exists and has correct response type */
+                    if (l != null && !l.isEmpty()) {
+                        if (l.get(0).equals(RES_TYPE_URA_VERSION)) {
+                            version = l.get(1).toString();
+                        } else if (l.get(0).equals(RES_TYPE_PREDICTION)) {
+                            trips.add(new Trip(l, version));
+                        }
+                    }
+                    line = br.readLine();
+                }
+            } catch (IOException e) {
+                throw new AsyncUraClientException("Failed to read trips from API", e);
+            }
+
+            return trips;
+        });
     }
 
     /**
@@ -351,21 +410,52 @@ public class UraClient implements Serializable {
      * @since 2.0 Throws {@link UraClientException}.
      */
     public List<Stop> getStops(final Query query) throws UraClientException {
-        List<Stop> stops = new ArrayList<>();
-        try (InputStream is = requestInstant(REQUEST_STOP, query);
-             BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                List<Serializable> l = mapper.readValue(line, mapper.getTypeFactory().constructCollectionType(List.class, Serializable.class));
-                /* Check if result exists and has correct response type */
-                if (l != null && !l.isEmpty() && l.get(0).equals(RES_TYPE_STOP)) {
-                    stops.add(new Stop(l));
-                }
+        try {
+            return getStopsAsync(query).join();
+        } catch (CompletionException e) {
+            if (e.getCause() instanceof AsyncUraClientException) {
+                throw new UraClientException((AsyncUraClientException) e.getCause());
+            } else {
+                throw new UraClientException("Asynchronous stop request failed to complete", e.getCause());
             }
-        } catch (IOException e) {
-            throw new UraClientException("Failed to read stops from API", e);
         }
-        return stops;
+    }
+
+    /**
+     * Get list of stops without filters asynchronously.
+     *
+     * @return The list of stops.
+     * @since 2.1
+     */
+    public CompletableFuture<List<Stop>> getStopsAsync() {
+        return getStopsAsync(new Query());
+    }
+
+    /**
+     * List available stopIDs asynchronously.
+     * If forStops() and/or forLines() has been called, those will be used as filter.
+     *
+     * @param query The query.
+     * @return The list.
+     * @since 2.0
+     */
+    public CompletableFuture<List<Stop>> getStopsAsync(final Query query) {
+        return requestInstantAsync(REQUEST_TRIP, query).thenApply(is -> {
+            List<Stop> stops = new ArrayList<>();
+            try (is; BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    List<Serializable> l = mapper.readValue(line, mapper.getTypeFactory().constructCollectionType(List.class, Serializable.class));
+                    /* Check if result exists and has correct response type */
+                    if (l != null && !l.isEmpty() && l.get(0).equals(RES_TYPE_STOP)) {
+                        stops.add(new Stop(l));
+                    }
+                }
+            } catch (IOException e) {
+                throw new AsyncUraClientException("Failed to read stops from API", e);
+            }
+            return stops;
+        });
     }
 
     /**
@@ -420,39 +510,83 @@ public class UraClient implements Serializable {
      * @since 2.0 Throw {@link UraClientException}.
      */
     public List<Message> getMessages(final Query query, final Integer limit) throws UraClientException {
-        List<Message> messages = new ArrayList<>();
-        try (InputStream is = requestInstant(REQUEST_MESSAGE, query);
-             BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
-            String version = null;
-            String line = br.readLine();
-            while (line != null && (limit == null || messages.size() < limit)) {
-                List<Serializable> l = mapper.readValue(line, mapper.getTypeFactory().constructCollectionType(List.class, Serializable.class));
-                /* Check if result exists and has correct response type */
-                if (l != null && !l.isEmpty()) {
-                    if (l.get(0).equals(RES_TYPE_URA_VERSION)) {
-                        version = l.get(1).toString();
-                    } else if (l.get(0).equals(RES_TYPE_FLEX_MESSAGE)) {
-                        messages.add(new Message(l, version));
-                    }
-                }
-                line = br.readLine();
+        try {
+            return getMessagesAsync(query, limit).join();
+        } catch (CompletionException e) {
+            if (e.getCause() instanceof AsyncUraClientException) {
+                throw new UraClientException((AsyncUraClientException) e.getCause());
+            } else {
+                throw new UraClientException("Asynchronous message request failed to complete", e.getCause());
             }
-        } catch (IOException e) {
-            throw new UraClientException("Failed to read messages from API", e);
         }
-        return messages;
     }
 
     /**
-     * Issue request to instant endpoint and return input stream.
+     * Get list of messages.
+     *
+     * @return List of messages.
+     * @since 2.1
+     */
+    public CompletableFuture<List<Message>> getMessagesAsync() {
+        return getMessagesAsync(new Query(), null);
+    }
+
+
+    /**
+     * Get list of messages asynchronously.
+     * If forStops() has been called, those will be used as filter.
+     *
+     * @param query The query.
+     * @return List of messages.
+     * @since 2.1
+     */
+    public CompletableFuture<List<Message>> getMessagesAsync(final Query query) {
+        return getMessagesAsync(query, null);
+    }
+
+    /**
+     * Get list of messages for given stopIDs with result limit asynchronously.
+     *
+     * @param query The query.
+     * @param limit Maximum number of results.
+     * @return List of messages.
+     * @since 2.1
+     */
+    public CompletableFuture<List<Message>> getMessagesAsync(final Query query, final Integer limit) {
+        return requestInstantAsync(REQUEST_MESSAGE, query).thenApply(is -> {
+            List<Message> messages = new ArrayList<>();
+            try (is; BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+                String version = null;
+                String line = br.readLine();
+                while (line != null && (limit == null || messages.size() < limit)) {
+                    List<Serializable> l = mapper.readValue(line, mapper.getTypeFactory().constructCollectionType(List.class, Serializable.class));
+                    /* Check if result exists and has correct response type */
+                    if (l != null && !l.isEmpty()) {
+                        if (l.get(0).equals(RES_TYPE_URA_VERSION)) {
+                            version = l.get(1).toString();
+                        } else if (l.get(0).equals(RES_TYPE_FLEX_MESSAGE)) {
+                            messages.add(new Message(l, version));
+                        }
+                    }
+                    line = br.readLine();
+                }
+            } catch (IOException e) {
+                throw new AsyncUraClientException("Failed to read messages from API", e);
+            }
+            return messages;
+        });
+    }
+
+    /**
+     * Issue asynchronous request to instant endpoint and return input stream.
      *
      * @param returnList Fields to fetch.
      * @param query      The query.
      * @return Response {@link InputStream}.
-     * @throws IOException on errors
+     * @since 2.1
      */
-    private InputStream requestInstant(final String[] returnList, final Query query) throws IOException {
-        return request(requestURL(config.getBaseURL() + config.getInstantPath(), returnList, query));
+    private CompletableFuture<InputStream> requestInstantAsync(final String[] returnList, final Query query) {
+        return requestAsync(requestURL(config.getBaseURL() + config.getInstantPath(), returnList, query));
     }
 
     /**
@@ -510,6 +644,28 @@ public class UraClient implements Serializable {
             Thread.currentThread().interrupt();
             throw new IOException("API request interrupted", e);
         }
+    }
+
+    /**
+     * Open given URL as InputStream.
+     *
+     * @param url The URL.
+     * @return Response {@link InputStream}.
+     * @since 2.1
+     */
+    private CompletableFuture<InputStream> requestAsync(String url) {
+        var clientBuilder = HttpClient.newBuilder();
+        if (config.getConnectTimeout() != null) {
+            clientBuilder.connectTimeout(config.getConnectTimeout());
+        }
+
+        var reqBuilder = HttpRequest.newBuilder(URI.create(url)).GET();
+        if (config.getTimeout() != null) {
+            reqBuilder.timeout(config.getTimeout());
+        }
+
+        return clientBuilder.build().sendAsync(reqBuilder.build(), HttpResponse.BodyHandlers.ofInputStream())
+                .thenApply(HttpResponse::body);
     }
 
     /**
@@ -645,6 +801,16 @@ public class UraClient implements Serializable {
         }
 
         /**
+         * Get stops for set filters asynchronously.
+         *
+         * @return List of matching trips.
+         * @since 2.1
+         */
+        public CompletableFuture<List<Stop>> getStopsAsync() {
+            return UraClient.this.getStopsAsync(this);
+        }
+
+        /**
          * Get trips for set filters.
          *
          * @return List of matching trips.
@@ -666,6 +832,16 @@ public class UraClient implements Serializable {
          */
         public List<Trip> getTrips(final Integer limit) throws UraClientException {
             return UraClient.this.getTrips(this, limit);
+        }
+
+        /**
+         * Get trips for set filters asynchronously.
+         *
+         * @return List of matching trips.
+         * @since 2.1
+         */
+        public CompletableFuture<List<Trip>> getTripsAsync() {
+            return UraClient.this.getTripsAsync(this);
         }
 
         /**
@@ -715,6 +891,16 @@ public class UraClient implements Serializable {
          */
         public List<Message> getMessages(final Integer limit) throws UraClientException {
             return UraClient.this.getMessages(this, limit);
+        }
+
+        /**
+         * Get trips for set filters asynchronously.
+         *
+         * @return List of matching messages.
+         * @since 2.1
+         */
+        public CompletableFuture<List<Message>> getMessagesAsync() {
+            return UraClient.this.getMessagesAsync(this);
         }
     }
 }
