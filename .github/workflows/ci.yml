@@ -22,7 +22,7 @@ jobs:
       - name: Test
         run: ./mvnw -B -P coverage clean verify
       - name: Analysis
-        if: matrix.analysis
+        if: matrix.analysis && env.SONAR_TOKEN != ''
         run: >
           ./mvnw -B sonar:sonar
           -Dsonar.host.url=https://sonarcloud.io
