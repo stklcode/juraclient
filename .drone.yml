@@ -4,9 +4,9 @@ name: java11
 
 steps:
   - name: test
-    image: maven:3-eclipse-temurin-11
+    image: eclipse-temurin:11-jdk
     commands:
-      - mvn -B clean test
+      - ./mvnw -B clean test
 
 ---
 kind: pipeline
@@ -15,9 +15,9 @@ name: java17
 
 steps:
   - name: test
-    image: maven:3-eclipse-temurin-17
+    image: eclipse-temurin:17-jdk
     commands:
-      - mvn -B clean test
+      - ./mvnw -B clean test
 
 ---
 kind: pipeline
@@ -26,6 +26,6 @@ name: java21
 
 steps:
   - name: test
-    image: maven:3-eclipse-temurin-21
+    image: eclipse-temurin:21-jdk
     commands:
-      - mvn -B clean test
+      - ./mvnw -B clean test
