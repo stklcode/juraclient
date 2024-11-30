@@ -20,11 +20,11 @@ jobs:
           java-version: ${{ matrix.jdk }}
           distribution: 'temurin'
       - name: Test
-        run: mvn -B -P coverage clean verify
+        run: ./mvnw -B -P coverage clean verify
       - name: Analysis
         if: matrix.analysis
         run: >
-          mvn -B sonar:sonar
+          ./mvnw -B sonar:sonar
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.organization=stklcode-github
         env:
