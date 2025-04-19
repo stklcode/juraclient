@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 2.0.9 - 2025-04-19
+
+### Dependencies
+* Updated Jackson dependency to 2.18.3
+
+### Improvement
+* Minor adjustments for reproducible builds
+
+
 ## 2.0.8 - 2024-10-03
 
 ### Fixed
