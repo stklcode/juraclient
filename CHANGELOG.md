@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 2.0.10 - 2025-10-12
+
+### Dependencies
+* Updated Jackson dependency to 2.20.0
+* Updated JUnit to 5.13.4
+* Updated WireMock to 3.13.1
+
+### Misc
+* Tested with JDK 25
+
+
 ## 2.0.9 - 2025-04-19
 
 ### Dependencies
