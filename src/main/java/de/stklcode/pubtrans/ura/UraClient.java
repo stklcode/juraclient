@@ -16,13 +16,14 @@
 
 package de.stklcode.pubtrans.ura;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.stklcode.pubtrans.ura.exception.UraClientConfigurationException;
 import de.stklcode.pubtrans.ura.exception.UraClientException;
 import de.stklcode.pubtrans.ura.model.Message;
 import de.stklcode.pubtrans.ura.model.Stop;
 import de.stklcode.pubtrans.ura.model.Trip;
 import de.stklcode.pubtrans.ura.reader.AsyncUraTripReader;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.*;
 import java.net.URI;
@@ -280,7 +281,7 @@ public class UraClient implements Serializable {
                 }
                 line = br.readLine();
             }
-        } catch (IOException e) {
+        } catch (IOException | JacksonException e) {
             throw new UraClientException("Failed to read trips from API", e);
         }
         return trips;
@@ -362,7 +363,7 @@ public class UraClient implements Serializable {
                     stops.add(new Stop(l));
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | JacksonException e) {
             throw new UraClientException("Failed to read stops from API", e);
         }
         return stops;
@@ -437,7 +438,7 @@ public class UraClient implements Serializable {
                 }
                 line = br.readLine();
             }
-        } catch (IOException e) {
+        } catch (IOException | JacksonException e) {
             throw new UraClientException("Failed to read messages from API", e);
         }
         return messages;

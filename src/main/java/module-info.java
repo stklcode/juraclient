@@ -25,5 +25,5 @@ module de.stklcode.pubtrans.juraclient {
 
     requires java.base;
     requires java.net.http;
-    requires com.fasterxml.jackson.databind;
+    requires tools.jackson.databind;
 }

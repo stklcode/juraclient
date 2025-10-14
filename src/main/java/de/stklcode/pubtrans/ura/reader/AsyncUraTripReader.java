@@ -16,9 +16,10 @@
 
 package de.stklcode.pubtrans.ura.reader;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.stklcode.pubtrans.ura.UraClientConfiguration;
 import de.stklcode.pubtrans.ura.model.Trip;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -188,7 +189,7 @@ public class AsyncUraTripReader implements AutoCloseable {
 
                 // Request next item.
                 this.subscription.request(1);
-            } catch (IOException e) {
+            } catch (IOException | JacksonException e) {
                 onError(e);
             }
         }

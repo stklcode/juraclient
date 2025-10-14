@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Breaking
 * Java 17 or later required (#91)
 * Updated JUnit to 6.0.3 (#92)
+* Updated Jackson dependency to 3.1.3 (#93)
 
 
 ## 2.0.11 - 2026-05-14
