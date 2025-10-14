@@ -11,6 +11,8 @@ This client allows to simply connect any Java application to the public transpor
 local bus station or any other custom queries. API versions 1.x and 2.x are supported.
 
 ## Supported versions
+Version 3.x requires Java 17 or later.
+
 Version 2.x requires Java 11 or later.
 It also contains some new features and allows configuration using a dedicated configuration object.
 
