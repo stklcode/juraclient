@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2024 Stefan Kalscheuer
+ * Copyright 2016-2026 Stefan Kalscheuer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,12 +35,13 @@ import java.util.Optional;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.CoreMatchers.startsWith;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test for the URA Client.
@@ -73,13 +74,10 @@ class UraClientTest {
         // Test Exception handling.
         mockHttpToError(500);
 
-        try {
-            new UraClient(wireMock.baseUrl()).getStops();
-        } catch (RuntimeException e) {
-            assertThat(e, is(instanceOf(IllegalStateException.class)));
-            assertThat(e.getCause(), is(instanceOf(IOException.class)));
-            assertThat(e.getCause().getMessage(), startsWith("Server returned HTTP response code: 500 for URL"));
-        }
+        var uraClient = new UraClient(wireMock.baseUrl());
+        var e = assertThrows(UraClientException.class, uraClient::getStops);
+        assertThat(e.getCause(), is(instanceOf(IOException.class)));
+        assertThat(e.getCause().getMessage(), is("API request failed with status 500"));
     }
 
     @Test
@@ -212,18 +210,15 @@ class UraClientTest {
         trips = new UraClient(wireMock.baseUrl()).getTrips(5);
         assertThat(trips, hasSize(5));
 
-        // Test mockException handling.
+        // Test Exception handling.
+        var uraClient = new UraClient(wireMock.baseUrl());
         mockHttpToError(502);
-        try {
-            new UraClient(wireMock.baseUrl()).getTrips();
-        } catch (RuntimeException e) {
-            assertThat(e, is(instanceOf(IllegalStateException.class)));
-            assertThat(e.getCause(), is(instanceOf(IOException.class)));
-            assertThat(e.getCause().getMessage(), startsWith("Server returned HTTP response code: 502 for URL"));
-        }
+        var exception = assertThrows(UraClientException.class, uraClient::getTrips);
+        assertThat(exception.getCause(), is(instanceOf(IOException.class)));
+        assertThat(exception.getCause().getMessage(), is("API request failed with status 502"));
 
         mockHttpToException();
-        UraClientException exception = assertThrows(
+        exception = assertThrows(
                 UraClientException.class,
                 () -> new UraClient(wireMock.baseUrl()).getTrips(),
                 "Expected reader to raise an exception"

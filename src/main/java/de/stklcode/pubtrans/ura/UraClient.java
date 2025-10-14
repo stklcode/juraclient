@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2024 Stefan Kalscheuer
+ * Copyright 2016-2026 Stefan Kalscheuer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -505,7 +505,11 @@ public class UraClient implements Serializable {
                 reqBuilder.timeout(config.getTimeout());
             }
 
-            return clientBuilder.build().send(reqBuilder.build(), HttpResponse.BodyHandlers.ofInputStream()).body();
+            var response = clientBuilder.build().send(reqBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
+            if (response.statusCode() != 200) {
+                throw new IOException("API request failed with status " + response.statusCode());
+            }
+            return response.body();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new IOException("API request interrupted", e);

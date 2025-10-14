@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 2.0.12 - unreleased
+
+### Fixed
+* Throw exception on HTTP status != 200 instead of silently returning no results (#97)
+
+
 ## 2.0.11 - 2026-05-14
 
 ### Dependencies
