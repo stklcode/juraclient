@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2024 Stefan Kalscheuer
+ * Copyright 2016-2026 Stefan Kalscheuer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,33 @@ import java.util.List;
 /**
  * Entity for a single stop.
  *
+ * @param id        Stop identifier.
+ * @param name      The name of the bus stop.
+ * @param indicator The letter(s) that are displayed on top of the bus stop flag (e.g. SA).
+ *                  These are used to help passengers easily identify a bus stop from others in the locality.
+ * @param state     The different stop states and their definitions are provided below:
+ *                  <ul>
+ *                    <li>0: “Open”: Bus stop is being served as usual</li>
+ *                    <li>1: “Temporarily Closed” : Vehicles are not serving the stop but may be serving a nearby bus
+ *                            stop, predictions may be available</li>
+ *                    <li>2: “Closed” : Vehicles are not serving the stop.
+ *                           Stop should display the closed message and predictions should not be shown.</li>
+ *                    <li>3: “Suspended” : Vehicles are not serving the stop.
+ *                           Stop should display the closed message and predictions should not be shown.</li>
+ *                  </ul>
+ * @param latitude  The latitude of the stop. This is expressed using the WGS84 coordinate system.
+ * @param longitude The longitude of the stop. This is expressed using the WGS84 coordinate system.
  * @author Stefan Kalscheuer
+ * @since 2.0 record
  */
-public final class Stop implements Model {
-    private static final long serialVersionUID = 202040044477267787L;
-
+public record Stop(
+    String id,
+    String name,
+    String indicator,
+    int state,
+    double latitude,
+    double longitude
+) implements Model {
     private static final int F_STOP_NAME = 1;
     private static final int F_STOP_ID = 2;
     private static final int F_INDICATOR = 3;
@@ -37,170 +59,45 @@ public final class Stop implements Model {
     private static final int F_NUM_OF_FIELDS = 7;
 
     /**
-     * Stop identifier.
-     */
-    private final String id;
-
-    /**
-     * The name of the bus stop.
-     */
-    private final String name;
-
-    /**
-     * The stop indicator.
-     */
-    private final String indicator;
-
-    /**
-     * The stop state
-     */
-    private final Integer state;
-
-    /**
-     * The stop geolocation latitude.
-     */
-    private final Double latitude;
-
-    /**
-     * The stop geolocation longitude.
-     */
-    private final Double longitude;
-
-    /**
-     * Construct Stop object.
-     *
-     * @param id        Stop ID.
-     * @param name      Stop name.
-     * @param indicator Stop indicator.
-     * @param state     Stop state.
-     * @param latitude  Stop geolocation latitude.
-     * @param longitude Stop geolocation longitude.
-     */
-    public Stop(final String id,
-                final String name,
-                final String indicator,
-                final Integer state,
-                final Double latitude,
-                final Double longitude) {
-        this.id = id;
-        this.name = name;
-        this.indicator = indicator;
-        this.state = state;
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
-
-    /**
      * Construct Stop object from raw list of attributes parsed from JSON.
      *
      * @param raw List of attributes from JSON line
      * @throws IOException Thrown on invalid line format.
      */
-    public Stop(final List<Serializable> raw) throws IOException {
+    public static Stop of(final List<Serializable> raw) throws IOException {
         if (raw == null || raw.size() < F_NUM_OF_FIELDS) {
             throw new IOException("Invalid number of fields");
         }
 
-        if (raw.get(1) instanceof String) {
-            name = (String) raw.get(F_STOP_NAME);
-        } else {
+        if (!(raw.get(F_STOP_NAME) instanceof String name)) {
             throw Model.typeErrorString(F_STOP_NAME, raw.get(F_STOP_NAME).getClass());
         }
 
-        if (raw.get(F_STOP_ID) instanceof String) {
-            id = (String) raw.get(F_STOP_ID);
-        } else {
+        if (!(raw.get(F_STOP_ID) instanceof String id)) {
             throw Model.typeErrorString(F_STOP_ID, raw.get(F_STOP_ID).getClass());
         }
 
-        if (raw.get(F_INDICATOR) instanceof String) {
-            indicator = (String) raw.get(F_INDICATOR);
+        String indicator;
+        if (raw.get(F_INDICATOR) instanceof String indicatorStr) {
+            indicator = indicatorStr;
         } else if (raw.get(F_INDICATOR) == null) {
             indicator = null;
         } else {
             throw Model.typeErrorString(F_INDICATOR, raw.get(F_INDICATOR).getClass());
         }
 
-        if (raw.get(F_STATE) instanceof Integer) {
-            state = (Integer) raw.get(F_STATE);
-        } else {
+        if (!(raw.get(F_STATE) instanceof Integer state)) {
             throw Model.typeError(F_STATE, raw.get(F_STATE).getClass(), "Integer");
         }
 
-        if (raw.get(F_LATITUDE) instanceof Double) {
-            latitude = (Double) raw.get(F_LATITUDE);
-        } else {
+        if (!(raw.get(F_LATITUDE) instanceof Double latitude)) {
             throw Model.typeError(F_LATITUDE, raw.get(F_LATITUDE).getClass(), "Double");
         }
 
-        if (raw.get(F_LONGITUDE) instanceof Double) {
-            longitude = (Double) raw.get(F_LONGITUDE);
-        } else {
+        if (!(raw.get(F_LONGITUDE) instanceof Double longitude)) {
             throw Model.typeError(F_LONGITUDE, raw.get(F_LONGITUDE).getClass(), "Double");
         }
-    }
 
-    /**
-     * Stop identifier.
-     *
-     * @return The stop ID.
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * The name of the bus stop.
-     *
-     * @return The stop name.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * The letter(s) that are displayed on top of the bus stop flag (e.g. SA).
-     * These are used to help passengers easily identify a bus stop from others in the locality.
-     *
-     * @return The stop indicator.
-     */
-    public String getIndicator() {
-        return indicator;
-    }
-
-    /**
-     * The different stop states and their definitions are provided below:
-     * <ul>
-     * <li>0: “Open”: Bus stop is being served as usual</li>
-     * <li>1: “Temporarily Closed” : Vehicles are not serving the stop but may be serving a nearby bus stop,
-     *                               predictions may be available</li>
-     * <li>2: “Closed” : Vehicles are not serving the stop.
-     *                   Stop should display the closed message and predictions should not be shown.</li>
-     * <li>3: “Suspended” : Vehicles are not serving the stop.
-     *                      Stop should display the closed message and predictions should not be shown.</li>
-     * </ul>
-     *
-     * @return The stop state.
-     */
-    public Integer getState() {
-        return state;
-    }
-
-    /**
-     * The latitude of the stop. This is expressed using the WGS84 coordinate system.
-     *
-     * @return The stop geolocation latitude.
-     */
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    /**
-     * The longitude of the stop. This is expressed using the WGS84 coordinate system.
-     *
-     * @return The stop geolocation longitude.
-     */
-    public Double getLongitude() {
-        return longitude;
+        return new Stop(id, name, indicator, state, latitude, longitude);
     }
 }

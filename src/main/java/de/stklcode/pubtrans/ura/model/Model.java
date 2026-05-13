@@ -47,6 +47,6 @@ interface Model extends Serializable {
      */
     static IOException typeError(int field, Class<?> actual, String expected) {
         return new IOException(String.format("Field %d not of expected type %s, found %s",
-                field, expected, actual.getSimpleName()));
+            field, expected, actual.getSimpleName()));
     }
 }

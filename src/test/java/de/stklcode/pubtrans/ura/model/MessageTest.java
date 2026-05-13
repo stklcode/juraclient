@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2024 Stefan Kalscheuer
+ * Copyright 2016-2026 Stefan Kalscheuer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,26 +37,28 @@ import static org.junit.jupiter.api.Assertions.fail;
 class MessageTest {
     @Test
     void basicConstructorTest() {
-        Message message = new Message("sid",
-                "name",
-                "indicator",
-                1,
-                2.345,
-                6.789,
-                "msg_uuid",
-                1,
-                3,
-                "message text");
-        assertThat(message.getStop().getId(), is("sid"));
-        assertThat(message.getStop().getName(), is("name"));
-        assertThat(message.getStop().getIndicator(), is("indicator"));
-        assertThat(message.getStop().getState(), is(1));
-        assertThat(message.getStop().getLatitude(), is(2.345));
-        assertThat(message.getStop().getLongitude(), is(6.789));
-        assertThat(message.getUuid(), is("msg_uuid"));
-        assertThat(message.getType(), is(1));
-        assertThat(message.getPriority(), is(3));
-        assertThat(message.getText(), is("message text"));
+        Message message = new Message(
+            "sid",
+            "name",
+            "indicator",
+            1,
+            2.345,
+            6.789,
+            "msg_uuid",
+            1,
+            3,
+            "message text"
+        );
+        assertThat(message.stop().id(), is("sid"));
+        assertThat(message.stop().name(), is("name"));
+        assertThat(message.stop().indicator(), is("indicator"));
+        assertThat(message.stop().state(), is(1));
+        assertThat(message.stop().latitude(), is(2.345));
+        assertThat(message.stop().longitude(), is(6.789));
+        assertThat(message.uuid(), is("msg_uuid"));
+        assertThat(message.type(), is(1));
+        assertThat(message.priority(), is(3));
+        assertThat(message.text(), is("message text"));
     }
 
     @Test
@@ -76,17 +78,17 @@ class MessageTest {
         raw.add("message text");
 
         try {
-            Message message = new Message(raw);
-            assertThat(message.getStop().getId(), is("stopId"));
-            assertThat(message.getStop().getName(), is("stopName"));
-            assertThat(message.getStop().getIndicator(), is("stopIndicator"));
-            assertThat(message.getStop().getState(), is(9));
-            assertThat(message.getStop().getLatitude(), is(8.765));
-            assertThat(message.getStop().getLongitude(), is(43.21));
-            assertThat(message.getUuid(), is("msg_uuid"));
-            assertThat(message.getType(), is(1));
-            assertThat(message.getPriority(), is(3));
-            assertThat(message.getText(), is("message text"));
+            Message message = Message.of(raw);
+            assertThat(message.stop().id(), is("stopId"));
+            assertThat(message.stop().name(), is("stopName"));
+            assertThat(message.stop().indicator(), is("stopIndicator"));
+            assertThat(message.stop().state(), is(9));
+            assertThat(message.stop().latitude(), is(8.765));
+            assertThat(message.stop().longitude(), is(43.21));
+            assertThat(message.uuid(), is("msg_uuid"));
+            assertThat(message.type(), is(1));
+            assertThat(message.priority(), is(3));
+            assertThat(message.text(), is("message text"));
         } catch (IOException e) {
             fail("Creation of Message from valid list failed: " + e.getMessage());
         }
@@ -94,7 +96,7 @@ class MessageTest {
         /* Excess elements should be ignored */
         raw.add("foo");
         try {
-            Message message = new Message(raw);
+            Message message = Message.of(raw);
             assertThat(message, is(notNullValue()));
             raw.remove(11);
         } catch (IOException e) {
@@ -106,7 +108,7 @@ class MessageTest {
         invalid.remove(7);
         invalid.add(7, 123L);
         try {
-            new Message(invalid);
+            Message.of(invalid);
             fail("Creation of Message with invalid UUID field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
@@ -116,7 +118,7 @@ class MessageTest {
         invalid.remove(8);
         invalid.add(8, "abc");
         try {
-            new Message(invalid);
+            Message.of(invalid);
             fail("Creation of Message with invalid type field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
@@ -126,7 +128,7 @@ class MessageTest {
         invalid.remove(9);
         invalid.add(9, "xyz");
         try {
-            new Message(invalid);
+            Message.of(invalid);
             fail("Creation of Message with invalid priority field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
@@ -136,7 +138,7 @@ class MessageTest {
         invalid.remove(10);
         invalid.add(10, 1.23);
         try {
-            new Message(invalid);
+            Message.of(invalid);
             fail("Creation of Message with invalid text field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
@@ -145,7 +147,7 @@ class MessageTest {
         invalid = new ArrayList<>(raw);
         invalid.remove(10);
         try {
-            new Message(invalid);
+            Message.of(invalid);
             fail("Creation of Message with too short list successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));

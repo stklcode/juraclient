@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2024 Stefan Kalscheuer
+ * Copyright 2016-2026 Stefan Kalscheuer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -182,7 +182,7 @@ public class AsyncUraTripReader implements AutoCloseable {
                         version = l.get(1).toString();
                     } else if (l.get(0).equals(RES_TYPE_PREDICTION)) {
                         // Parse Trip and pass to each consumer.
-                        Trip trip = new Trip(l, version);
+                        Trip trip = Trip.of(l, version);
                         consumers.forEach(c -> c.accept(trip));
                     }
                 }

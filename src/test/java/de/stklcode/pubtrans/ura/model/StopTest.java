@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2024 Stefan Kalscheuer
+ * Copyright 2016-2026 Stefan Kalscheuer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,12 +38,12 @@ class StopTest {
     @Test
     void basicConstructorTest() {
         Stop stop = new Stop("id", "name", "indicator", 1, 2.345, 6.789);
-        assertThat(stop.getId(), is("id"));
-        assertThat(stop.getName(), is("name"));
-        assertThat(stop.getIndicator(), is("indicator"));
-        assertThat(stop.getState(), is(1));
-        assertThat(stop.getLatitude(), is(2.345));
-        assertThat(stop.getLongitude(), is(6.789));
+        assertThat(stop.id(), is("id"));
+        assertThat(stop.name(), is("name"));
+        assertThat(stop.indicator(), is("indicator"));
+        assertThat(stop.state(), is(1));
+        assertThat(stop.latitude(), is(2.345));
+        assertThat(stop.longitude(), is(6.789));
     }
 
     @Test
@@ -59,13 +59,13 @@ class StopTest {
         raw.add(4.321);
 
         try {
-            Stop stop = new Stop(raw);
-            assertThat(stop.getId(), is("stopId"));
-            assertThat(stop.getName(), is("stopName"));
-            assertThat(stop.getIndicator(), is("stopIndicator"));
-            assertThat(stop.getState(), is(9));
-            assertThat(stop.getLatitude(), is(8.765));
-            assertThat(stop.getLongitude(), is(4.321));
+            Stop stop = Stop.of(raw);
+            assertThat(stop.id(), is("stopId"));
+            assertThat(stop.name(), is("stopName"));
+            assertThat(stop.indicator(), is("stopIndicator"));
+            assertThat(stop.state(), is(9));
+            assertThat(stop.latitude(), is(8.765));
+            assertThat(stop.longitude(), is(4.321));
         } catch (IOException e) {
             fail("Creation of Stop from valid list failed: " + e.getMessage());
         }
@@ -73,7 +73,7 @@ class StopTest {
         /* Excess elements should be ignored */
         raw.add("foo");
         try {
-            Stop stop = new Stop(raw);
+            Stop stop = Stop.of(raw);
             assertThat(stop, is(notNullValue()));
             raw.remove(7);
         } catch (IOException e) {
@@ -85,7 +85,7 @@ class StopTest {
         invalid.remove(1);
         invalid.add(1, 5);
         try {
-            new Stop(invalid);
+            Stop.of(invalid);
             fail("Creation of Stop with invalid name field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
@@ -95,7 +95,7 @@ class StopTest {
         invalid.remove(2);
         invalid.add(2, 0);
         try {
-            new Stop(invalid);
+            Stop.of(invalid);
             fail("Creation of Stop with invalid id field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
@@ -105,7 +105,7 @@ class StopTest {
         invalid.remove(3);
         invalid.add(3, -1.23);
         try {
-            new Stop(invalid);
+            Stop.of(invalid);
             fail("Creation of Stop with invalid indicator field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
@@ -115,7 +115,7 @@ class StopTest {
         invalid.remove(4);
         invalid.add(4, "foo");
         try {
-            new Stop(invalid);
+            Stop.of(invalid);
             fail("Creation of Stop with invalid state field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
@@ -125,7 +125,7 @@ class StopTest {
         invalid.remove(5);
         invalid.add(5, "123");
         try {
-            new Stop(invalid);
+            Stop.of(invalid);
             fail("Creation of Stop with invalid latitude field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
@@ -135,7 +135,7 @@ class StopTest {
         invalid.remove(6);
         invalid.add(6, 456);
         try {
-            new Stop(invalid);
+            Stop.of(invalid);
             fail("Creation of Stop with invalid longitude field successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));
@@ -144,7 +144,7 @@ class StopTest {
         invalid = new ArrayList<>(raw);
         invalid.remove(6);
         try {
-            new Stop(invalid);
+            Stop.of(invalid);
             fail("Creation of Stop with too short list successful");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(IOException.class)));

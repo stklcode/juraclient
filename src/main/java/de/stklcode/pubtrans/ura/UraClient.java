@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2024 Stefan Kalscheuer
+ * Copyright 2016-2026 Stefan Kalscheuer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -276,7 +276,7 @@ public class UraClient implements Serializable {
                     if (l.get(0).equals(RES_TYPE_URA_VERSION)) {
                         version = l.get(1).toString();
                     } else if (l.get(0).equals(RES_TYPE_PREDICTION)) {
-                        trips.add(new Trip(l, version));
+                        trips.add(Trip.of(l, version));
                     }
                 }
                 line = br.readLine();
@@ -360,7 +360,7 @@ public class UraClient implements Serializable {
                 List<Serializable> l = mapper.readValue(line, mapper.getTypeFactory().constructCollectionType(List.class, Serializable.class));
                 /* Check if result exists and has correct response type */
                 if (l != null && !l.isEmpty() && l.get(0).equals(RES_TYPE_STOP)) {
-                    stops.add(new Stop(l));
+                    stops.add(Stop.of(l));
                 }
             }
         } catch (IOException | JacksonException e) {
@@ -433,7 +433,7 @@ public class UraClient implements Serializable {
                     if (l.get(0).equals(RES_TYPE_URA_VERSION)) {
                         version = l.get(1).toString();
                     } else if (l.get(0).equals(RES_TYPE_FLEX_MESSAGE)) {
-                        messages.add(new Message(l, version));
+                        messages.add(Message.of(l, version));
                     }
                 }
                 line = br.readLine();

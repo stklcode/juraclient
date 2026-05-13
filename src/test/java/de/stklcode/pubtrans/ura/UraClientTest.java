@@ -64,11 +64,11 @@ class UraClientTest {
         // List stops and verify some values.
         List<Stop> stops = new UraClient(wireMock.baseUrl(), "/interfaces/ura/instant_V2", "/interfaces/ura/stream").getStops();
         assertThat(stops, hasSize(10));
-        assertThat(stops.get(0).getId(), is("100210"));
-        assertThat(stops.get(1).getName(), is("Brockenberg"));
-        assertThat(stops.get(2).getState(), is(0));
-        assertThat(stops.get(3).getLatitude(), is(50.7578775));
-        assertThat(stops.get(4).getLongitude(), is(6.0708663));
+        assertThat(stops.get(0).id(), is("100210"));
+        assertThat(stops.get(1).name(), is("Brockenberg"));
+        assertThat(stops.get(2).state(), is(0));
+        assertThat(stops.get(3).latitude(), is(50.7578775));
+        assertThat(stops.get(4).longitude(), is(6.0708663));
 
         // Test Exception handling.
         mockHttpToError(500);
@@ -92,12 +92,12 @@ class UraClientTest {
                 .forLines("33")
                 .getStops();
         assertThat(stops, hasSize(47));
-        assertThat(stops.get(0).getId(), is("100000"));
-        assertThat(stops.get(1).getName(), is("Kuckelkorn"));
-        assertThat(stops.get(2).getState(), is(0));
-        assertThat(stops.get(3).getLatitude(), is(50.7690688));
-        assertThat(stops.get(4).getIndicator(), is("H.1"));
-        assertThat(stops.get(5).getLongitude(), is(6.2314072));
+        assertThat(stops.get(0).id(), is("100000"));
+        assertThat(stops.get(1).name(), is("Kuckelkorn"));
+        assertThat(stops.get(2).state(), is(0));
+        assertThat(stops.get(3).latitude(), is(50.7690688));
+        assertThat(stops.get(4).indicator(), is("H.1"));
+        assertThat(stops.get(5).longitude(), is(6.2314072));
     }
 
     @Test
@@ -110,12 +110,12 @@ class UraClientTest {
                 .forPosition(51.51009, -0.1345734, 200)
                 .getStops();
         assertThat(stops, hasSize(13));
-        assertThat(stops.get(0).getId(), is("156"));
-        assertThat(stops.get(1).getName(), is("Piccadilly Circus"));
-        assertThat(stops.get(2).getState(), is(0));
-        assertThat(stops.get(3).getLatitude(), is(51.509154));
-        assertThat(stops.get(4).getLongitude(), is(-0.134172));
-        assertThat(stops.get(5).getIndicator(), is(nullValue()));
+        assertThat(stops.get(0).id(), is("156"));
+        assertThat(stops.get(1).name(), is("Piccadilly Circus"));
+        assertThat(stops.get(2).state(), is(0));
+        assertThat(stops.get(3).latitude(), is(51.509154));
+        assertThat(stops.get(4).longitude(), is(-0.134172));
+        assertThat(stops.get(5).indicator(), is(nullValue()));
 
         mockHttpToFile(1, "instant_V1_stops_circle_name.txt");
         stops = new UraClient(wireMock.baseUrl())
@@ -123,7 +123,7 @@ class UraClientTest {
                 .forPosition(51.51009, -0.1345734, 200)
                 .getStops();
         assertThat(stops, hasSize(7));
-        assertThat(stops.stream().filter(t -> !t.getName().equals("Piccadilly Circus")).findAny(), is(Optional.empty()));
+        assertThat(stops.stream().filter(t -> !t.name().equals("Piccadilly Circus")).findAny(), is(Optional.empty()));
     }
 
     @Test
@@ -134,7 +134,7 @@ class UraClientTest {
         // List stops and verify some values.
         List<Trip> trips = new UraClient(wireMock.baseUrl()).forDestinationNames("Piccadilly Circus").getTrips();
         assertThat(trips, hasSize(9));
-        assertThat(trips.stream().filter(t -> !t.getDestinationName().equals("Piccadilly Cir")).findAny(),
+        assertThat(trips.stream().filter(t -> !t.destinationName().equals("Piccadilly Cir")).findAny(),
                 is(Optional.empty()));
 
         mockHttpToFile(1, "instant_V1_trips_stop_destination.txt");
@@ -143,9 +143,9 @@ class UraClientTest {
                 .forDestinationNames("Marble Arch")
                 .getTrips();
         assertThat(trips, hasSize(5));
-        assertThat(trips.stream().filter(t -> !t.getStop().getId().equals("156")).findAny(),
+        assertThat(trips.stream().filter(t -> !t.stop().id().equals("156")).findAny(),
                 is(Optional.empty()));
-        assertThat(trips.stream().filter(t -> !t.getDestinationName().equals("Marble Arch")).findAny(),
+        assertThat(trips.stream().filter(t -> !t.destinationName().equals("Marble Arch")).findAny(),
                 is(Optional.empty()));
     }
 
@@ -161,7 +161,7 @@ class UraClientTest {
         mockHttpToFile(1, "instant_V1_trips_stop_towards.txt");
         trips = new UraClient(wireMock.baseUrl()).forStops("156").towards("Marble Arch").getTrips();
         assertThat(trips, hasSize(17));
-        assertThat(trips.stream().filter(t -> !t.getStop().getId().equals("156")).findAny(), is(Optional.empty()));
+        assertThat(trips.stream().filter(t -> !t.stop().id().equals("156")).findAny(), is(Optional.empty()));
     }
 
     @Test
@@ -172,16 +172,16 @@ class UraClientTest {
         // Get trips without filters and verify some values.
         List<Trip> trips = new UraClient(wireMock.baseUrl()).getTrips();
         assertThat(trips, hasSize(10));
-        assertThat(trips.get(0).getId(), is("27000165015001"));
-        assertThat(trips.get(1).getLineID(), is("55"));
-        assertThat(trips.get(2).getLineName(), is("28"));
-        assertThat(trips.get(3).getDirectionID(), is(1));
-        assertThat(trips.get(4).getDestinationName(), is("Verlautenheide Endstr."));
-        assertThat(trips.get(5).getDestinationText(), is("Aachen Bushof"));
-        assertThat(trips.get(6).getVehicleID(), is("247"));
-        assertThat(trips.get(7).getEstimatedTime(), is(1482854580000L));
-        assertThat(trips.get(8).getVisitID(), is(30));
-        assertThat(trips.get(9).getStop().getId(), is("100002"));
+        assertThat(trips.get(0).id(), is("27000165015001"));
+        assertThat(trips.get(1).lineID(), is("55"));
+        assertThat(trips.get(2).lineName(), is("28"));
+        assertThat(trips.get(3).directionID(), is(1));
+        assertThat(trips.get(4).destinationName(), is("Verlautenheide Endstr."));
+        assertThat(trips.get(5).destinationText(), is("Aachen Bushof"));
+        assertThat(trips.get(6).vehicleID(), is("247"));
+        assertThat(trips.get(7).estimatedTime(), is(1482854580000L));
+        assertThat(trips.get(8).visitID(), is(30));
+        assertThat(trips.get(9).stop().id(), is("100002"));
 
         // With limit.
         trips = new UraClient(wireMock.baseUrl()).getTrips(5);
@@ -196,16 +196,16 @@ class UraClientTest {
         trips = new UraClient(wireMock.baseUrl(), "/interfaces/ura/instant_V2", "/interfaces/ura/stream")
                 .getTrips();
         assertThat(trips, hasSize(10));
-        assertThat(trips.get(0).getId(), is("27000165015001"));
-        assertThat(trips.get(1).getLineID(), is("55"));
-        assertThat(trips.get(2).getLineName(), is("28"));
-        assertThat(trips.get(3).getDirectionID(), is(1));
-        assertThat(trips.get(4).getDestinationName(), is("Verlautenheide Endstr."));
-        assertThat(trips.get(5).getDestinationText(), is("Aachen Bushof"));
-        assertThat(trips.get(6).getVehicleID(), is("247"));
-        assertThat(trips.get(7).getEstimatedTime(), is(1482854580000L));
-        assertThat(trips.get(8).getVisitID(), is(30));
-        assertThat(trips.get(9).getStop().getId(), is("100002"));
+        assertThat(trips.get(0).id(), is("27000165015001"));
+        assertThat(trips.get(1).lineID(), is("55"));
+        assertThat(trips.get(2).lineName(), is("28"));
+        assertThat(trips.get(3).directionID(), is(1));
+        assertThat(trips.get(4).destinationName(), is("Verlautenheide Endstr."));
+        assertThat(trips.get(5).destinationText(), is("Aachen Bushof"));
+        assertThat(trips.get(6).vehicleID(), is("247"));
+        assertThat(trips.get(7).estimatedTime(), is(1482854580000L));
+        assertThat(trips.get(8).visitID(), is(30));
+        assertThat(trips.get(9).stop().id(), is("100002"));
 
         // Get limited number of trips.
         mockHttpToFile(1, "instant_V1_trips_all.txt");
@@ -242,11 +242,11 @@ class UraClientTest {
                 .forStops("100000")
                 .getTrips();
         assertThat(trips, hasSize(10));
-        assertThat(trips.stream().filter(t -> !t.getStop().getId().equals("100000")).findAny(), is(Optional.empty()));
-        assertThat(trips.get(0).getId(), is("27000158010001"));
-        assertThat(trips.get(1).getLineID(), is("7"));
-        assertThat(trips.get(2).getLineName(), is("25"));
-        assertThat(trips.get(3).getStop().getIndicator(), is("H.15"));
+        assertThat(trips.stream().filter(t -> !t.stop().id().equals("100000")).findAny(), is(Optional.empty()));
+        assertThat(trips.get(0).id(), is("27000158010001"));
+        assertThat(trips.get(1).lineID(), is("7"));
+        assertThat(trips.get(2).lineName(), is("25"));
+        assertThat(trips.get(3).stop().indicator(), is("H.15"));
 
         // With limit.
         trips = new UraClient(wireMock.baseUrl())
@@ -260,12 +260,12 @@ class UraClientTest {
                 .forStopsByName("Uniklinik")
                 .getTrips();
         assertThat(trips, hasSize(10));
-        assertThat(trips.stream().filter(t -> !t.getStop().getName().equals("Uniklinik")).findAny(),
+        assertThat(trips.stream().filter(t -> !t.stop().name().equals("Uniklinik")).findAny(),
                 is(Optional.empty()));
-        assertThat(trips.get(0).getId(), is("92000043013001"));
-        assertThat(trips.get(1).getLineID(), is("5"));
-        assertThat(trips.get(2).getVehicleID(), is("317"));
-        assertThat(trips.get(3).getDirectionID(), is(1));
+        assertThat(trips.get(0).id(), is("92000043013001"));
+        assertThat(trips.get(1).lineID(), is("5"));
+        assertThat(trips.get(2).vehicleID(), is("317"));
+        assertThat(trips.get(3).directionID(), is(1));
 
         mockHttpToException();
         UraClientException exception = assertThrows(
@@ -287,11 +287,11 @@ class UraClientTest {
                 .forLines("3")
                 .getTrips();
         assertThat(trips, hasSize(10));
-        assertThat(trips.stream().filter(t -> !t.getLineID().equals("3")).findAny(), is(Optional.empty()));
-        assertThat(trips.get(0).getId(), is("27000154004001"));
-        assertThat(trips.get(1).getLineID(), is("3"));
-        assertThat(trips.get(2).getLineName(), is("3.A"));
-        assertThat(trips.get(3).getStop().getIndicator(), is("H.4 (Pontwall)"));
+        assertThat(trips.stream().filter(t -> !t.lineID().equals("3")).findAny(), is(Optional.empty()));
+        assertThat(trips.get(0).id(), is("27000154004001"));
+        assertThat(trips.get(1).lineID(), is("3"));
+        assertThat(trips.get(2).lineName(), is("3.A"));
+        assertThat(trips.get(3).stop().indicator(), is("H.4 (Pontwall)"));
 
         // Get trips for line name "3.A" and verify some values.
         mockHttpToFile(1, "instant_V1_trips_line_name.txt");
@@ -299,11 +299,11 @@ class UraClientTest {
                 .forLinesByName("3.A")
                 .getTrips();
         assertThat(trips, hasSize(10));
-        assertThat(trips.stream().filter(t -> !t.getLineName().equals("3.A")).findAny(), is(Optional.empty()));
-        assertThat(trips.get(0).getId(), is("92000288014001"));
-        assertThat(trips.get(1).getLineID(), is("3"));
-        assertThat(trips.get(2).getLineName(), is("3.A"));
-        assertThat(trips.get(3).getStop().getName(), is("Aachen Gartenstraße"));
+        assertThat(trips.stream().filter(t -> !t.lineName().equals("3.A")).findAny(), is(Optional.empty()));
+        assertThat(trips.get(0).id(), is("92000288014001"));
+        assertThat(trips.get(1).lineID(), is("3"));
+        assertThat(trips.get(2).lineName(), is("3.A"));
+        assertThat(trips.get(3).stop().name(), is("Aachen Gartenstraße"));
 
         // Get trips for line 3 with direction 1 and verify some values.
         mockHttpToFile(1, "instant_V1_trips_line_direction.txt");
@@ -312,8 +312,8 @@ class UraClientTest {
                 .forDirection(2)
                 .getTrips();
         assertThat(trips, hasSize(10));
-        assertThat(trips.stream().filter(t -> !t.getLineID().equals("412")).findAny(), is(Optional.empty()));
-        assertThat(trips.stream().filter(t -> !t.getDirectionID().equals(2)).findAny(), is(Optional.empty()));
+        assertThat(trips.stream().filter(t -> !t.lineID().equals("412")).findAny(), is(Optional.empty()));
+        assertThat(trips.stream().filter(t -> t.directionID() != 2).findAny(), is(Optional.empty()));
 
         // Test lineID and direction in different order.
         mockHttpToFile(1, "instant_V1_trips_line_direction.txt");
@@ -322,8 +322,8 @@ class UraClientTest {
                 .forLines("412")
                 .getTrips();
         assertThat(trips, hasSize(10));
-        assertThat(trips.stream().filter(t -> !t.getLineID().equals("412")).findAny(), is(Optional.empty()));
-        assertThat(trips.stream().filter(t -> !t.getDirectionID().equals(2)).findAny(), is(Optional.empty()));
+        assertThat(trips.stream().filter(t -> !t.lineID().equals("412")).findAny(), is(Optional.empty()));
+        assertThat(trips.stream().filter(t -> t.directionID() != 2).findAny(), is(Optional.empty()));
     }
 
     @Test
@@ -337,13 +337,13 @@ class UraClientTest {
                 .forStops("100000")
                 .getTrips();
         assertThat(trips, hasSize(10));
-        assertThat(trips.stream().filter(t -> !t.getLineID().equals("25") && !t.getLineID().equals("35")).findAny(),
+        assertThat(trips.stream().filter(t -> !t.lineID().equals("25") && !t.lineID().equals("35")).findAny(),
                 is(Optional.empty()));
-        assertThat(trips.stream().filter(t -> !t.getStop().getId().equals("100000")).findAny(), is(Optional.empty()));
-        assertThat(trips.get(0).getId(), is("27000078014001"));
-        assertThat(trips.get(1).getLineID(), is("25"));
-        assertThat(trips.get(3).getLineName(), is("35"));
-        assertThat(trips.get(5).getStop().getIndicator(), is("H.12"));
+        assertThat(trips.stream().filter(t -> !t.stop().id().equals("100000")).findAny(), is(Optional.empty()));
+        assertThat(trips.get(0).id(), is("27000078014001"));
+        assertThat(trips.get(1).lineID(), is("25"));
+        assertThat(trips.get(3).lineName(), is("35"));
+        assertThat(trips.get(5).stop().indicator(), is("H.12"));
     }
 
 
@@ -357,14 +357,14 @@ class UraClientTest {
         // Get messages without filter and verify some values.
         List<Message> messages = uraClient.getMessages();
         assertThat(messages, hasSize(2));
-        assertThat(messages.get(0).getStop().getId(), is("100707"));
-        assertThat(messages.get(0).getUuid(), is("016e1231d4e30014_100707"));
-        assertThat(messages.get(1).getStop().getName(), is("Herzogenr. Rathaus"));
-        assertThat(messages.get(1).getUuid(), is("016e2cc3a3750006_210511"));
-        assertThat(messages.get(0).getType(), is(0));
-        assertThat(messages.get(1).getPriority(), is(0));
-        assertThat(messages.get(0).getText(), is("Sehr geehrte Fahrgäste, wegen Strassenbauarbeiten kann diese Haltestelle nicht von den Bussen der Linien 17, 44 und N2 angefahren werden."));
-        assertThat(messages.get(1).getText(), is("Sehr geehrte Fahrgäste, diese Haltestelle wird vorübergehend von den Linien 47, 147 und N3 nicht angefahren."));
+        assertThat(messages.get(0).stop().id(), is("100707"));
+        assertThat(messages.get(0).uuid(), is("016e1231d4e30014_100707"));
+        assertThat(messages.get(1).stop().name(), is("Herzogenr. Rathaus"));
+        assertThat(messages.get(1).uuid(), is("016e2cc3a3750006_210511"));
+        assertThat(messages.get(0).type(), is(0));
+        assertThat(messages.get(1).priority(), is(0));
+        assertThat(messages.get(0).text(), is("Sehr geehrte Fahrgäste, wegen Strassenbauarbeiten kann diese Haltestelle nicht von den Bussen der Linien 17, 44 und N2 angefahren werden."));
+        assertThat(messages.get(1).text(), is("Sehr geehrte Fahrgäste, diese Haltestelle wird vorübergehend von den Linien 47, 147 und N3 nicht angefahren."));
 
         // With limit.
         messages = uraClient.getMessages(1);
@@ -392,11 +392,11 @@ class UraClientTest {
         // Get trips for stop ID 100707 (Berensberger Str.) and verify some values.
         List<Message> messages = uraClient.forStops("100707").getMessages();
         assertThat(messages, hasSize(1));
-        assertThat(messages.stream().filter(t -> !t.getStop().getId().equals("100707")).findAny(), is(Optional.empty()));
-        assertThat(messages.get(0).getUuid(), is("016e1231d4e30014_100707"));
-        assertThat(messages.get(0).getType(), is(0));
-        assertThat(messages.get(0).getPriority(), is(3));
-        assertThat(messages.get(0).getText(), is("Sehr geehrte Fahrgäste, wegen Strassenbauarbeiten kann diese Haltestelle nicht von den Bussen der Linien 17, 44 und N2 angefahren werden."));
+        assertThat(messages.stream().filter(t -> !t.stop().id().equals("100707")).findAny(), is(Optional.empty()));
+        assertThat(messages.get(0).uuid(), is("016e1231d4e30014_100707"));
+        assertThat(messages.get(0).type(), is(0));
+        assertThat(messages.get(0).priority(), is(3));
+        assertThat(messages.get(0).text(), is("Sehr geehrte Fahrgäste, wegen Strassenbauarbeiten kann diese Haltestelle nicht von den Bussen der Linien 17, 44 und N2 angefahren werden."));
 
         // With limit.
         messages = uraClient.forStops("100707").getMessages(0);
