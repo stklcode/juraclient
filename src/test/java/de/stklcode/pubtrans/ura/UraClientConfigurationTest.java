@@ -47,18 +47,18 @@ class UraClientConfigurationTest {
 
         // With custom paths.
         config = UraClientConfiguration.forBaseURL(baseURL)
-                .withInstantPath(instantPath)
-                .withStreamPath(streamPath)
-                .build();
+            .withInstantPath(instantPath)
+            .withStreamPath(streamPath)
+            .build();
         assertEquals(baseURL, config.baseURL(), "Unexpected base URL");
         assertEquals(instantPath, config.instantPath(), "Unexpected custom instant path");
         assertEquals(streamPath, config.streamPath(), "Unexpected custom stream path");
 
         // With timeouts. (#14)
         config = UraClientConfiguration.forBaseURL(baseURL)
-                .withConnectTimeout(conTimeout)
-                .withTimeout(timeout)
-                .build();
+            .withConnectTimeout(conTimeout)
+            .withTimeout(timeout)
+            .build();
         assertEquals(conTimeout, config.connectTimeout(), "Unexpected connection timeout value");
         assertEquals(timeout, config.timeout(), "Unexpected timeout value");
     }

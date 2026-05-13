@@ -23,11 +23,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
+
+;
 
 /**
  * Unit test for the {@link Message} model.
@@ -49,16 +47,16 @@ class MessageTest {
             3,
             "message text"
         );
-        assertThat(message.stop().id(), is("sid"));
-        assertThat(message.stop().name(), is("name"));
-        assertThat(message.stop().indicator(), is("indicator"));
-        assertThat(message.stop().state(), is(1));
-        assertThat(message.stop().latitude(), is(2.345));
-        assertThat(message.stop().longitude(), is(6.789));
-        assertThat(message.uuid(), is("msg_uuid"));
-        assertThat(message.type(), is(1));
-        assertThat(message.priority(), is(3));
-        assertThat(message.text(), is("message text"));
+        assertEquals("sid", message.stop().id());
+        assertEquals("name", message.stop().name());
+        assertEquals("indicator", message.stop().indicator());
+        assertEquals(1, message.stop().state());
+        assertEquals(2.345, message.stop().latitude());
+        assertEquals(6.789, message.stop().longitude());
+        assertEquals("msg_uuid", message.uuid());
+        assertEquals(1, message.type());
+        assertEquals(3, message.priority());
+        assertEquals("message text", message.text());
     }
 
     @Test
@@ -77,80 +75,66 @@ class MessageTest {
         raw.add(3);
         raw.add("message text");
 
-        try {
-            Message message = Message.of(raw);
-            assertThat(message.stop().id(), is("stopId"));
-            assertThat(message.stop().name(), is("stopName"));
-            assertThat(message.stop().indicator(), is("stopIndicator"));
-            assertThat(message.stop().state(), is(9));
-            assertThat(message.stop().latitude(), is(8.765));
-            assertThat(message.stop().longitude(), is(43.21));
-            assertThat(message.uuid(), is("msg_uuid"));
-            assertThat(message.type(), is(1));
-            assertThat(message.priority(), is(3));
-            assertThat(message.text(), is("message text"));
-        } catch (IOException e) {
-            fail("Creation of Message from valid list failed: " + e.getMessage());
-        }
+        Message message = assertDoesNotThrow(() -> Message.of(raw), "Creation of Message from valid list failed");
+        assertEquals("stopId", message.stop().id());
+        assertEquals("stopName", message.stop().name());
+        assertEquals("stopIndicator", message.stop().indicator());
+        assertEquals(9, message.stop().state());
+        assertEquals(8.765, message.stop().latitude());
+        assertEquals(43.21, message.stop().longitude());
+        assertEquals("msg_uuid", message.uuid());
+        assertEquals(1, message.type());
+        assertEquals(3, message.priority());
+        assertEquals("message text", message.text());
 
         /* Excess elements should be ignored */
         raw.add("foo");
-        try {
-            Message message = Message.of(raw);
-            assertThat(message, is(notNullValue()));
-            raw.remove(11);
-        } catch (IOException e) {
-            fail("Creation of Message from valid list failed: " + e.getMessage());
-        }
+        assertNotNull(assertDoesNotThrow(() -> Message.of(raw), "Creation of Message from valid list failed"));
+        raw.remove(11);
 
         /* Test exceptions on invalid data */
-        List<Serializable> invalid = new ArrayList<>(raw);
-        invalid.remove(7);
-        invalid.add(7, 123L);
-        try {
-            Message.of(invalid);
-            fail("Creation of Message with invalid UUID field successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid1 = new ArrayList<>(raw);
+        invalid1.remove(7);
+        invalid1.add(7, 123L);
+        assertThrows(
+            IOException.class,
+            () -> Message.of(invalid1),
+            "Creation of Message with invalid UUID field successful"
+        );
 
-        invalid = new ArrayList<>(raw);
-        invalid.remove(8);
-        invalid.add(8, "abc");
-        try {
-            Message.of(invalid);
-            fail("Creation of Message with invalid type field successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid2 = new ArrayList<>(raw);
+        invalid2.remove(8);
+        invalid2.add(8, "abc");
+        assertThrows(
+            IOException.class,
+            () -> Message.of(invalid2),
+            "Creation of Message with invalid type field successful"
+        );
 
-        invalid = new ArrayList<>(raw);
-        invalid.remove(9);
-        invalid.add(9, "xyz");
-        try {
-            Message.of(invalid);
-            fail("Creation of Message with invalid priority field successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid3 = new ArrayList<>(raw);
+        invalid3.remove(9);
+        invalid3.add(9, "xyz");
+        assertThrows(
+            IOException.class,
+            () -> Message.of(invalid3),
+            "Creation of Message with invalid priority field successful"
+        );
 
-        invalid = new ArrayList<>(raw);
-        invalid.remove(10);
-        invalid.add(10, 1.23);
-        try {
-            Message.of(invalid);
-            fail("Creation of Message with invalid text field successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid4 = new ArrayList<>(raw);
+        invalid4.remove(10);
+        invalid4.add(10, 1.23);
+        assertThrows(
+            IOException.class,
+            () -> Message.of(invalid4),
+            "Creation of Message with invalid text field successful"
+        );
 
-        invalid = new ArrayList<>(raw);
-        invalid.remove(10);
-        try {
-            Message.of(invalid);
-            fail("Creation of Message with too short list successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid5 = new ArrayList<>(raw);
+        invalid5.remove(10);
+        assertThrows(
+            IOException.class,
+            () -> Message.of(invalid5),
+            "Creation of Message with too short list successful"
+        );
     }
 }

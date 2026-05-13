@@ -23,11 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for the {@link Trip} model.
@@ -37,7 +33,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 class TripTest {
     @Test
     void basicConstructorTest() {
-        Trip trip = new Trip("sid",
+        Trip trip = new Trip(
+            "sid",
             "name",
             "indicator",
             1,
@@ -51,22 +48,23 @@ class TripTest {
             "destination text",
             "vehicle",
             "id",
-            123456789123456789L);
-        assertThat(trip.stop().id(), is("sid"));
-        assertThat(trip.stop().name(), is("name"));
-        assertThat(trip.stop().indicator(), is("indicator"));
-        assertThat(trip.stop().state(), is(1));
-        assertThat(trip.stop().latitude(), is(2.345));
-        assertThat(trip.stop().longitude(), is(6.789));
-        assertThat(trip.visitID(), is(123));
-        assertThat(trip.lineID(), is("lineid"));
-        assertThat(trip.lineName(), is("linename"));
-        assertThat(trip.directionID(), is(0));
-        assertThat(trip.destinationName(), is("destination name"));
-        assertThat(trip.destinationText(), is("destination text"));
-        assertThat(trip.vehicleID(), is("vehicle"));
-        assertThat(trip.id(), is("id"));
-        assertThat(trip.estimatedTime(), is(123456789123456789L));
+            123456789123456789L
+        );
+        assertEquals("sid", trip.stop().id());
+        assertEquals("name", trip.stop().name());
+        assertEquals("indicator", trip.stop().indicator());
+        assertEquals(1, trip.stop().state());
+        assertEquals(2.345, trip.stop().latitude());
+        assertEquals(6.789, trip.stop().longitude());
+        assertEquals(123, trip.visitID());
+        assertEquals("lineid", trip.lineID());
+        assertEquals("linename", trip.lineName());
+        assertEquals(0, trip.directionID());
+        assertEquals("destination name", trip.destinationName());
+        assertEquals("destination text", trip.destinationText());
+        assertEquals("vehicle", trip.vehicleID());
+        assertEquals("id", trip.id());
+        assertEquals(123456789123456789L, trip.estimatedTime());
     }
 
     @Test
@@ -90,174 +88,143 @@ class TripTest {
         raw.add(9876543210L);
         raw.add(123456789123456789L);
 
-        try {
-            Trip trip = Trip.of(raw);
-            assertThat(trip.stop().id(), is("stopId"));
-            assertThat(trip.stop().name(), is("stopName"));
-            assertThat(trip.stop().indicator(), is("stopIndicator"));
-            assertThat(trip.stop().state(), is(9));
-            assertThat(trip.stop().latitude(), is(8.765));
-            assertThat(trip.stop().longitude(), is(43.21));
-            assertThat(trip.visitID(), is(123));
-            assertThat(trip.lineID(), is("lineid"));
-            assertThat(trip.lineName(), is("linename"));
-            assertThat(trip.directionID(), is(0));
-            assertThat(trip.destinationName(), is("destination name"));
-            assertThat(trip.destinationText(), is("destination text"));
-            assertThat(trip.vehicleID(), is("vehicle"));
-            assertThat(trip.id(), is("9876543210"));
-            assertThat(trip.estimatedTime(), is(123456789123456789L));
-        } catch (IOException e) {
-            fail("Creation of Trip from valid list failed: " + e.getMessage());
-        }
+        Trip trip = assertDoesNotThrow(() -> Trip.of(raw), "Creation of Trip from valid list failed");
+        assertEquals("stopId", trip.stop().id());
+        assertEquals("stopName", trip.stop().name());
+        assertEquals("stopIndicator", trip.stop().indicator());
+        assertEquals(9, trip.stop().state());
+        assertEquals(8.765, trip.stop().latitude());
+        assertEquals(43.21, trip.stop().longitude());
+        assertEquals(123, trip.visitID());
+        assertEquals("lineid", trip.lineID());
+        assertEquals("linename", trip.lineName());
+        assertEquals(0, trip.directionID());
+        assertEquals("destination name", trip.destinationName());
+        assertEquals("destination text", trip.destinationText());
+        assertEquals("vehicle", trip.vehicleID());
+        assertEquals("9876543210", trip.id());
+        assertEquals(123456789123456789L, trip.estimatedTime());
 
         /* Test with V2 style list */
         raw.set(14, "id");
-        try {
-            Trip trip = Trip.of(raw, "2.0");
-            assertThat(trip.id(), is("id"));
-        } catch (IOException e) {
-            fail("Creation of Trip from valid list failed: " + e.getMessage());
-        }
+        trip = assertDoesNotThrow(() -> Trip.of(raw, "2.0"), "Creation of Trip from valid list failed");
+        assertEquals("id", trip.id());
         raw.set(14, 9876543210L);
 
         /* Excess elements should be ignored */
         raw.add("foo");
-        try {
-            Trip trip = Trip.of(raw);
-            assertThat(trip, is(notNullValue()));
-            raw.remove(16);
-        } catch (IOException e) {
-            fail("Creation of Trip from valid list failed: " + e.getMessage());
-        }
+        trip = assertDoesNotThrow(() -> Trip.of(raw), "Creation of Trip from valid list failed");
+        assertNotNull(trip);
+        raw.remove(16);
 
         raw.remove(10);
         raw.add(10, 0L);    // Long values are OK.
-        try {
-            Trip trip = Trip.of(raw);
-            assertThat(trip, is(notNullValue()));
-            assertThat(trip.directionID(), is(0));
-        } catch (IOException e) {
-            fail("Creation of Trip from valid list failed: " + e.getMessage());
-        }
+        trip = assertDoesNotThrow(() -> Trip.of(raw), "Creation of Trip from valid list failed");
+        assertNotNull(trip);
+        assertEquals(0, trip.directionID());
 
         raw.remove(10);
         raw.add(10, "0");    // String values are OK.
-        try {
-            Trip trip = Trip.of(raw);
-            assertThat(trip, is(notNullValue()));
-            assertThat(trip.directionID(), is(0));
-        } catch (IOException e) {
-            fail("Creation of Trip from valid list failed: " + e.getMessage());
-        }
+        trip = assertDoesNotThrow(() -> Trip.of(raw), "Creation of Trip from valid list failed");
+        assertNotNull(trip);
+        assertEquals(0, trip.directionID());
 
         /* Test exceptions on invalid data */
-        List<Serializable> invalid = new ArrayList<>(raw);
-        invalid.remove(7);
-        invalid.add(7, "123");
-        try {
-            Trip.of(invalid);
-            fail("Creation of Trip with invalid visitID field successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid1 = new ArrayList<>(raw);
+        invalid1.remove(7);
+        invalid1.add(7, "123");
+        assertThrows(
+            IOException.class,
+            () -> Trip.of(invalid1),
+            "Creation of Trip with invalid visitID field successful"
+        );
 
-        invalid = new ArrayList<>(raw);
-        invalid.remove(8);
-        invalid.add(8, 25);
-        try {
-            Trip.of(invalid);
-            fail("Creation of Trip with invalid lineID field successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid2 = new ArrayList<>(raw);
+        invalid2.remove(8);
+        invalid2.add(8, 25);
+        assertThrows(
+            IOException.class,
+            () -> Trip.of(invalid2),
+            "Creation of Trip with invalid lineID field successful"
+        );
 
-        invalid = new ArrayList<>(raw);
-        invalid.remove(9);
-        invalid.add(9, 234L);
-        try {
-            Trip.of(invalid);
-            fail("Creation of Trip with invalid line name field successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid3 = new ArrayList<>(raw);
+        invalid3.remove(9);
+        invalid3.add(9, 234L);
+        assertThrows(
+            IOException.class,
+            () -> Trip.of(invalid3),
+            "Creation of Trip with invalid lineName field successful"
+        );
 
-        invalid = new ArrayList<>(raw);
-        invalid.remove(10);
-        invalid.add(10, "7");   // Strings are generally OK, but 7 is out of range (#2).
-        try {
-            Trip.of(invalid);
-            fail("Creation of Trip with invalid directionID field successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid4 = new ArrayList<>(raw);
+        invalid4.remove(10);
+        invalid4.add(10, "7");   // Strings are generally OK, but 7 is out of range (#2).
+        assertThrows(
+            IOException.class,
+            () -> Trip.of(invalid4),
+            "Creation of Trip with invalid directionID field successful"
+        );
 
-        invalid = new ArrayList<>(raw);
-        invalid.remove(11);
-        invalid.add(11, 987);
-        try {
-            Trip.of(invalid);
-            fail("Creation of Trip with invalid destinationName field successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid5 = new ArrayList<>(raw);
+        invalid5.remove(11);
+        invalid5.add(11, 987);
+        assertThrows(
+            IOException.class,
+            () -> Trip.of(invalid5),
+            "Creation of Trip with invalid destinationName field successful"
+        );
 
-        invalid = new ArrayList<>(raw);
-        invalid.remove(12);
-        invalid.add(12, 456.78);
-        try {
-            Trip.of(invalid);
-            fail("Creation of Trip with invalid destinationText field successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid6 = new ArrayList<>(raw);
+        invalid6.remove(12);
+        invalid6.add(12, 456.78);
+        assertThrows(
+            IOException.class,
+            () -> Trip.of(invalid6),
+            "Creation of Trip with invalid destinationText field successful"
+        );
 
-        invalid = new ArrayList<>(raw);
-        invalid.remove(13);
-        invalid.add(13, 'x');
-        try {
-            Trip.of(invalid);
-            fail("Creation of Trip with invalid vehicleID field successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid7 = new ArrayList<>(raw);
+        invalid7.remove(13);
+        invalid7.add(13, 'x');
+        assertThrows(
+            IOException.class,
+            () -> Trip.of(invalid7),
+            "Creation of Trip with invalid vehicleID field successful"
+        );
 
-        invalid = new ArrayList<>(raw);
-        invalid.remove(14);
-        invalid.add(14, 1.2);
-        try {
-            Trip.of(invalid);
-            fail("Creation of Trip with invalid id field successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid8 = new ArrayList<>(raw);
+        invalid8.remove(14);
+        invalid8.add(14, 1.2);
+        assertThrows(
+            IOException.class,
+            () -> Trip.of(invalid8),
+            "Creation of Trip with invalid id field successful"
+        );
 
-        invalid = new ArrayList<>(raw);
-        invalid.remove(15);
-        invalid.add(15, 456);
-        try {
-            Trip.of(invalid);
-            fail("Creation of Trip with invalid estimatedTime field successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid9 = new ArrayList<>(raw);
+        invalid9.remove(15);
+        invalid9.add(15, 456);
+        assertThrows(
+            IOException.class,
+            () -> Trip.of(invalid9),
+            "Creation of Trip with invalid estimatedTime field successful"
+        );
 
-        invalid = new ArrayList<>(raw);
-        invalid.remove(15);
-        try {
-            Trip.of(invalid);
-            fail("Creation of Trip with too short list successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid10 = new ArrayList<>(raw);
+        invalid10.remove(15);
+        assertThrows(
+            IOException.class,
+            () -> Trip.of(invalid10),
+            "Creation of Trip with too short list successful"
+        );
 
-        invalid = new ArrayList<>(raw);
-        invalid.set(10, 3);
-        try {
-            Trip.of(invalid);
-            fail("Creation of Trip with direction ID 3 successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid11 = new ArrayList<>(raw);
+        invalid11.set(10, 3);
+        assertThrows(
+            IOException.class,
+            () -> Trip.of(invalid11),
+            "Creation of Trip with direction ID 3 successful"
+        );
     }
 }

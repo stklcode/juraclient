@@ -39,10 +39,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
@@ -60,8 +57,8 @@ class AsyncUraTripReaderTest {
     public static void setUp() {
         // Initialize HTTP mock.
         httpMock = new WireMockServer(WireMockConfiguration.options().dynamicPort()
-                .asynchronousResponseEnabled(true)
-                .extensions(StreamTransformer.class)
+            .asynchronousResponseEnabled(true)
+            .extensions(StreamTransformer.class)
         );
         httpMock.start();
         WireMock.configureFor("localhost", httpMock.port());
@@ -92,13 +89,13 @@ class AsyncUraTripReaderTest {
         readLinesToMock(1, "/__files/stream_V1_stops_all.txt", 8);
 
         AsyncUraTripReader tr = new AsyncUraTripReader(
-                URI.create(httpMock.baseUrl() + "/interfaces/ura/stream_V1"),
-                Collections.singletonList(
-                        trip -> {
-                            trips.add(trip);
-                            counter.incrementAndGet();
-                        }
-                )
+            URI.create(httpMock.baseUrl() + "/interfaces/ura/stream_V1"),
+            Collections.singletonList(
+                trip -> {
+                    trips.add(trip);
+                    counter.incrementAndGet();
+                }
+            )
         );
 
         // Open the reader.
@@ -110,20 +107,20 @@ class AsyncUraTripReaderTest {
         // Wait another 1s for the callback to be triggered.
         TimeUnit.SECONDS.sleep(1);
 
-        assertThat("Unexpected number of trips after first entry", trips.size(), is(2));
+        assertEquals(2, trips.size(), "Unexpected number of trips after first entry");
 
         // Flush all remaining lines.
         TimeUnit.SECONDS.sleep(3);
 
-        assertThat("Unexpected number of trips after all lines have been flushed", trips.size(), is(7));
+        assertEquals(7, trips.size(), "Unexpected number of trips after all lines have been flushed");
 
         // Clear trip list and repeat with V2 data.
         trips.clear();
         readLinesToMock(2, "/__files/stream_V2_stops_all.txt", 8);
 
         tr = new AsyncUraTripReader(
-                URI.create(httpMock.baseUrl() + "/interfaces/ura/stream_V2"),
-                trips::add
+            URI.create(httpMock.baseUrl() + "/interfaces/ura/stream_V2"),
+            trips::add
         );
 
         // Open the reader.
@@ -133,7 +130,7 @@ class AsyncUraTripReaderTest {
         assumeTrue(trips.isEmpty(), "Trips should empty after 1s without reading");
 
         TimeUnit.SECONDS.sleep(1);
-        assertThat("Unexpected number of v2 trips after first entry", trips.size(), is(2));
+        assertEquals(2, trips.size(), "Unexpected number of v2 trips after first entry");
 
         // Add a second consumer that pushes to another list.
         Deque<Trip> trips2 = new ConcurrentLinkedDeque<>();
@@ -144,9 +141,9 @@ class AsyncUraTripReaderTest {
 
         tr.close();
 
-        assertThat("Unexpected number of v2 trips after all lines have been flushed", trips.size(), is(7));
-        assertThat("Unexpected number of v2 trips in list 2 after all lines have been flushed", trips2.size(), is(5));
-        assertThat("Same object should have been pushed to both lists", trips.containsAll(trips2));
+        assertEquals(7, trips.size(), "Unexpected number of v2 trips after all lines have been flushed");
+        assertEquals(5, trips2.size(), "Unexpected number of v2 trips in list 2 after all lines have been flushed");
+        assertTrue(trips.containsAll(trips2), "Same object should have been pushed to both lists");
 
         // Opening the reader twice should raise an exception.
         assertDoesNotThrow(tr::open, "Opening the reader after closing should not fail");
@@ -171,13 +168,13 @@ class AsyncUraTripReaderTest {
         readLinesToMock(1, "/__files/stream_V1_stops_all.txt", 8);
 
         AsyncUraTripReader tr = new AsyncUraTripReader(
-                URI.create(httpMock.baseUrl() + "/interfaces/ura/stream_V1"),
-                Collections.singletonList(
-                        trip -> {
-                            trips.add(trip);
-                            counter.incrementAndGet();
-                        }
-                )
+            URI.create(httpMock.baseUrl() + "/interfaces/ura/stream_V1"),
+            Collections.singletonList(
+                trip -> {
+                    trips.add(trip);
+                    counter.incrementAndGet();
+                }
+            )
         );
 
         // Open the reader.
@@ -197,7 +194,7 @@ class AsyncUraTripReaderTest {
 
         // Wait for another second.
         TimeUnit.MILLISECONDS.sleep(1);
-        assertThat("Unexpected number of trips after all lines have been flushed", trips.size(), is(1));
+        assertEquals(1, trips.size(), "Unexpected number of trips after all lines have been flushed");
     }
 
     @Test
@@ -212,16 +209,16 @@ class AsyncUraTripReaderTest {
         readLinesToMock(1, "/__files/stream_V1_stops_all.txt", 8);
 
         AsyncUraTripReader tr = new AsyncUraTripReader(
-                URI.create(httpMock.baseUrl() + "/interfaces/ura/stream_V1"),
-                UraClientConfiguration.forBaseURL(httpMock.baseUrl())
-                        .withConnectTimeout(Duration.ofMillis(100))
-                        .build(),
-                Collections.singletonList(
-                        trip -> {
-                            trips.add(trip);
-                            counter.incrementAndGet();
-                        }
-                )
+            URI.create(httpMock.baseUrl() + "/interfaces/ura/stream_V1"),
+            UraClientConfiguration.forBaseURL(httpMock.baseUrl())
+                .withConnectTimeout(Duration.ofMillis(100))
+                .build(),
+            Collections.singletonList(
+                trip -> {
+                    trips.add(trip);
+                    counter.incrementAndGet();
+                }
+            )
         );
 
         // Open the reader.
@@ -233,20 +230,20 @@ class AsyncUraTripReaderTest {
         // Wait another 1s for the callback to be triggered.
         TimeUnit.SECONDS.sleep(1);
 
-        assertThat("Unexpected number of trips after first entry", trips.size(), is(2));
+        assertEquals(2, trips.size(), "Unexpected number of trips after first entry");
 
         // Flush all remaining lines.
         TimeUnit.SECONDS.sleep(3);
 
-        assertThat("Unexpected number of trips after all lines have been flushed", trips.size(), is(7));
+        assertEquals(7, trips.size(), "Unexpected number of trips after all lines have been flushed");
 
         // Clear trip list and repeat with V2 data.
         trips.clear();
         readLinesToMock(2, "/__files/stream_V2_stops_all.txt", 8);
 
         tr = new AsyncUraTripReader(
-                URI.create(httpMock.baseUrl() + "/interfaces/ura/stream_V2"),
-                Collections.singletonList(trips::add)
+            URI.create(httpMock.baseUrl() + "/interfaces/ura/stream_V2"),
+            Collections.singletonList(trips::add)
         );
 
         // Open the reader.
@@ -256,7 +253,7 @@ class AsyncUraTripReaderTest {
         assumeTrue(trips.isEmpty(), "Trips should empty after 1s without reading");
 
         TimeUnit.SECONDS.sleep(1);
-        assertThat("Unexpected number of v2 trips after first entry", trips.size(), is(2));
+        assertEquals(2, trips.size(), "Unexpected number of v2 trips after first entry");
 
         // Add a second consumer that pushes to another list.
         Deque<Trip> trips2 = new ConcurrentLinkedDeque<>();
@@ -267,9 +264,9 @@ class AsyncUraTripReaderTest {
 
         tr.close();
 
-        assertThat("Unexpected number of v2 trips after all lines have been flushed", trips.size(), is(7));
-        assertThat("Unexpected number of v2 trips in list 2 after all lines have been flushed", trips2.size(), is(5));
-        assertThat("Same object should have been pushed to both lists", trips.containsAll(trips2));
+        assertEquals(7, trips.size(), "Unexpected number of v2 trips after all lines have been flushed");
+        assertEquals(5, trips2.size(), "Unexpected number of v2 trips in list 2 after all lines have been flushed");
+        assertTrue(trips.containsAll(trips2), "Same object should have been pushed to both lists");
     }
 
     /**
@@ -281,10 +278,10 @@ class AsyncUraTripReaderTest {
      */
     private void readLinesToMock(int version, String resourceFile, int chunks) {
         WireMock.stubFor(get(urlPathEqualTo("/interfaces/ura/stream_V" + version))
-                .willReturn(aResponse()
-                        .withTransformer("stream-transformer", "source", resourceFile)
-                        .withTransformer("stream-transformer", "chunks", chunks)
-                )
+            .willReturn(aResponse()
+                .withTransformer("stream-transformer", "source", resourceFile)
+                .withTransformer("stream-transformer", "chunks", chunks)
+            )
         );
     }
 
@@ -294,11 +291,11 @@ class AsyncUraTripReaderTest {
             Parameters parameters = serveEvent.getTransformerParameters();
             int chunks = parameters.getInt("chunks", 1);
             return Response.Builder.like(response)
-                    // Read source file to response.
-                    .body(() -> AsyncUraTripReaderTest.class.getResourceAsStream(parameters.getString("source")))
-                    // Split response in given number of chunks with 500ms delay.
-                    .chunkedDribbleDelay(new ChunkedDribbleDelay(chunks, chunks * 500))
-                    .build();
+                // Read source file to response.
+                .body(() -> AsyncUraTripReaderTest.class.getResourceAsStream(parameters.getString("source")))
+                // Split response in given number of chunks with 500ms delay.
+                .chunkedDribbleDelay(new ChunkedDribbleDelay(chunks, chunks * 500))
+                .build();
         }
 
         @Override

@@ -23,11 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for the {@link Stop} model.
@@ -38,12 +34,12 @@ class StopTest {
     @Test
     void basicConstructorTest() {
         Stop stop = new Stop("id", "name", "indicator", 1, 2.345, 6.789);
-        assertThat(stop.id(), is("id"));
-        assertThat(stop.name(), is("name"));
-        assertThat(stop.indicator(), is("indicator"));
-        assertThat(stop.state(), is(1));
-        assertThat(stop.latitude(), is(2.345));
-        assertThat(stop.longitude(), is(6.789));
+        assertEquals("id", stop.id());
+        assertEquals("name", stop.name());
+        assertEquals("indicator", stop.indicator());
+        assertEquals(1, stop.state());
+        assertEquals(2.345, stop.latitude());
+        assertEquals(6.789, stop.longitude());
     }
 
     @Test
@@ -58,96 +54,81 @@ class StopTest {
         raw.add(8.765);
         raw.add(4.321);
 
-        try {
-            Stop stop = Stop.of(raw);
-            assertThat(stop.id(), is("stopId"));
-            assertThat(stop.name(), is("stopName"));
-            assertThat(stop.indicator(), is("stopIndicator"));
-            assertThat(stop.state(), is(9));
-            assertThat(stop.latitude(), is(8.765));
-            assertThat(stop.longitude(), is(4.321));
-        } catch (IOException e) {
-            fail("Creation of Stop from valid list failed: " + e.getMessage());
-        }
+        Stop stop = assertDoesNotThrow(() -> Stop.of(raw), "Creation of Stop from valid list failed");
+        assertEquals("stopId", stop.id());
+        assertEquals("stopName", stop.name());
+        assertEquals("stopIndicator", stop.indicator());
+        assertEquals(9, stop.state());
+        assertEquals(8.765, stop.latitude());
+        assertEquals(4.321, stop.longitude());
 
         /* Excess elements should be ignored */
         raw.add("foo");
-        try {
-            Stop stop = Stop.of(raw);
-            assertThat(stop, is(notNullValue()));
-            raw.remove(7);
-        } catch (IOException e) {
-            fail("Creation of Stop from valid list failed: " + e.getMessage());
-        }
+        stop = assertDoesNotThrow(() -> Stop.of(raw), "Creation of Stop from valid list failed");
+        assertNotNull(stop);
+        raw.remove(7);
 
         /* Test exceptions on invalid data */
-        List<Serializable> invalid = new ArrayList<>(raw);
-        invalid.remove(1);
-        invalid.add(1, 5);
-        try {
-            Stop.of(invalid);
-            fail("Creation of Stop with invalid name field successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        List<Serializable> invalid1 = new ArrayList<>(raw);
+        invalid1.remove(1);
+        invalid1.add(1, 5);
+        assertThrows(
+            IOException.class,
+            () -> Stop.of(invalid1),
+            "Creation of Stop with invalid name field successful"
+        );
 
-        invalid = new ArrayList<>(raw);
-        invalid.remove(2);
-        invalid.add(2, 0);
-        try {
-            Stop.of(invalid);
-            fail("Creation of Stop with invalid id field successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid2 = new ArrayList<>(raw);
+        invalid2.remove(2);
+        invalid2.add(2, 0);
+        assertThrows(
+            IOException.class,
+            () -> Stop.of(invalid2),
+            "Creation of Stop with invalid id field successful"
+        );
 
-        invalid = new ArrayList<>(raw);
-        invalid.remove(3);
-        invalid.add(3, -1.23);
-        try {
-            Stop.of(invalid);
-            fail("Creation of Stop with invalid indicator field successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid3 = new ArrayList<>(raw);
+        invalid3.remove(3);
+        invalid3.add(3, -1.23);
+        assertThrows(
+            IOException.class,
+            () -> Stop.of(invalid3),
+            "Creation of Stop with invalid indicator field successful"
+        );
 
-        invalid = new ArrayList<>(raw);
-        invalid.remove(4);
-        invalid.add(4, "foo");
-        try {
-            Stop.of(invalid);
-            fail("Creation of Stop with invalid state field successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid4 = new ArrayList<>(raw);
+        invalid4.remove(4);
+        invalid4.add(4, "foo");
+        assertThrows(
+            IOException.class,
+            () -> Stop.of(invalid4),
+            "Creation of Stop with invalid state field successful"
+        );
 
-        invalid = new ArrayList<>(raw);
-        invalid.remove(5);
-        invalid.add(5, "123");
-        try {
-            Stop.of(invalid);
-            fail("Creation of Stop with invalid latitude field successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid5 = new ArrayList<>(raw);
+        invalid5.remove(5);
+        invalid5.add(5, "123");
+        assertThrows(
+            IOException.class,
+            () -> Stop.of(invalid5),
+            "Creation of Stop with invalid latitude field successful"
+        );
 
-        invalid = new ArrayList<>(raw);
-        invalid.remove(6);
-        invalid.add(6, 456);
-        try {
-            Stop.of(invalid);
-            fail("Creation of Stop with invalid longitude field successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid6 = new ArrayList<>(raw);
+        invalid6.remove(6);
+        invalid6.add(6, 456);
+        assertThrows(
+            IOException.class,
+            () -> Stop.of(invalid6),
+            "Creation of Stop with invalid longitude field successful"
+        );
 
-        invalid = new ArrayList<>(raw);
-        invalid.remove(6);
-        try {
-            Stop.of(invalid);
-            fail("Creation of Stop with too short list successful");
-        } catch (Exception e) {
-            assertThat(e, is(instanceOf(IOException.class)));
-        }
+        var invalid7 = new ArrayList<>(raw);
+        invalid7.remove(6);
+        assertThrows(
+            IOException.class,
+            () -> Stop.of(invalid7),
+            "Creation of Stop with too short list successful"
+        );
     }
 }
