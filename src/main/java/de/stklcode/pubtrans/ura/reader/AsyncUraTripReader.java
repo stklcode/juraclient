@@ -99,13 +99,13 @@ public class AsyncUraTripReader implements AutoCloseable {
         this.subscriber = new JsonLineSubscriber();
 
         HttpClient.Builder clientBuilder = HttpClient.newBuilder();
-        if (config != null && config.getConnectTimeout() != null) {
-            clientBuilder.connectTimeout(config.getConnectTimeout());
+        if (config != null && config.connectTimeout() != null) {
+            clientBuilder.connectTimeout(config.connectTimeout());
         }
 
         HttpRequest.Builder reqBuilder = HttpRequest.newBuilder(uri).GET();
-        if (config != null && config.getTimeout() != null) {
-            reqBuilder.timeout(config.getTimeout());
+        if (config != null && config.timeout() != null) {
+            reqBuilder.timeout(config.timeout());
         }
 
         clientBuilder.build().sendAsync(

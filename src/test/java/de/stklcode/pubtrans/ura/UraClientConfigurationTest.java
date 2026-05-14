@@ -39,27 +39,27 @@ class UraClientConfigurationTest {
 
         // With Base-URL only.
         UraClientConfiguration config = UraClientConfiguration.forBaseURL(baseURL).build();
-        assertEquals(baseURL, config.getBaseURL(), "Unexpected base URL");
-        assertEquals("/interfaces/ura/instant_V1", config.getInstantPath(), "Unexpected default instant path");
-        assertEquals("/interfaces/ura/stream_V1", config.getStreamPath(), "Unexpected default stream path");
-        assertNull(config.getConnectTimeout(), "No default connection timeout expected");
-        assertNull(config.getTimeout(), "No default timeout expected");
+        assertEquals(baseURL, config.baseURL(), "Unexpected base URL");
+        assertEquals("/interfaces/ura/instant_V1", config.instantPath(), "Unexpected default instant path");
+        assertEquals("/interfaces/ura/stream_V1", config.streamPath(), "Unexpected default stream path");
+        assertNull(config.connectTimeout(), "No default connection timeout expected");
+        assertNull(config.timeout(), "No default timeout expected");
 
         // With custom paths.
         config = UraClientConfiguration.forBaseURL(baseURL)
                 .withInstantPath(instantPath)
                 .withStreamPath(streamPath)
                 .build();
-        assertEquals(baseURL, config.getBaseURL(), "Unexpected base URL");
-        assertEquals(instantPath, config.getInstantPath(), "Unexpected custom instant path");
-        assertEquals(streamPath, config.getStreamPath(), "Unexpected custom stream path");
+        assertEquals(baseURL, config.baseURL(), "Unexpected base URL");
+        assertEquals(instantPath, config.instantPath(), "Unexpected custom instant path");
+        assertEquals(streamPath, config.streamPath(), "Unexpected custom stream path");
 
         // With timeouts. (#14)
         config = UraClientConfiguration.forBaseURL(baseURL)
                 .withConnectTimeout(conTimeout)
                 .withTimeout(timeout)
                 .build();
-        assertEquals(conTimeout, config.getConnectTimeout(), "Unexpected connection timeout value");
-        assertEquals(timeout, config.getTimeout(), "Unexpected timeout value");
+        assertEquals(conTimeout, config.connectTimeout(), "Unexpected connection timeout value");
+        assertEquals(timeout, config.timeout(), "Unexpected timeout value");
     }
 }

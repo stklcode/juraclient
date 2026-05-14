@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2024 Stefan Kalscheuer
+ * Copyright 2016-2026 Stefan Kalscheuer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,39 +22,25 @@ import java.time.Duration;
 /**
  * Configuration Object for the {@link UraClient}.
  *
+ * @param baseURL        API base URL.
+ * @param instantPath    Path to instant API endpoint.
+ * @param streamPath     Path to stream API endpoint.
+ * @param connectTimeout Optional connection timeout.
+ * @param timeout        Optional read timeout.
  * @author Stefan Kalscheuer
  * @since 2.0
+ * @since 3.0 record
  */
-public class UraClientConfiguration implements Serializable {
-    private static final long serialVersionUID = 1L;
+public record UraClientConfiguration(
+    String baseURL,
+    String instantPath,
+    String streamPath,
+    Duration connectTimeout,
+    Duration timeout
+) implements Serializable {
 
     private static final String DEFAULT_INSTANT_PATH = "/interfaces/ura/instant_V1";
     private static final String DEFAULT_STREAM_PATH = "/interfaces/ura/stream_V1";
-
-    /**
-     * API base URL.
-     */
-    private final String baseURL;
-
-    /**
-     * Path to instant API endpoint.
-     */
-    private final String instantPath;
-
-    /**
-     * Path to stream API endpoint.
-     */
-    private final String streamPath;
-
-    /**
-     * Optional connection timeout.
-     */
-    private final Duration connectTimeout;
-
-    /**
-     * Optional read timeout.
-     */
-    private final Duration timeout;
 
     /**
      * Get new configuration {@link Builder} for given base URL.
@@ -67,63 +53,6 @@ public class UraClientConfiguration implements Serializable {
         return new Builder(baseURL);
     }
 
-    /**
-     * Construct new configuration object from Builder.
-     *
-     * @param builder The builder instance.
-     */
-    private UraClientConfiguration(Builder builder) {
-        this.baseURL = builder.baseURL;
-        this.instantPath = builder.instantPath;
-        this.streamPath = builder.streamPath;
-        this.connectTimeout = builder.connectTimeout;
-        this.timeout = builder.timeout;
-    }
-
-    /**
-     * Get the API base URL.
-     *
-     * @return Base URL.
-     */
-    public String getBaseURL() {
-        return baseURL;
-    }
-
-    /**
-     * Get the API instant endpoint path.
-     *
-     * @return Instant endpoint path.
-     */
-    public String getInstantPath() {
-        return this.instantPath;
-    }
-
-    /**
-     * Get the API stream endpoint path.
-     *
-     * @return Stream endpoint path.
-     */
-    public String getStreamPath() {
-        return this.streamPath;
-    }
-
-    /**
-     * Get the connection timeout, if any.
-     *
-     * @return Timeout duration or {@code null} if none specified.
-     */
-    public Duration getConnectTimeout() {
-        return this.connectTimeout;
-    }
-
-    /**
-     * Get the response timeout, if any.
-     *
-     * @return Timeout duration or {@code null} if none specified.
-     */
-    public Duration getTimeout() {
-        return this.timeout;
-    }
 
     /**
      * Builder for {@link UraClientConfiguration} objects.
@@ -199,7 +128,7 @@ public class UraClientConfiguration implements Serializable {
          * @return The configuration.
          */
         public UraClientConfiguration build() {
-            return new UraClientConfiguration(this);
+            return new UraClientConfiguration(baseURL, instantPath, streamPath, connectTimeout, timeout);
         }
     }
 }

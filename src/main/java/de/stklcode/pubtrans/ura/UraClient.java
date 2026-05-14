@@ -315,7 +315,7 @@ public class UraClient implements Serializable {
         // Create the reader.
         try {
             AsyncUraTripReader reader = new AsyncUraTripReader(
-                    URI.create(requestURL(config.getBaseURL() + config.getStreamPath(), REQUEST_TRIP, query)),
+                    URI.create(requestURL(config.baseURL() + config.streamPath(), REQUEST_TRIP, query)),
                     config,
                     consumers
             );
@@ -453,7 +453,7 @@ public class UraClient implements Serializable {
      * @throws IOException on errors
      */
     private InputStream requestInstant(final String[] returnList, final Query query) throws IOException {
-        return request(requestURL(config.getBaseURL() + config.getInstantPath(), returnList, query));
+        return request(requestURL(config.baseURL() + config.instantPath(), returnList, query));
     }
 
     /**
@@ -497,13 +497,13 @@ public class UraClient implements Serializable {
     private InputStream request(String url) throws IOException {
         try {
             var clientBuilder = HttpClient.newBuilder();
-            if (config.getConnectTimeout() != null) {
-                clientBuilder.connectTimeout(config.getConnectTimeout());
+            if (config.connectTimeout() != null) {
+                clientBuilder.connectTimeout(config.connectTimeout());
             }
 
             var reqBuilder = HttpRequest.newBuilder(URI.create(url)).GET();
-            if (config.getTimeout() != null) {
-                reqBuilder.timeout(config.getTimeout());
+            if (config.timeout() != null) {
+                reqBuilder.timeout(config.timeout());
             }
 
             return clientBuilder.build().send(reqBuilder.build(), HttpResponse.BodyHandlers.ofInputStream()).body();
