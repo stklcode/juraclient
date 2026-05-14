@@ -46,6 +46,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @author Stefan Kalscheuer
  */
 public class UraClient implements Serializable {
+
+    @Serial
     private static final long serialVersionUID = -1183740075816686611L;
 
     private static final String PAR_STOP_ID = "StopID";

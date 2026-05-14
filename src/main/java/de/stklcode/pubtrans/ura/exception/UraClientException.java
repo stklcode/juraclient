@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2024 Stefan Kalscheuer
+ * Copyright 2016-2026 Stefan Kalscheuer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package de.stklcode.pubtrans.ura.exception;
 
 import java.io.IOException;
+import java.io.Serial;
 
 /**
  * Custom exception class indicating an error with the URA API communication.
@@ -25,6 +26,8 @@ import java.io.IOException;
  * @since 2.0
  */
 public class UraClientException extends IOException {
+
+    @Serial
     private static final long serialVersionUID = 4585240685746203433L;
 
     /**
