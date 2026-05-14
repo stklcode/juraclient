@@ -9,6 +9,9 @@ All notable changes to this project will be documented in this file.
 * Updated Jackson dependency to 3.1.3 (#93)
 * Use Java _record_ classes for `Message`, `Stop` and `Trip` models (#94)
 
+### Fixed
+* Throw exception on HTTP status != 200 instead of silently returning no results (#96)
+
 
 ## 2.0.11 - 2026-05-14
 

@@ -65,14 +65,13 @@ class UraClientTest {
         assertEquals(6.0708663, stops.get(4).longitude());
 
         // Test Exception handling.
-        /*
         mockHttpToError(500);
 
         var uraClient = new UraClient(wireMock.baseUrl());
-        var e = assertThrows(IllegalStateException.class, uraClient::getStops);
-        assertInstanceOf(IOException.class, e.getCause());
-        assertTrue(e.getCause().getMessage().startsWith("Server returned HTTP response code: 500 for URL"));
-        */
+        Exception e = assertThrows(UraClientException.class, uraClient::getStops);
+        assertEquals("Failed to read stops from API", e.getMessage());
+        e = assertInstanceOf(IOException.class, e.getCause());
+        assertEquals("API request failed with status 500", e.getMessage());
     }
 
     @Test
@@ -203,21 +202,23 @@ class UraClientTest {
         assertEquals(5, trips.size());
 
         // Test Exception handling.
-        /*
         mockHttpToError(502);
         var uraClient = new UraClient(wireMock.baseUrl());
-        var e = assertThrows(IllegalStateException.class, uraClient::getTrips);
-        assertInstanceOf(IOException.class, e.getCause());
-        assertTrue(e.getCause().getMessage().startsWith("Server returned HTTP response code: 502 for URL"));
-        */
+        Exception e = assertThrows(UraClientException.class, uraClient::getStops);
+        assertEquals("Failed to read stops from API", e.getMessage());
+        e = assertInstanceOf(IOException.class, e.getCause());
+        assertEquals("API request failed with status 502", e.getMessage());
+
         mockHttpToException();
-        UraClientException exception = assertThrows(
+        e = assertThrows(
             UraClientException.class,
             () -> new UraClient(wireMock.baseUrl()).getTrips(),
             "Expected reader to raise an exception"
         );
-        assertEquals("Failed to read trips from API", exception.getMessage(), "Unexpected error message");
-        assertInstanceOf(IOException.class, exception.getCause(), "Unexpected error cause");
+        assertEquals("Failed to read trips from API", e.getMessage(), "Unexpected error message");
+        assertInstanceOf(IOException.class, e.getCause(), "Unexpected error cause");
+        assertEquals("Failed to read trips from API", e.getMessage(), "Unexpected error message");
+        assertInstanceOf(IOException.class, e.getCause(), "Unexpected error cause");
 
     }
 

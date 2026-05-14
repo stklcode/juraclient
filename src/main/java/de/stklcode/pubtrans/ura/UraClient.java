@@ -508,7 +508,11 @@ public class UraClient implements Serializable {
                 reqBuilder.timeout(config.timeout());
             }
 
-            return clientBuilder.build().send(reqBuilder.build(), HttpResponse.BodyHandlers.ofInputStream()).body();
+            var response = clientBuilder.build().send(reqBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
+            if (response.statusCode() != 200) {
+                throw new IOException("API request failed with status " + response.statusCode());
+            }
+            return response.body();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new IOException("API request interrupted", e);
